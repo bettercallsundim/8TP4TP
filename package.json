@@ -1,0 +1,15 @@
+{
+  "name": "food-o-graphy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && yarn run dev",
+    "server": "cd server && yarn run dev",
+    "dev": "concurrently \"yarn run server\" \"yarn run client\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

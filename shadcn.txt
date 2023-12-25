@@ -1,0 +1,3 @@
+npx shadcn-ui@latest add tooltip toggle toast textarea tabs  table switch slider skeleton sheet select scroll-area progress popover navigation-menu menubar label input hover-card form dropdown-menu dialog command checkbox card button badge avatar alert-dialog alert accordion
+
+yarn add next-themes
