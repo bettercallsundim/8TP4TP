@@ -5,6 +5,7 @@ const globalSlice = createSlice({
   initialState: {
     user: "",
     token: "",
+    posts: [],
   },
   reducers: {
     setUser(state, { payload: { email, name, picture, sub } }) {
@@ -16,6 +17,14 @@ const globalSlice = createSlice({
       };
       console.log(state.user, "from redux");
     },
+    addPostRedux(state, { payload: { post, author, time, photo } }) {
+      state.posts.push({
+        post,
+        author,
+        time,
+        photo,
+      });
+    },
     setToken(state, { payload: { token } }) {
       state.token = token;
     },
@@ -25,5 +34,5 @@ const globalSlice = createSlice({
     },
   },
 });
-export const { setUser, logOut, setToken } = globalSlice.actions;
+export const { setUser, logOut, setToken, addPostRedux } = globalSlice.actions;
 export default globalSlice.reducer;

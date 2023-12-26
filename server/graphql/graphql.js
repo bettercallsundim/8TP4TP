@@ -1,11 +1,12 @@
 import gql from "graphql-tag";
 import "../db.js";
+import PostModel from "../models/Post.model.js";
 import UserModel from "../models/User.model.js";
 import { generateJWT, verifyJWT } from "../utils/auth.js";
 export const typeDefs = gql`
   type Query {
     hello: String
-    tokenizedSignIn: Boolean!
+    tokenizedSignIn: String!
   }
   scalar Date
   enum Role {
@@ -34,25 +35,30 @@ export const typeDefs = gql`
   type Post {
     post: String!
     photo: String!
-    author: User!
-    likes: [User!]
-    dislikes: [User!]
-    comments: [Comment!]
-    isPaid: [User!]
-    shared_by: [User!]
+    author: String!
+    likes: [String!]
+    dislikes: [String!]
+    comments: [String!]
+    isPaid: [String!]
+    shared_by: [String!]
     time: String!
     tags: [String!]
     location: String!
     approved: Boolean!
   }
-
+  type CreatedPost {
+    post: String!
+    photo: String
+    author: String!
+    time: String!
+  }
   type Comment {
     comment_by: User!
     comment: String!
     time: String!
   }
   type Mutation {
-    addPost(post: String!, picture: String, email: String!): Post!
+    addPost(post: String!, photo: String, email: String!): Post!
     signIn(
       email: String!
       googleId: String
@@ -78,10 +84,10 @@ export const resolvers = {
       );
       if (verify) {
         console.log("token verified");
-        return true;
+        return "valid";
       } else {
         console.log("token not verified");
-        return false;
+        return "invalid";
       }
     },
   },
@@ -102,6 +108,25 @@ export const resolvers = {
         const token = generateJWT({ email: email });
         console.log(token);
         return { token };
+      }
+    },
+    addPost: async (_, { post, photo, email }, context) => {
+      console.log("add post");
+      // console.log("context", context.headers.authorization);
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (verify) {
+        const user = await UserModel.findOne({ email: email });
+        if (user) {
+          const newPost = new PostModel({
+            post: post,
+            photo: photo,
+            author: user._id,
+          });
+          await newPost.save();
+          return newPost._doc;
+        } else {
+          return null;
+        }
       }
     },
   },

@@ -2,26 +2,39 @@
 import { Button } from "@/components/ui/button";
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useMutation } from "@apollo/client";
-
 import axios from "axios";
 import { memo, useRef, useState } from "react";
+import { BiSolidImageAdd } from "react-icons/bi";
+import { useDispatch } from "react-redux";
+import { addPostRedux } from "../redux/globalSlice";
 const CreatePost = memo(() => {
   const [doc, setDoc] = useState({ post: "", photo: "" });
   const fileRef = useRef(null);
-
+  const dispatch = useDispatch();
   const [photo, setPhoto] = useState("");
   const [photoURL, setPhotoURL] = useState(null);
   const user = getDataFromLocal("user");
+  const { token } = getDataFromLocal("token");
   const addPost = gql`
     mutation addPost($post: String!, $photo: String!, $email: String!) {
       addPost(post: $post, photo: $photo, email: $email) {
         post
+        photo
+        author
+        time
+        tags
+        likes
       }
     }
   `;
   const [postStatus] = useMutation(addPost, {
     onError: (err) => {
       console.log(err);
+    },
+    context: {
+      headers: {
+        authorization: "Bearer " + token,
+      },
     },
   });
   async function uploadPost(e) {
@@ -51,8 +64,17 @@ const CreatePost = memo(() => {
               photo: res.data.secure_url,
               email: user.email,
             },
-            update: (cache, data) => {
-              console.log(data);
+
+            update: (
+              cache,
+              {
+                data: {
+                  addPost: { post, author, time, photo },
+                },
+              }
+            ) => {
+              dispatch(addPostRedux({ post, author, time, photo }));
+              // console.log(data);
             },
           });
           console.log("yoy yoy", res);
@@ -63,7 +85,6 @@ const CreatePost = memo(() => {
         });
       fileRef.current.value = "";
     } else {
-      alert("lul");
       // if user does not upload a photo
       // await axios.post(`${process.env.NEXT_PUBLIC_BACKEND}/post/createPost`, {
       //   photo: "",
@@ -110,7 +131,7 @@ const CreatePost = memo(() => {
                 fileRef.current.click();
               }}
             >
-              add photo
+              <BiSolidImageAdd className="text-3xl hover:text-primary" />
             </button>
             <input
               ref={fileRef}
@@ -135,7 +156,7 @@ const CreatePost = memo(() => {
           </label>
           <Button
             size="small"
-            className="hover:bg-bng hover:text-text bg-text text-bng  px-6 pr-6 rounded-lg font-medium "
+            className="hover:bg-accent hover:text-text bg-text text-bng  px-6 pr-6 rounded-lg font-medium "
             variant="contained"
             type="submit"
           >

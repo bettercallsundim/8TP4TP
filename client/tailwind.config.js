@@ -51,6 +51,11 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        text: "var(--text)",
+        bng: "var(--background)",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        accent: "var(--accent)",
       },
       borderRadius: {
         lg: "6px",
@@ -72,13 +77,13 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
-    colors: {
-      text: "var(--text)",
-      bng: "var(--background)",
-      primary: "var(--primary)",
-      secondary: "var(--secondary)",
-      accent: "var(--accent)",
-    },
+    // colors: {
+    //   text: "var(--text)",
+    //   bng: "var(--background)",
+    //   primary: "var(--primary)",
+    //   secondary: "var(--secondary)",
+    //   accent: "var(--accent)",
+    // },
   },
   plugins: [require("tailwindcss-animate")],
 };

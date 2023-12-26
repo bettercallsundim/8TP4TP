@@ -40,7 +40,7 @@ const GraphQL_wrapper = ({ children }) => {
   }, [jwt_token]);
   console.log("isTokenValid", isTokenValid);
   useEffect(() => {
-    if (token && jwt_token && !isTokenValid?.tokenizedSignIn) {
+    if (token && jwt_token && isTokenValid?.tokenizedSignIn == "invalid") {
       const notify = () => toast.success("Invalid Token");
       notify();
       dispatch(logOut());

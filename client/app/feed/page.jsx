@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
-import InstagramPost from "../components/PostCard";
+import PostCard from "../components/PostCard";
 import { setUser } from "../redux/globalSlice";
 const GET_GREETING = gql`
   query greetings {
@@ -18,6 +18,7 @@ export default function feed() {
   const { loading, error, data } = useQuery(GET_GREETING);
   console.log(data);
   const user = useSelector((state) => state.globalSlice.user);
+  const posts = useSelector((state) => state.globalSlice.posts);
   const dispatch = useDispatch();
   const router = useRouter();
   useEffect(() => {
@@ -36,13 +37,9 @@ export default function feed() {
           <CreatePost />
         </div>
         <div className=" ">
-          <InstagramPost />
-          <InstagramPost />
-          <InstagramPost />
-          <InstagramPost />
-          <InstagramPost />
-          <InstagramPost />
-          <InstagramPost />
+          {posts.map((post) => (
+            <PostCard key={post.time} post={post} />
+          ))}
         </div>
       </div>
     </div>
