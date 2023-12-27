@@ -1,11 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/toaster";
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
 import { memo, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 import Spinner from "./Spinner";
 const CreatePost = memo(({ refetch, loading }) => {
   const [doc, setDoc] = useState({ post: "", photo: "" });
@@ -17,7 +19,7 @@ const CreatePost = memo(({ refetch, loading }) => {
   const user = getDataFromLocal("user");
   const { token } = getDataFromLocal("token");
   const addPost = gql`
-    mutation addPost($post: String!, $photo: String!, $email: String!) {
+    mutation addPost($post: String!, $photo: String, $email: String!) {
       addPost(post: $post, photo: $photo, email: $email) {
         post
         photo
@@ -80,6 +82,13 @@ const CreatePost = memo(({ refetch, loading }) => {
               // dispatch(addPostRedux({ post, name, time, photo, authorPhoto }));
               refetch();
               setLoading(false);
+              toast("Successfully Posted", {
+                description: "Sunday, December 03, 2023 at 9:00 AM",
+                action: {
+                  label: "Undo",
+                  onClick: () => console.log("Undo"),
+                },
+              });
               // console.log(data);
             },
           });
@@ -93,20 +102,35 @@ const CreatePost = memo(({ refetch, loading }) => {
       fileRef.current.value = "";
     } else {
       // if user does not upload a photo
-      // await axios.post(`${process.env.NEXT_PUBLIC_BACKEND}/post/createPost`, {
-      //   photo: "",
-      //   authorPhoto: user.photo,
-      //   authorName: user.name,
-      //   post: doc.post,
-      //   uid: user.uid,
-      // });
-      // console.log(res);
+      setLoading(true);
+
+      postStatus({
+        variables: {
+          post: doc.post,
+          email: user.email,
+        },
+
+        update: (
+          cache,
+          {
+            data: {
+              addPost: { post, name, time, authorPhoto },
+            },
+          }
+        ) => {
+          // dispatch(addPostRedux({ post, name, time, photo, authorPhoto }));
+          refetch();
+          setLoading(false);
+
+        },
+      });
 
       setDoc({ post: "", photo: "" });
     }
   }
   return (
     <div>
+      <Toaster />
       <form
         className="w-[400px]"
         onSubmit={uploadPost}

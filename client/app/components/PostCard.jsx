@@ -1,10 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
 import { DateTime } from "luxon";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentDots } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useSelector } from "react-redux";
+import MySheet from "./Sheet";
 // const GET_POST_BY_ID = gql`
 //   query getPostById($id: String!) {
 //     getPostById(id: $id) {
@@ -42,6 +43,9 @@ const LIKE_DISLIKE_POST = gql`
     }
   }
 `;
+// const Sheet = () => (
+
+// );
 export default function PostCard({ post }) {
   const [like, setLike] = useState(false);
   const [initPost, setInitPost] = useState({
@@ -65,7 +69,7 @@ export default function PostCard({ post }) {
   // const fetched_post = data?.getPostById;
   const token = useSelector((state) => state.globalSlice.token);
   const user = useSelector((state) => state.globalSlice.user);
-
+  const commentRef = useRef();
   const [likeDislikePost] = useMutation(LIKE_DISLIKE_POST, {
     context: {
       headers: {
@@ -73,20 +77,17 @@ export default function PostCard({ post }) {
       },
     },
   });
-  // const fetched_post = data?.likeDislikePost?.post;
-  // console.log("fetched_post", data);
+
   useEffect(() => {
     setInitPost({
       ...initPost,
       ...post,
     });
   }, [post]);
-  useEffect(() => {
-    console.log("initPost", initPost);
-  }, [initPost]);
 
   return (
     <div className="w-[300px] min-h-[300px] rounded-lg px-4 py-8 bg-bng text-text mb-8 boxshadow">
+      <MySheet commentRef={commentRef} />
       <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300">
         <div className="pic mr-4">
           <img
@@ -110,30 +111,27 @@ export default function PostCard({ post }) {
       <div className="post mb-4 pb-2 border-b-2 border-b-gray-300">
         <p>{initPost.post}</p>
       </div>
-      <div className=" h-[250px] w-[250px] rounded-sm mb-5">
-        <img
-          className="w-full h-full rounded-sm object-cover"
-          src={initPost.photo}
-          alt=""
-        />
-      </div>
+      {initPost.photo && (
+        <div className=" h-[250px] w-[250px] rounded-sm mb-5">
+          <img
+            className="w-full h-full rounded-sm object-cover"
+            src={initPost.photo}
+            alt=""
+          />
+        </div>
+      )}
       <div className="footer flex items-center justify-between">
-        <span>
+        <span className="flex items-center gap-2">
+          <span className="flex items-center">{initPost?.likes?.length}</span>
           {initPost?.likes?.includes(user?._id) ? (
             <AiFillLike
               onClick={() => {
-                console.log({
-                  id: post._id,
-                  email: user?.email,
-                  token,
-                });
                 likeDislikePost({
                   variables: {
                     id: post._id,
                     email: user?.email,
                   },
                   update: (cache, data) => {
-                    console.log(data);
                     const likeDislikePost = data?.data?.likeDislikePost?.post;
                     if (likeDislikePost) {
                       setInitPost({
@@ -150,19 +148,12 @@ export default function PostCard({ post }) {
           ) : (
             <AiOutlineLike
               onClick={() => {
-                console.log({
-                  id: post._id,
-                  email: user?.email,
-                  token,
-                });
                 likeDislikePost({
                   variables: {
                     id: post._id,
                     email: user?.email,
                   },
                   update: (cache, data) => {
-                    console.log(data);
-
                     const likeDislikePost = data?.data?.likeDislikePost?.post;
                     if (likeDislikePost) {
                       setInitPost({
@@ -178,7 +169,11 @@ export default function PostCard({ post }) {
             />
           )}
         </span>
-        <span>
+        <span
+          onClick={() => {
+            commentRef.current.click();
+          }}
+        >
           <FaCommentDots className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />
         </span>
         <span>

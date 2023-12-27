@@ -139,7 +139,7 @@ export const resolvers = {
         return { token, _id: user._id };
       }
     },
-    addPost: async (_, { post, photo, email }, context) => {
+    addPost: async (_, { post, photo="", email }, context) => {
       console.log("add post");
       // console.log("context", context.headers.authorization);
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
@@ -148,7 +148,7 @@ export const resolvers = {
         if (user) {
           const newPost = new PostModel({
             post: post,
-            photo: photo,
+            photo: photo ,
             author: user._id,
             name: user.name,
             authorPhoto: user.picture,
