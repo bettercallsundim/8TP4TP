@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { logOut } from "../redux/globalSlice";
+import { logOut, setToken, setUser } from "../redux/globalSlice";
 
 const GraphQL_wrapper = ({ children }) => {
   const { token } = getDataFromLocal("token");
@@ -48,6 +48,12 @@ const GraphQL_wrapper = ({ children }) => {
       removeDataFromLocal("user");
       router.push("/");
       return;
+    } else {
+      const user = getDataFromLocal("user");
+      if (user) {
+        dispatch(setUser(user));
+        dispatch(setToken({ token }));
+      }
     }
   }, [isTokenValid]);
   return children;

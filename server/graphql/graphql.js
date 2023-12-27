@@ -7,6 +7,19 @@ export const typeDefs = gql`
   type Query {
     hello: String
     tokenizedSignIn: String!
+    getAllPosts: [Post!]
+    getPostById(id: String!): Post!
+    getPostByAuthor(email: String!): [Post!]
+  }
+  type Mutation {
+    signIn(
+      email: String!
+      googleId: String
+      picture: String!
+      name: String!
+    ): UserSignedIn!
+    addPost(post: String!, photo: String, email: String!): Post!
+    likeDislikePost(id: String!, email: String!): likeDislikePost!
   }
   scalar Date
   enum Role {
@@ -30,9 +43,11 @@ export const typeDefs = gql`
 
   type UserSignedIn {
     token: String!
+    _id: String!
   }
 
   type Post {
+    _id: String!
     post: String!
     photo: String!
     author: String!
@@ -45,26 +60,24 @@ export const typeDefs = gql`
     tags: [String!]
     location: String!
     approved: Boolean!
+    name: String!
+    authorPhoto: String!
   }
   type CreatedPost {
     post: String!
     photo: String
     author: String!
     time: String!
+    name: String!
   }
   type Comment {
     comment_by: User!
     comment: String!
     time: String!
   }
-  type Mutation {
-    addPost(post: String!, photo: String, email: String!): Post!
-    signIn(
-      email: String!
-      googleId: String
-      picture: String!
-      name: String!
-    ): UserSignedIn!
+  type likeDislikePost {
+    liked: Boolean!
+    post: Post!
   }
 `;
 
@@ -90,6 +103,22 @@ export const resolvers = {
         return "invalid";
       }
     },
+    getAllPosts: async (_, __, context) => {
+      const posts = await PostModel.find({});
+      return posts;
+    },
+    getPostByAuthor: async (_, { email }, context) => {
+      const user = await UserModel.findOne({ email });
+      const posts = await PostModel.find({ author: user._id }).sort({
+        createdAt: -1,
+      });
+      return posts;
+    },
+    getPostById: async (_, { id }, context) => {
+      console.log("hi from where", id);
+      const post = await PostModel.findOne({ _id: id });
+      return post;
+    },
   },
   Mutation: {
     signIn: async (_, { name, email, picture, googleId }, context) => {
@@ -103,11 +132,11 @@ export const resolvers = {
         });
         await newUser.save();
         const token = generateJWT({ email: email });
-        return { token };
+        return { token, _id: newUser._id };
       } else {
         const token = generateJWT({ email: email });
         console.log(token);
-        return { token };
+        return { token, _id: user._id };
       }
     },
     addPost: async (_, { post, photo, email }, context) => {
@@ -121,9 +150,47 @@ export const resolvers = {
             post: post,
             photo: photo,
             author: user._id,
+            name: user.name,
+            authorPhoto: user.picture,
           });
           await newPost.save();
           return newPost._doc;
+        } else {
+          return null;
+        }
+      }
+    },
+    likeDislikePost: async (_, { id, email }, context) => {
+      console.log("hi from likeDislikePost");
+      // console.log("context", context.headers.authorization);
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (verify) {
+        const user = await UserModel.findOne({ email: email });
+        if (user) {
+          const post = await PostModel.findOne({ _id: id });
+          if (post) {
+            if (post.likes.includes(user._id)) {
+              const updatedPost = await PostModel.findOneAndUpdate(
+                { _id: id },
+                { $pull: { likes: user._id } },
+                { new: true }
+              );
+              return {
+                liked: false,
+                post: updatedPost,
+              };
+            } else {
+              const updatedPost = await PostModel.findOneAndUpdate(
+                { _id: id },
+                { $push: { likes: user._id } },
+                { new: true }
+              );
+              return {
+                liked: true,
+                post: updatedPost,
+              };
+            }
+          }
         } else {
           return null;
         }

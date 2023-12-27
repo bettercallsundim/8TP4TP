@@ -6,12 +6,13 @@ import axios from "axios";
 import { memo, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { useDispatch } from "react-redux";
-import { addPostRedux } from "../redux/globalSlice";
-const CreatePost = memo(() => {
+import Spinner from "./Spinner";
+const CreatePost = memo(({ refetch, loading }) => {
   const [doc, setDoc] = useState({ post: "", photo: "" });
   const fileRef = useRef(null);
   const dispatch = useDispatch();
   const [photo, setPhoto] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const [photoURL, setPhotoURL] = useState(null);
   const user = getDataFromLocal("user");
   const { token } = getDataFromLocal("token");
@@ -20,16 +21,16 @@ const CreatePost = memo(() => {
       addPost(post: $post, photo: $photo, email: $email) {
         post
         photo
-        author
         time
-        tags
-        likes
+        name
+        authorPhoto
       }
     }
   `;
   const [postStatus] = useMutation(addPost, {
     onError: (err) => {
       console.log(err);
+      setLoading(false);
     },
     context: {
       headers: {
@@ -39,9 +40,12 @@ const CreatePost = memo(() => {
   });
   async function uploadPost(e) {
     e.preventDefault();
+
     console.log(doc, "doc");
     // if user uploads a photo
     if (fileRef.current.files.length > 0 && doc.photo) {
+      setLoading(true);
+
       const formData = new FormData();
       formData.append("file", doc.photo);
       formData.append(
@@ -69,11 +73,13 @@ const CreatePost = memo(() => {
               cache,
               {
                 data: {
-                  addPost: { post, author, time, photo },
+                  addPost: { post, name, time, photo, authorPhoto },
                 },
               }
             ) => {
-              dispatch(addPostRedux({ post, author, time, photo }));
+              // dispatch(addPostRedux({ post, name, time, photo, authorPhoto }));
+              refetch();
+              setLoading(false);
               // console.log(data);
             },
           });
@@ -81,6 +87,7 @@ const CreatePost = memo(() => {
           setDoc({ post: "", photo: "" });
         })
         .catch((error) => {
+          setLoading(false);
           console.error("Error uploading file", error);
         });
       fileRef.current.value = "";
@@ -127,7 +134,8 @@ const CreatePost = memo(() => {
           )}
           <label htmlFor="photo">
             <button
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 fileRef.current.click();
               }}
             >
@@ -165,8 +173,8 @@ const CreatePost = memo(() => {
         </div>
       </form>
       <br />
-      <br />
-      <br />
+
+      {isLoading && <Spinner />}
     </div>
   );
 });

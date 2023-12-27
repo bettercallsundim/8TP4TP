@@ -9,9 +9,9 @@ import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
 import PostCard from "../components/PostCard";
 import { setUser } from "../redux/globalSlice";
-const GET_USER_POSTS = gql`
-  query getPostByAuthor($email: String!) {
-    getPostByAuthor(email: $email) {
+const GET_ALL_POSTS = gql`
+  query getAllPosts {
+    getAllPosts {
       post
       approved
       authorPhoto
@@ -22,20 +22,15 @@ const GET_USER_POSTS = gql`
       name
       photo
       time
-      _id
     }
   }
 `;
-export default function feed() {
+export default function Global_feed() {
+  const { loading, error, data } = useQuery(GET_ALL_POSTS);
+  const posts = data?.getAllPosts;
+  console.log(posts);
   const user = useSelector((state) => state.globalSlice.user);
-
-  const { loading, error, data, refetch } = useQuery(GET_USER_POSTS, {
-    variables: {
-      email: user?.email,
-    },
-  });
-  const posts = data?.getPostByAuthor;
-  console.log(posts, user?.email);
+  // const posts = useSelector((state) => state.globalSlice.posts);
   const dispatch = useDispatch();
   const router = useRouter();
   useEffect(() => {
@@ -51,7 +46,7 @@ export default function feed() {
       <LeftSidebar />
       <div className="hidescroll overflow-y-scroll h-[inherit]">
         <div>
-          <CreatePost loading={loading} refetch={refetch} />
+          <CreatePost />
         </div>
         <div className=" ">
           {posts?.map((post, ind) => (

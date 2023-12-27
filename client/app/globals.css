@@ -6,18 +6,18 @@
 
 @layer base {
   :root {
-    --text: #0e1f1f;
-    --background: #edf8f7;
-    --primary: #296b66;
-    --secondary: #82d4cf;
-    --accent: #329f98;
+    --text: #15050e;
+    --background: #fefbfd;
+    --primary: #cf3a94;
+    --secondary: #a2e490;
+    --accent: #67da9f;
   }
   .dark {
-    --text: #dff1f1;
-    --background: #071211;
-    --primary: #94d6d1;
-    --secondary: #2b7d78;
-    --accent: #60cdc6;
+    --text: #faeaf3;
+    --background: #040103;
+    --primary: #c53089;
+    --secondary: #2d6f1b;
+    --accent: #25985c;
   }
 }
 
@@ -38,8 +38,13 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-.boxshadow {
-  box-shadow: inset 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+.light .boxshadow {
+  box-shadow: inset 11px 0px 15px 0px rgba(0, 0, 0, 0.1),
+    0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+}
+.dark .boxshadow {
+  box-shadow: inset 5px 0px 15px 0px rgba(189, 189, 189, 0.1),
+    0px 0px 10px 0px rgba(191, 191, 191, 0.1);
 }
 .poppins {
   font-family: "Poppins", sans-serif;

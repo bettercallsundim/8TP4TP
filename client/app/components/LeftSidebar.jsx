@@ -21,8 +21,8 @@ const links = [
     description: "",
   },
   {
-    name: "Groups",
-    link: "/groups",
+    name: "Global Feed",
+    link: "/global_feed",
     icon: <HomeIcon />,
     description: "",
   },

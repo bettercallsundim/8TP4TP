@@ -30,6 +30,7 @@ export default function Login() {
         email: $email
       ) {
         token
+        _id
       }
     }
   `;
@@ -47,7 +48,7 @@ export default function Login() {
     // dispatch(setUser(user));
     // router.push("/feed");
   }, []);
-  if(!token){
+  if (!token) {
     return (
       <div>
         <Toaster
@@ -78,22 +79,26 @@ export default function Login() {
                   cache,
                   {
                     data: {
-                      signIn: { token },
+                      signIn: { token, _id },
                     },
                   }
                 ) => {
                   console.log("token", token);
                   setDataToLocal("token", { token });
-                  dispatch(setToken(token));
+                  dispatch(setToken({ token }));
+                  setDataToLocal("user", {
+                    name,
+                    email,
+                    picture,
+                    googleId: id,
+                    _id: _id,
+                  });
+                  dispatch(
+                    setUser({ name, email, picture, googleId: id, _id: _id })
+                  );
                 },
               });
-              setDataToLocal("user", {
-                name,
-                email,
-                picture,
-                googleId: id,
-              });
-              dispatch(setUser({ name, email, picture, googleId: id }));
+
               router.push("/feed");
             }}
             onError={() => {
