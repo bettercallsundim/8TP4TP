@@ -1,11 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
 import { DateTime } from "luxon";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentDots } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { useSelector } from "react-redux";
-import MySheet from "./Sheet";
+import { useDispatch, useSelector } from "react-redux";
+import { setCommentRequestPostID } from "../redux/globalSlice";
 // const GET_POST_BY_ID = gql`
 //   query getPostById($id: String!) {
 //     getPostById(id: $id) {
@@ -46,7 +46,8 @@ const LIKE_DISLIKE_POST = gql`
 // const Sheet = () => (
 
 // );
-export default function PostCard({ post }) {
+export default function PostCard({ post, commentRef }) {
+  const dispatch = useDispatch();
   const [like, setLike] = useState(false);
   const [initPost, setInitPost] = useState({
     post: "",
@@ -69,7 +70,6 @@ export default function PostCard({ post }) {
   // const fetched_post = data?.getPostById;
   const token = useSelector((state) => state.globalSlice.token);
   const user = useSelector((state) => state.globalSlice.user);
-  const commentRef = useRef();
   const [likeDislikePost] = useMutation(LIKE_DISLIKE_POST, {
     context: {
       headers: {
@@ -86,8 +86,7 @@ export default function PostCard({ post }) {
   }, [post]);
 
   return (
-    <div className="w-[300px] min-h-[300px] rounded-lg px-4 py-8 bg-bng text-text mb-8 boxshadow">
-      <MySheet commentRef={commentRef} />
+    <div className="w-[300px] min-h-[300px] rounded-lg px-4 py-8 bg-bng text-text mb-8 boxshadow flex flex-col">
       <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300">
         <div className="pic mr-4">
           <img
@@ -108,11 +107,11 @@ export default function PostCard({ post }) {
           </p>
         </div>
       </div>
-      <div className="post mb-4 pb-2 border-b-2 border-b-gray-300">
+      <div className="post mb-4 pb-2 ">
         <p>{initPost.post}</p>
       </div>
       {initPost.photo && (
-        <div className=" h-[250px] w-[250px] rounded-sm mb-5">
+        <div className=" h-[250px] w-[250px] rounded-sm mb-5 border-t-2 border-t-gray-300">
           <img
             className="w-full h-full rounded-sm object-cover"
             src={initPost.photo}
@@ -120,9 +119,8 @@ export default function PostCard({ post }) {
           />
         </div>
       )}
-      <div className="footer flex items-center justify-between">
+      <div className="footer flex items-center justify-between mt-auto">
         <span className="flex items-center gap-2">
-          <span className="flex items-center">{initPost?.likes?.length}</span>
           {initPost?.likes?.includes(user?._id) ? (
             <AiFillLike
               onClick={() => {
@@ -168,10 +166,14 @@ export default function PostCard({ post }) {
               className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300"
             />
           )}
+          <span className="flex items-center -mb-1">
+            {initPost?.likes?.length}
+          </span>
         </span>
         <span
           onClick={() => {
             commentRef.current.click();
+            dispatch(setCommentRequestPostID({ id: post._id }));
           }}
         >
           <FaCommentDots className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />

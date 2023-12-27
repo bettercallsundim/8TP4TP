@@ -50,7 +50,7 @@ export default function Login() {
   }, []);
   if (!token) {
     return (
-      <div>
+      <div className="my-auto mx-auto">
         <Toaster
           toastOptions={{
             className: "",

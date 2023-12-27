@@ -15,7 +15,9 @@ const GET_ALL_POSTS = gql`
       post
       approved
       authorPhoto
-      comments
+      comments {
+        name
+      }
       dislikes
       isPaid
       likes
@@ -43,7 +45,9 @@ export default function Global_feed() {
 
   return (
     <div className="bg-bng text-text py-8 px-12 flex items-start h-[90vh] w-full overflow-hidden ">
-      <LeftSidebar />
+      <div className="hidden md:block">
+        <LeftSidebar />
+      </div>
       <div className="hidescroll overflow-y-scroll h-[inherit]">
         <div>
           <CreatePost />

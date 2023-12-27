@@ -6,6 +6,7 @@ const globalSlice = createSlice({
     user: "",
     token: "",
     posts: [],
+    commentRequestPostID: "",
   },
   reducers: {
     setUser(state, { payload: { email, name, picture, googleId, _id } }) {
@@ -31,11 +32,20 @@ const globalSlice = createSlice({
       state.token = token;
       console.log("from redux :token", state.token);
     },
+    setCommentRequestPostID(state, { payload: { id } }) {
+      state.commentRequestPostID = id;
+    },
     logOut(state) {
       state.user = "";
       console.log("from redux : logout called");
     },
   },
 });
-export const { setUser, logOut, setToken, addPostRedux } = globalSlice.actions;
+export const {
+  setUser,
+  logOut,
+  setToken,
+  addPostRedux,
+  setCommentRequestPostID,
+} = globalSlice.actions;
 export default globalSlice.reducer;

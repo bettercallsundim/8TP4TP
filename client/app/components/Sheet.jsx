@@ -1,7 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -12,9 +10,65 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { memo, useState } from "react";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { memo, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+const COMMENT_POST = gql`
+  mutation commentPost($id: String!, $email: String!, $comment: String!) {
+    comment(id: $id, email: $email, comment: $comment) {
+      name
+      comment
+      time
+      comment_by
+    }
+  }
+`;
 const MySheet = memo(({ commentRef }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const token = useSelector((state) => state.globalSlice.token);
+  const user = useSelector((state) => state.globalSlice.user);
+  const [commentPost] = useMutation(COMMENT_POST, {
+    onError: (err) => {
+      console.log(err);
+    },
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+  });
+  const GET_POST_BY_ID = gql`
+    query getPostById($id: String!) {
+      getPostById(id: $id) {
+        comments {
+          comment
+          name
+          time
+        }
+      }
+    }
+  `;
+  const [refetch, { loading, data: commentData }] =
+    useLazyQuery(GET_POST_BY_ID);
+  const commentRequestPostID = useSelector(
+    (state) => state.globalSlice.commentRequestPostID
+  );
+  console.log("what a data", commentRequestPostID);
+
+  useEffect(() => {
+    if (commentRequestPostID) {
+      refetch({
+        variables: { id: commentRequestPostID },
+      });
+    }
+  }, [commentRequestPostID]);
+  useEffect(() => {
+    if (commentData) {
+      setComments(commentData.getPostById.comments);
+    }
+  }, [commentData]);
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -23,30 +77,58 @@ const MySheet = memo(({ commentRef }) => {
           Open
         </Button>
       </SheetTrigger>
-      <SheetContent className="bg-bng text-text">
+      <SheetContent className="bg-bng text-text overflow-y-scroll">
         <SheetHeader>
           <SheetTitle>Comments</SheetTitle>
           <SheetDescription>
             Make changes to your profile here. Click save when you're done.
           </SheetDescription>
         </SheetHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input id="name" value="Pedro Duarte" className="col-span-3" />
+        <div className="">
+          <div className="comments">
+            {comments?.map((comment, ind) => (
+              <p>{comment?.comment}</p>
+            ))}
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Username
-            </Label>
-            <Input id="username" value="@peduarte" className="col-span-3" />
+          <div className="comment-form">
+            <textarea
+              className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
+              rows="2"
+              placeholder="Write a commnent ..."
+              onChange={(e) => setComment(e.target.value)}
+              value={comment}
+              name="comment"
+              type="text"
+            ></textarea>
+            <p>
+              <Button
+                onClick={() => {
+                  commentPost({
+                    variables: {
+                      id: commentRequestPostID,
+                      email: user.email,
+                      comment: comment,
+                    },
+                    update: (cache, data) => {
+                      console.log("hi from comment", data);
+                      const commentArray = data.data.comment;
+                      setComments(commentArray);
+                    },
+                  });
+                }}
+                className="bg-accent text-text"
+                variant="contained"
+              >
+                Comment
+              </Button>
+            </p>
           </div>
         </div>
         <SheetFooter>
           <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
+            <Button className="hidden" type="submit">
+              Save changes
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

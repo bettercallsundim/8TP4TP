@@ -32,10 +32,11 @@ const PostSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
+        name: String,
         comment: String,
         time: {
           type: Date,
-          default: Date.now(),
+          default: Date.now,
         },
       },
     ],
@@ -48,7 +49,7 @@ const PostSchema = new mongoose.Schema(
 
     time: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     location: String,
     approved: {

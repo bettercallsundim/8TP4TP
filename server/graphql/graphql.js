@@ -20,6 +20,7 @@ export const typeDefs = gql`
     ): UserSignedIn!
     addPost(post: String!, photo: String, email: String!): Post!
     likeDislikePost(id: String!, email: String!): likeDislikePost!
+    comment(id: String!, email: String!, comment: String!): [Comment!]
   }
   scalar Date
   enum Role {
@@ -53,7 +54,7 @@ export const typeDefs = gql`
     author: String!
     likes: [String!]
     dislikes: [String!]
-    comments: [String!]
+    comments: [Comment!]
     isPaid: [String!]
     shared_by: [String!]
     time: String!
@@ -71,7 +72,8 @@ export const typeDefs = gql`
     name: String!
   }
   type Comment {
-    comment_by: User!
+    comment_by: String!
+    name: String!
     comment: String!
     time: String!
   }
@@ -139,7 +141,7 @@ export const resolvers = {
         return { token, _id: user._id };
       }
     },
-    addPost: async (_, { post, photo="", email }, context) => {
+    addPost: async (_, { post, photo = "", email }, context) => {
       console.log("add post");
       // console.log("context", context.headers.authorization);
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
@@ -148,7 +150,7 @@ export const resolvers = {
         if (user) {
           const newPost = new PostModel({
             post: post,
-            photo: photo ,
+            photo: photo,
             author: user._id,
             name: user.name,
             authorPhoto: user.picture,
@@ -190,6 +192,32 @@ export const resolvers = {
                 post: updatedPost,
               };
             }
+          }
+        } else {
+          return null;
+        }
+      }
+    },
+    comment: async (_, { id, email, comment }, context) => {
+      console.log("hi from comment");
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (verify) {
+        const user = await UserModel.findOne({ email: email });
+        if (user) {
+          const post = await PostModel.findOne({ _id: id });
+          if (post) {
+            const newComment = {
+              comment_by: user._id,
+              comment,
+              name: user.name,
+            };
+            const updatedPost = await PostModel.findOneAndUpdate(
+              { _id: id },
+              { $push: { comments: newComment } },
+              { new: true }
+            );
+            console.log("comment success");
+            return updatedPost._doc.comments;
           }
         } else {
           return null;

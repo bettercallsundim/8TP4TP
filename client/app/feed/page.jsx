@@ -3,11 +3,12 @@
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
 import PostCard from "../components/PostCard";
+import MySheet from "../components/Sheet";
 import { setUser } from "../redux/globalSlice";
 const GET_USER_POSTS = gql`
   query getPostByAuthor($email: String!) {
@@ -15,8 +16,10 @@ const GET_USER_POSTS = gql`
       post
       approved
       authorPhoto
-      comments
       dislikes
+      comments {
+        name
+      }
       isPaid
       likes
       name
@@ -30,10 +33,15 @@ export default function feed() {
   const user = useSelector((state) => state.globalSlice.user);
 
   const { loading, error, data, refetch } = useQuery(GET_USER_POSTS, {
+    onError: (err) => {
+      console.log(err);
+    },
     variables: {
       email: user?.email,
     },
   });
+  const commentRef = useRef();
+
   const posts = data?.getPostByAuthor;
   console.log(posts, user?.email);
   const dispatch = useDispatch();
@@ -48,14 +56,18 @@ export default function feed() {
 
   return (
     <div className="bg-bng text-text py-8 px-12 flex items-start h-[90vh] w-full overflow-hidden ">
-      <LeftSidebar />
+      <MySheet commentRef={commentRef} />
+
+      <div className="hidden md:block">
+        <LeftSidebar />
+      </div>
       <div className="hidescroll overflow-y-scroll h-[inherit]">
         <div>
           <CreatePost loading={loading} refetch={refetch} />
         </div>
         <div className=" ">
           {posts?.map((post, ind) => (
-            <PostCard key={ind} post={post} />
+            <PostCard commentRef={commentRef} key={ind} post={post} />
           ))}
         </div>
       </div>
