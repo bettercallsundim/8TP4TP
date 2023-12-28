@@ -74,6 +74,7 @@ export const typeDefs = gql`
   type Comment {
     comment_by: String!
     name: String!
+    photo: String!
     comment: String!
     time: String!
   }
@@ -210,6 +211,7 @@ export const resolvers = {
               comment_by: user._id,
               comment,
               name: user.name,
+              photo: user.picture,
             };
             const updatedPost = await PostModel.findOneAndUpdate(
               { _id: id },

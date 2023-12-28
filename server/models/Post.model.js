@@ -33,6 +33,7 @@ const PostSchema = new mongoose.Schema(
           ref: "User",
         },
         name: String,
+        photo: String,
         comment: String,
         time: {
           type: Date,

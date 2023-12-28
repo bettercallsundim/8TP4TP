@@ -6,23 +6,25 @@ import { FaCommentDots } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { setCommentRequestPostID } from "../redux/globalSlice";
-// const GET_POST_BY_ID = gql`
-//   query getPostById($id: String!) {
-//     getPostById(id: $id) {
-//       post
-//       approved
-//       authorPhoto
-//       comments
-//       dislikes
-//       isPaid
-//       likes
-//       name
-//       photo
-//       time
-//       _id
-//     }
-//   }
-// `;
+const GET_POST_BY_ID = gql`
+  query getPostById($id: String!) {
+    getPostById(id: $id) {
+      post
+      approved
+      authorPhoto
+      comments {
+        name
+      }
+      dislikes
+      isPaid
+      likes
+      name
+      photo
+      time
+      _id
+    }
+  }
+`;
 const LIKE_DISLIKE_POST = gql`
   mutation likeDislikePost($id: String!, $email: String!) {
     likeDislikePost(id: $id, email: $email) {
@@ -31,7 +33,9 @@ const LIKE_DISLIKE_POST = gql`
         post
         approved
         authorPhoto
-        comments
+        comments {
+          name
+        }
         dislikes
         isPaid
         likes
@@ -62,12 +66,21 @@ export default function PostCard({ post, commentRef }) {
     isPaid: null,
     _id: "",
   });
-  // const { loading, error, data, refetch } = useQuery(GET_POST_BY_ID, {
-  //   variables: {
-  //     id: post._id,
-  //   },
-  // });
-  // const fetched_post = data?.getPostById;
+  // const [getPost, { data: getPostData }] = useLazyQuery(GET_POST_BY_ID);
+  // const commentRequestPostID = useSelector(
+  //   (state) => state.globalSlice.commentRequestPostID
+  // );
+  // useEffect(() => {
+  //   if (commentRequestPostID == initPost._id) {
+  //     getPost({
+  //       variables: { id: commentRequestPostID },
+  //     });
+  //     if (getPostData) {
+  //       console.log("getPostData", getPostData);
+  //     }
+  //   }
+  // }, [commentRequestPostID]);
+
   const token = useSelector((state) => state.globalSlice.token);
   const user = useSelector((state) => state.globalSlice.user);
   const [likeDislikePost] = useMutation(LIKE_DISLIKE_POST, {
@@ -171,12 +184,17 @@ export default function PostCard({ post, commentRef }) {
           </span>
         </span>
         <span
+          className="flex items-center gap-2"
           onClick={() => {
+            console.log("hi from comment button");
             commentRef.current.click();
             dispatch(setCommentRequestPostID({ id: post._id }));
           }}
         >
           <FaCommentDots className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />
+          <span className="flex items-center -mb-1">
+            {initPost?.comments?.length}
+          </span>
         </span>
         <span>
           <FaCircleExclamation className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />

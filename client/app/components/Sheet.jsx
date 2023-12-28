@@ -20,6 +20,7 @@ const COMMENT_POST = gql`
       comment
       time
       comment_by
+      photo
     }
   }
 `;
@@ -46,6 +47,7 @@ const MySheet = memo(({ commentRef }) => {
           comment
           name
           time
+          photo
         }
       }
     }
@@ -86,9 +88,24 @@ const MySheet = memo(({ commentRef }) => {
         </SheetHeader>
         <div className="">
           <div className="comments">
-            {comments?.map((comment, ind) => (
-              <p>{comment?.comment}</p>
-            ))}
+            {comments?.map((comment, ind) => {
+              console.log("comment author photo : ", comment);
+              return (
+                <div>
+                  <p className="flex items-center">
+                    <span>
+                      <img
+                        className="w-[40px] h-[40px] rounded-full"
+                        src={comment?.photo}
+                        alt=""
+                      />
+                    </span>
+                    <span>{comment?.name}</span>
+                  </p>
+                  <p className="pl-10">{comment?.comment}</p>
+                </div>
+              );
+            })}
           </div>
           <div className="comment-form">
             <textarea
@@ -115,6 +132,7 @@ const MySheet = memo(({ commentRef }) => {
                       setComments(commentArray);
                     },
                   });
+                  setComment("");
                 }}
                 className="bg-accent text-text"
                 variant="contained"
