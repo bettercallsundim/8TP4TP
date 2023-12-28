@@ -9,10 +9,36 @@ import { IoMdClose } from "react-icons/io";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 
+import { HomeIcon } from "@radix-ui/react-icons";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { logOut } from "../redux/globalSlice";
-import MobileNav from "./MobileNav";
-
+const mblLinks = [
+  {
+    name: "Home",
+    link: "/",
+    icon: <HomeIcon />,
+    description: "",
+  },
+  {
+    name: "Feed",
+    link: "/feed",
+    icon: <HomeIcon />,
+    description: "",
+  },
+  {
+    name: "My Profile",
+    link: "/profile",
+    icon: <HomeIcon />,
+    description: "",
+  },
+  {
+    name: "Global Feed",
+    link: "/global_feed",
+    icon: <HomeIcon />,
+    description: "",
+  },
+];
 function Nav(props) {
   const router = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
@@ -67,7 +93,7 @@ function Nav(props) {
     },
   ];
   return (
-    <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
+    <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text relative z-[100]">
       <div className="logo">food-O-graphy</div>
       <div className="links hidden md:block">
         <ul className="flex items-center gap-x-6">
@@ -97,7 +123,7 @@ function Nav(props) {
           </li>
         </ul>
       </div>
-      <div className="menuButton">
+      <div className="menuButton md:hidden">
         <button
           className="md:hidden"
           onClick={() => {
@@ -112,8 +138,60 @@ function Nav(props) {
           )}
         </button>
       </div>
-
-      <MobileNav nav={showMenu} />
+      <AnimatePresence>
+        {showMenu && (
+          <motion.div
+            variants={{
+              hide: {
+                x: "-100%",
+                transition: {
+                  type: "spring",
+                  bounce: 0.1,
+                  when: "afterChildren",
+                  staggerChildren: 0.001,
+                },
+              },
+              show: {
+                x: "0%",
+                transition: {
+                  type: "spring",
+                  bounce: 0.1,
+                  when: "beforeChildren",
+                  staggerChildren: 0.001,
+                },
+              },
+            }}
+            initial="hide"
+            animate="show"
+            exit="hide"
+            className="bg-bng h-screen fixed inset-0 top-20 z-[100] md:hidden"
+          >
+            {mblLinks.map((link) => (
+              <motion.p
+                variants={{
+                  hide: {
+                    y: "25%",
+                    opacity: 0,
+                  },
+                  show: {
+                    y: "0%",
+                    opacity: 1,
+                  },
+                }}
+              >
+                <Link
+                  prefetch={false}
+                  href={link.link}
+                  className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+                >
+                  <span className="text-primary">{link.icon}</span>
+                  <h1 className="text-text">{link.name}</h1>
+                </Link>
+              </motion.p>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
