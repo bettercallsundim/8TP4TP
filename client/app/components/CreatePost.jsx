@@ -130,9 +130,9 @@ const CreatePost = memo(({ refetch, loading }) => {
   }
   useEffect(() => {
     const user = getDataFromLocal("user");
-    const { token } = getDataFromLocal("token");
+    const { token: gotToken } = getDataFromLocal("token");
     setUser(user);
-    setToken(token);
+    setToken(gotToken);
   }, []);
 
   return (
