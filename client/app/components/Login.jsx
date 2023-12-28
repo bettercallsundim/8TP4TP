@@ -8,14 +8,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken, setUser } from "../redux/globalSlice";
+import { setUser } from "../redux/globalSlice";
 export default function Login() {
   const dispatch = useDispatch();
   const [tokenData, setTokenData] = useState(null);
-  const userFromState = useSelector((state) => state.globalSlice);
+  const userFromState = useSelector((state) => state.globalSlice.user);
   const router = useRouter();
-  const { token } = getDataFromLocal("token");
-
+  const [token, setToken] = useState(null);
   const addUser = gql`
     mutation signIn(
       $email: String!
@@ -41,12 +40,10 @@ export default function Login() {
     },
   });
   useEffect(() => {
-    // alert(data);
-    // const notifyAlreadyLoggedIn = () =>
-    //   toast.success("Logged in successfully. Redirecting...");
-    // notifyAlreadyLoggedIn();
-    // dispatch(setUser(user));
-    // router.push("/feed");
+    const { token: gotToken } = getDataFromLocal("token");
+    if (gotToken) {
+      setToken(gotToken);
+    }
   }, []);
   if (!token) {
     return (

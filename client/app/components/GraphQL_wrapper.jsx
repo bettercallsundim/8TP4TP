@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { logOut, setToken, setUser } from "../redux/globalSlice";
 
 const GraphQL_wrapper = ({ children }) => {
-  const { token } = getDataFromLocal("token");
+  const [token, settoken] = useState(null);
   const [jwt_token, setJwt_Token] = useState(token);
   const router = useRouter();
   const tokenizedSignInGql = gql`
@@ -31,6 +31,11 @@ const GraphQL_wrapper = ({ children }) => {
   //   removeDataFromLocal("token");
   //   return router.push("/login");
   // }
+  useEffect(() => {
+    const { token } = getDataFromLocal("token");
+    settoken(token);
+    setJwt_Token(token);
+  }, []);
   useEffect(() => {
     if (token) {
       console.log("lol token", token);
