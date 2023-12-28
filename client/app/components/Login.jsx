@@ -8,13 +8,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../redux/globalSlice";
+import { setToken, setUser } from "../redux/globalSlice";
 export default function Login() {
   const dispatch = useDispatch();
   const [tokenData, setTokenData] = useState(null);
   const userFromState = useSelector((state) => state.globalSlice.user);
   const router = useRouter();
-  const [token, setToken] = useState(null);
   const addUser = gql`
     mutation signIn(
       $email: String!
@@ -42,10 +41,10 @@ export default function Login() {
   useEffect(() => {
     const { token: gotToken } = getDataFromLocal("token");
     if (gotToken) {
-      setToken(gotToken);
+      setTokenData(gotToken);
     }
   }, []);
-  if (!token) {
+  if (!tokenData) {
     return (
       <div className="my-auto mx-auto">
         <Toaster
@@ -55,7 +54,7 @@ export default function Login() {
           }}
         />
 
-        {!userFromState?.id && (
+        {!userFromState?.email && (
           <GoogleLogin
             onSuccess={({ credential }) => {
               const notify = () =>
@@ -76,13 +75,13 @@ export default function Login() {
                   cache,
                   {
                     data: {
-                      signIn: { token, _id },
+                      signIn: { token: newToken, _id },
                     },
                   }
                 ) => {
-                  console.log("token", token);
-                  setDataToLocal("token", { token });
-                  dispatch(setToken({ token }));
+                  console.log("token", newToken);
+                  setTokenData(newToken);
+                  setDataToLocal("token", { token: newToken });
                   setDataToLocal("user", {
                     name,
                     email,
@@ -90,11 +89,13 @@ export default function Login() {
                     googleId: id,
                     _id: _id,
                   });
+
                   dispatch(
                     setUser({ name, email, picture, googleId: id, _id: _id })
                   );
                 },
               });
+              dispatch(setToken({ token:tokenData }));
 
               router.push("/feed");
             }}
