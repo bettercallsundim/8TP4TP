@@ -139,7 +139,7 @@ const CreatePost = memo(({ refetch, loading }) => {
     <div>
       <Toaster />
       <form
-        className="w-[400px]"
+        className="w-[300px] md:w-[400px]"
         onSubmit={uploadPost}
         encType="multipart/form-data"
       >

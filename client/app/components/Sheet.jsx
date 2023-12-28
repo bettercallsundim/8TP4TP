@@ -79,7 +79,12 @@ const MySheet = memo(({ commentRef }) => {
           Open
         </Button>
       </SheetTrigger>
-      <SheetContent className="bg-bng text-text overflow-y-scroll">
+      <SheetContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+        className="bg-bng text-text overflow-y-scroll w-[80%]"
+      >
         <SheetHeader>
           <SheetTitle>Comments</SheetTitle>
           <SheetDescription>
@@ -108,15 +113,17 @@ const MySheet = memo(({ commentRef }) => {
             })}
           </div>
           <div className="comment-form">
-            <textarea
-              className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
-              rows="2"
-              placeholder="Write a commnent ..."
-              onChange={(e) => setComment(e.target.value)}
-              value={comment}
-              name="comment"
-              type="text"
-            ></textarea>
+            <form>
+              <textarea
+                className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
+                rows="2"
+                placeholder="Write a commnent ..."
+                onChange={(e) => setComment(e.target.value)}
+                value={comment}
+                name="comment"
+                autofocus={false}
+              ></textarea>
+            </form>
             <p>
               <Button
                 onClick={() => {

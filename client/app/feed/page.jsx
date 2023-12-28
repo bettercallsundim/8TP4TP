@@ -55,7 +55,7 @@ export default function feed() {
   }, []);
 
   return (
-    <div className="bg-bng text-text py-8 px-12 flex items-start h-[90vh] w-full overflow-hidden ">
+    <div className="bg-bng text-text py-8 px-8 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">
       <MySheet commentRef={commentRef} />
 
       <div className="hidden md:block">

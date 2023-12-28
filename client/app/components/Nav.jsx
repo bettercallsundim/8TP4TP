@@ -4,14 +4,18 @@ import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import toast from "react-hot-toast";
+import { CiMenuFries } from "react-icons/ci";
+import { IoMdClose } from "react-icons/io";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 
 import Link from "next/link";
 import { logOut } from "../redux/globalSlice";
+import MobileNav from "./MobileNav";
 
 function Nav(props) {
   const router = useRouter();
+  const [showMenu, setShowMenu] = React.useState(false);
   const user = useSelector((state) => state.globalSlice.user);
   const handleLogout = () => {
     console.log("logging out");
@@ -63,9 +67,9 @@ function Nav(props) {
     },
   ];
   return (
-    <nav className="flex items-center justify-between px-8 glassmorph text-text">
+    <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
       <div className="logo">food-O-graphy</div>
-      <div className="links">
+      <div className="links hidden md:block">
         <ul className="flex items-center gap-x-6">
           {links.map((link, ind) => (
             <li
@@ -93,6 +97,23 @@ function Nav(props) {
           </li>
         </ul>
       </div>
+      <div className="menuButton">
+        <button
+          className="md:hidden"
+          onClick={() => {
+            console.log("clicked");
+            setShowMenu(!showMenu);
+          }}
+        >
+          {showMenu ? (
+            <IoMdClose className="text-3xl" />
+          ) : (
+            <CiMenuFries className="text-3xl" />
+          )}
+        </button>
+      </div>
+
+      <MobileNav nav={showMenu} />
     </nav>
   );
 }

@@ -27,7 +27,7 @@ const links = [
     description: "",
   },
 ];
-const LeftSidebar = memo(() => {
+const LeftSidebar = memo(({ nav }) => {
   return (
     <div className="bg-bng h-screen w-[300px] overflow-scroll mr-14 border-r-2 hidescroll">
       {links.map((link) => (
