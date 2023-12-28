@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
-import { memo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
@@ -16,8 +16,9 @@ const CreatePost = memo(({ refetch, loading }) => {
   const [photo, setPhoto] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [photoURL, setPhotoURL] = useState(null);
-  const user = getDataFromLocal("user");
-  const { token } = getDataFromLocal("token");
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+
   const addPost = gql`
     mutation addPost($post: String!, $photo: String, $email: String!) {
       addPost(post: $post, photo: $photo, email: $email) {
@@ -121,13 +122,19 @@ const CreatePost = memo(({ refetch, loading }) => {
           // dispatch(addPostRedux({ post, name, time, photo, authorPhoto }));
           refetch();
           setLoading(false);
-
         },
       });
 
       setDoc({ post: "", photo: "" });
     }
   }
+  useEffect(() => {
+    const user = getDataFromLocal("user");
+    const { token } = getDataFromLocal("token");
+    setUser(user);
+    setToken(token);
+  }, []);
+
   return (
     <div>
       <Toaster />

@@ -1,12 +1,7 @@
 "use client";
-import { getDataFromLocal } from "@/utils/localStorage";
-import { useRouter } from "next/navigation";
-import { memo, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../redux/globalSlice";
+import { memo } from "react";
+import { Toaster } from "react-hot-toast";
 const ThemeProvider = memo(({ children }) => {
-  
   return (
     <div>
       {" "}
