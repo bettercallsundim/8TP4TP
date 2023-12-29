@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import LeftSidebar from "../components/LeftSidebar";
 import PostCard from "../components/PostCard";
 import MySheet from "../components/Sheet";
 import { setUser } from "../redux/globalSlice";
+import PostSkeleton from "../components/PostSkeleton";
 const GET_USER_POSTS = gql`
   query getPostByAuthor($email: String!) {
     getPostByAuthor(email: $email) {
@@ -41,7 +43,6 @@ export default function feed() {
     },
   });
   const commentRef = useRef();
-  const parentRef = useRef(null);
   const posts = data?.getPostByAuthor;
   console.log(posts, user?.email);
   const dispatch = useDispatch();
@@ -53,10 +54,13 @@ export default function feed() {
       router.push("/feed");
     }
   }, []);
+  const array = [1, 2, 3];
+
+
 
   return (
     <div className="bg-bng text-text py-8 px-8 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">
-      <MySheet parentRef={parentRef} commentRef={commentRef} />
+      <MySheet commentRef={commentRef} />
 
       <div className="hidden md:block">
         <LeftSidebar />
@@ -66,8 +70,9 @@ export default function feed() {
           <CreatePost loading={loading} refetch={refetch} />
         </div>
         <div className=" ">
+          {loading && array?.map((_, ind) => <PostSkeleton key={ind} />)}
           {posts?.map((post, ind) => (
-            <PostCard parentRef={parentRef} commentRef={commentRef} key={ind} post={post} />
+            <PostCard commentRef={commentRef} key={ind} post={post} />
           ))}
         </div>
       </div>

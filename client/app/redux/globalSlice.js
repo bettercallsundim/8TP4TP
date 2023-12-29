@@ -37,6 +37,7 @@ const globalSlice = createSlice({
     },
     logOut(state) {
       state.user = "";
+      state.token = "";
       console.log("from redux : logout called");
     },
   },

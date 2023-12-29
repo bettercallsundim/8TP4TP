@@ -196,7 +196,6 @@ export default function PostCard({ post, commentRef }) {
           onClick={() => {
             console.log("hi from comment button");
             commentRef.current.click();
-            parentRef.current.scrollIntoView();
             dispatch(setCommentRequestPostID({ id: post._id }));
           }}
         >

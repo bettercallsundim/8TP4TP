@@ -14,6 +14,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { DateTime } from "luxon";
 import { memo, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import CommentSkeleton from "./CommentSkeleton";
 import Spinner from "./Spinner";
 const COMMENT_POST = gql`
   mutation commentPost($id: String!, $email: String!, $comment: String!) {
@@ -75,7 +76,7 @@ const MySheet = memo(({ commentRef }) => {
       // parentElement.scrollBottom = "0px";
     }
   };
-
+  const array = [1, 2, 4, 5];
   useEffect(() => {
     if (commentRequestPostID) {
       refetch({
@@ -95,7 +96,7 @@ const MySheet = memo(({ commentRef }) => {
   }, []);
 
   return (
-    <div >
+    <div>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button ref={commentRef} className="hidden" variant="outline">
@@ -114,6 +115,8 @@ const MySheet = memo(({ commentRef }) => {
           </SheetHeader>
           <div className="">
             <div className="comments mt-4">
+              {loading && array?.map((_, ind) => <CommentSkeleton key={ind} />)}
+
               {comments?.map((comment, ind) => {
                 console.log("comment author photo : ", comment);
                 return (
@@ -127,17 +130,17 @@ const MySheet = memo(({ commentRef }) => {
                         />
                       </span>
                       <p className="flex flex-col gap-1">
-                        <p className="font-medium bg-primary text-bng rounded-lg px-2 inline-block">
+                        <p className="font-medium bg-primary text-white rounded-lg px-2 inline-block">
                           {comment?.name}
                         </p>
-                        <p className="text-[10px] bg-slate-700 text-bng rounded-lg px-2 inline-block ">
+                        <p className="text-[10px] bg-slate-700 text-white rounded-lg px-2 inline-block ">
                           {DateTime.fromMillis(
                             parseInt(comment.time)
                           ).toLocaleString(DateTime.DATETIME_MED)}
                         </p>
                       </p>
                     </p>
-                    <p className="mt-2 ml-12 bg-sky-100 p-2 rounded">
+                    <p className="mt-2 ml-12 text-text bg-sky-400 dark:text-black dark:bg-sky-300 p-2 rounded">
                       {comment?.comment}
                     </p>
                   </div>

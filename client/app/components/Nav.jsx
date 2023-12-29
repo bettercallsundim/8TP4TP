@@ -39,7 +39,7 @@ const mblLinks = [
     description: "",
   },
 ];
-function Nav(props) {
+function Nav() {
   const router = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
   const user = useSelector((state) => state.globalSlice.user);
