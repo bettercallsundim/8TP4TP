@@ -6,13 +6,13 @@ const PostSkeleton = memo(() => {
     <div className="flex flex-col">
       <div className="flex items-center gap-2">
         <Skeleton className="h-12 w-12 rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[100px]" />
+        <div className="space-y-2 w-full">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
         </div>
       </div>
-      <div className="ml-16">
-        <Skeleton className="h-[380px] w-[200px]" />
+      <div className="ml-14">
+        <Skeleton className="h-[250px] w-full" />
       </div>
     </div>
   );

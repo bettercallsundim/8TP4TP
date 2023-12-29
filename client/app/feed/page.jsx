@@ -1,6 +1,5 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
@@ -9,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
 import PostCard from "../components/PostCard";
+import PostSkeleton from "../components/PostSkeleton";
 import MySheet from "../components/Sheet";
 import { setUser } from "../redux/globalSlice";
-import PostSkeleton from "../components/PostSkeleton";
 const GET_USER_POSTS = gql`
   query getPostByAuthor($email: String!) {
     getPostByAuthor(email: $email) {
@@ -56,8 +55,6 @@ export default function feed() {
   }, []);
   const array = [1, 2, 3];
 
-
-
   return (
     <div className="bg-bng text-text py-8 px-8 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">
       <MySheet commentRef={commentRef} />
@@ -65,7 +62,7 @@ export default function feed() {
       <div className="hidden md:block">
         <LeftSidebar />
       </div>
-      <div className="hidescroll overflow-y-scroll h-[inherit]">
+      <div className="hidescroll overflow-y-scroll h-[inherit] w-full md:w-[unset]">
         <div>
           <CreatePost loading={loading} refetch={refetch} />
         </div>

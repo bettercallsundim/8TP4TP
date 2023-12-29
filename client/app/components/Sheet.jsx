@@ -68,13 +68,17 @@ const MySheet = memo(({ commentRef }) => {
 
   // Function to scroll to the end of the parent element
   const lastElm = useRef(null);
-  const scrollToBottom = () => {
+  const scrollToBottom = async () => {
+    function delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
     if (lastElm.current) {
       lastElm.current.scrollIntoView({ behavior: "smooth" });
-      // const parentElement = parentRef.current;
-      // Scroll to the bottom of the parent element
-      // parentElement.scrollBottom = "0px";
+      await delay(1000);
     }
+    // const parentElement = parentRef.current;
+    // Scroll to the bottom of the parent element
+    // parentElement.scrollBottom = "0px";
   };
   const array = [1, 2, 4, 5];
   useEffect(() => {
@@ -91,9 +95,10 @@ const MySheet = memo(({ commentRef }) => {
       scrollToBottom();
     }
   }, [commentData]);
+
   useEffect(() => {
     scrollToBottom();
-  }, []);
+  }, [isOpen]);
 
   return (
     <div>
@@ -106,6 +111,7 @@ const MySheet = memo(({ commentRef }) => {
         <SheetContent
           onOpenAutoFocus={(e) => {
             e.preventDefault();
+            scrollToBottom();
           }}
           className="bg-bng text-text overflow-y-scroll w-[80%]"
         >
@@ -146,6 +152,7 @@ const MySheet = memo(({ commentRef }) => {
                   </div>
                 );
               })}
+              <div ref={lastElm}></div>
             </div>
             <div className="comment-form">
               <form>
@@ -197,7 +204,7 @@ const MySheet = memo(({ commentRef }) => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      <div className="hidden h-40 w-40" ref={lastElm}></div>
+      <div></div>
     </div>
   );
 });
