@@ -7,7 +7,7 @@ export const typeDefs = gql`
   type Query {
     hello: String
     tokenizedSignIn: String!
-    getAllPosts: [Post!]
+    getAllPosts(limit: Int!, pageNumber: Int!): GetAllPosts
     getPostById(id: String!): Post!
     getPostByAuthor(email: String!): [Post!]
   }
@@ -21,6 +21,10 @@ export const typeDefs = gql`
     addPost(post: String!, photo: String, email: String!): Post!
     likeDislikePost(id: String!, email: String!): likeDislikePost!
     comment(id: String!, email: String!, comment: String!): [Comment!]
+  }
+  type GetAllPosts {
+    hasMore: Boolean!
+    posts: [Post!]
   }
   scalar Date
   enum Role {
@@ -106,9 +110,24 @@ export const resolvers = {
         return "invalid";
       }
     },
-    getAllPosts: async (_, __, context) => {
-      const posts = await PostModel.find({});
-      return posts;
+    getAllPosts: async (_, { limit, pageNumber }, context) => {
+      console.log("hi from getAllPosts", limit, pageNumber);
+      const postsLength = await PostModel.find({}).countDocuments();
+      const posts = await PostModel.find({})
+        .sort({
+          createdAt: -1,
+        })
+        .skip((parseInt(pageNumber) - 1) * parseInt(limit))
+        .limit(parseInt(limit));
+      console.log(
+        postsLength,
+        "postsLength",
+        postsLength >= limit * pageNumber
+      );
+      return {
+        posts,
+        hasMore: postsLength >= limit * pageNumber,
+      };
     },
     getPostByAuthor: async (_, { email }, context) => {
       const user = await UserModel.findOne({ email });

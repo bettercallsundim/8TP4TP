@@ -73,12 +73,9 @@ const MySheet = memo(({ commentRef }) => {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
     if (lastElm.current) {
-      lastElm.current.scrollIntoView({ behavior: "smooth" });
-      await delay(1000);
+      await delay(500);
+      lastElm?.current?.scrollIntoView({ behavior: "smooth" });
     }
-    // const parentElement = parentRef.current;
-    // Scroll to the bottom of the parent element
-    // parentElement.scrollBottom = "0px";
   };
   const array = [1, 2, 4, 5];
   useEffect(() => {
@@ -92,7 +89,6 @@ const MySheet = memo(({ commentRef }) => {
   useEffect(() => {
     if (commentData) {
       setComments(commentData.getPostById.comments);
-      scrollToBottom();
     }
   }, [commentData]);
 
