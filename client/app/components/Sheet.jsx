@@ -11,8 +11,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { memo, useEffect, useState } from "react";
+import { DateTime } from "luxon";
+import { memo, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import Spinner from "./Spinner";
 const COMMENT_POST = gql`
   mutation commentPost($id: String!, $email: String!, $comment: String!) {
     comment(id: $id, email: $email, comment: $comment) {
@@ -30,16 +32,19 @@ const MySheet = memo(({ commentRef }) => {
   const [comments, setComments] = useState([]);
   const token = useSelector((state) => state.globalSlice.token);
   const user = useSelector((state) => state.globalSlice.user);
-  const [commentPost] = useMutation(COMMENT_POST, {
-    onError: (err) => {
-      console.log(err);
-    },
-    context: {
-      headers: {
-        authorization: `Bearer ${token}`,
+  const [commentPost, { loading: loadingNewComment }] = useMutation(
+    COMMENT_POST,
+    {
+      onError: (err) => {
+        console.log(err);
       },
-    },
-  });
+      context: {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    }
+  );
   const GET_POST_BY_ID = gql`
     query getPostById($id: String!) {
       getPostById(id: $id) {
@@ -58,106 +63,139 @@ const MySheet = memo(({ commentRef }) => {
     (state) => state.globalSlice.commentRequestPostID
   );
   console.log("what a data", commentRequestPostID);
+  // Create a ref for the parent element
+
+  // Function to scroll to the end of the parent element
+  const lastElm = useRef(null);
+  const scrollToBottom = () => {
+    if (lastElm.current) {
+      lastElm.current.scrollIntoView({ behavior: "smooth" });
+      // const parentElement = parentRef.current;
+      // Scroll to the bottom of the parent element
+      // parentElement.scrollBottom = "0px";
+    }
+  };
 
   useEffect(() => {
     if (commentRequestPostID) {
       refetch({
         variables: { id: commentRequestPostID },
       });
+      scrollToBottom();
     }
   }, [commentRequestPostID]);
   useEffect(() => {
     if (commentData) {
       setComments(commentData.getPostById.comments);
+      scrollToBottom();
     }
   }, [commentData]);
+  useEffect(() => {
+    scrollToBottom();
+  }, []);
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button ref={commentRef} className="hidden" variant="outline">
-          Open
-        </Button>
-      </SheetTrigger>
-      <SheetContent
-        onOpenAutoFocus={(e) => {
-          e.preventDefault();
-        }}
-        className="bg-bng text-text overflow-y-scroll w-[80%]"
-      >
-        <SheetHeader>
-          <SheetTitle>Comments</SheetTitle>
-          <SheetDescription>
-            Make changes to your profile here. Click save when you're done.
-          </SheetDescription>
-        </SheetHeader>
-        <div className="">
-          <div className="comments">
-            {comments?.map((comment, ind) => {
-              console.log("comment author photo : ", comment);
-              return (
-                <div>
-                  <p className="flex items-center">
-                    <span>
-                      <img
-                        className="w-[40px] h-[40px] rounded-full"
-                        src={comment?.photo}
-                        alt=""
-                      />
-                    </span>
-                    <span>{comment?.name}</span>
-                  </p>
-                  <p className="pl-10">{comment?.comment}</p>
-                </div>
-              );
-            })}
+    <div >
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>
+          <Button ref={commentRef} className="hidden" variant="outline">
+            Open
+          </Button>
+        </SheetTrigger>
+        <SheetContent
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+          }}
+          className="bg-bng text-text overflow-y-scroll w-[80%]"
+        >
+          <SheetHeader>
+            <SheetTitle>Comments</SheetTitle>
+            <SheetDescription></SheetDescription>
+          </SheetHeader>
+          <div className="">
+            <div className="comments mt-4">
+              {comments?.map((comment, ind) => {
+                console.log("comment author photo : ", comment);
+                return (
+                  <div className="mb-8">
+                    <p className="flex items-center gap-x-2 ">
+                      <span>
+                        <img
+                          className="w-[40px] h-[40px] rounded-full"
+                          src={comment?.photo}
+                          alt=""
+                        />
+                      </span>
+                      <p className="flex flex-col gap-1">
+                        <p className="font-medium bg-primary text-bng rounded-lg px-2 inline-block">
+                          {comment?.name}
+                        </p>
+                        <p className="text-[10px] bg-slate-700 text-bng rounded-lg px-2 inline-block ">
+                          {DateTime.fromMillis(
+                            parseInt(comment.time)
+                          ).toLocaleString(DateTime.DATETIME_MED)}
+                        </p>
+                      </p>
+                    </p>
+                    <p className="mt-2 ml-12 bg-sky-100 p-2 rounded">
+                      {comment?.comment}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="comment-form">
+              <form>
+                <textarea
+                  className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
+                  rows="2"
+                  placeholder="Write a commnent ..."
+                  onChange={(e) => setComment(e.target.value)}
+                  value={comment}
+                  name="comment"
+                  autofocus={false}
+                ></textarea>
+              </form>
+              <p>
+                <Button
+                  onClick={() => {
+                    commentPost({
+                      variables: {
+                        id: commentRequestPostID,
+                        email: user.email,
+                        comment: comment,
+                      },
+                      update: (cache, data) => {
+                        console.log("hi from comment", data);
+                        const commentArray = data.data.comment;
+                        setComments(commentArray);
+                      },
+                    });
+                    scrollToBottom();
+                    setComment("");
+                  }}
+                  className="bg-accent text-text"
+                  variant="contained"
+                >
+                  Comment
+                </Button>
+                <span className="ml-2">
+                  {loadingNewComment && <Spinner inline={true} />}
+                </span>
+              </p>
+            </div>
           </div>
-          <div className="comment-form">
-            <form>
-              <textarea
-                className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
-                rows="2"
-                placeholder="Write a commnent ..."
-                onChange={(e) => setComment(e.target.value)}
-                value={comment}
-                name="comment"
-                autofocus={false}
-              ></textarea>
-            </form>
-            <p>
-              <Button
-                onClick={() => {
-                  commentPost({
-                    variables: {
-                      id: commentRequestPostID,
-                      email: user.email,
-                      comment: comment,
-                    },
-                    update: (cache, data) => {
-                      console.log("hi from comment", data);
-                      const commentArray = data.data.comment;
-                      setComments(commentArray);
-                    },
-                  });
-                  setComment("");
-                }}
-                className="bg-accent text-text"
-                variant="contained"
-              >
-                Comment
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button className="hidden" type="submit">
+                Save changes
               </Button>
-            </p>
-          </div>
-        </div>
-        <SheetFooter>
-          <SheetClose asChild>
-            <Button className="hidden" type="submit">
-              Save changes
-            </Button>
-          </SheetClose>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+      <div className="hidden h-40 w-40" ref={lastElm}></div>
+    </div>
   );
 });
 

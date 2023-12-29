@@ -6,6 +6,7 @@ import { FaCommentDots } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { setCommentRequestPostID } from "../redux/globalSlice";
+import Spinner from "./Spinner";
 const GET_POST_BY_ID = gql`
   query getPostById($id: String!) {
     getPostById(id: $id) {
@@ -82,15 +83,21 @@ export default function PostCard({ post, commentRef }) {
   // }, [commentRequestPostID]);
 
   const token = useSelector((state) => state.globalSlice.token);
+  console.log("token from postcaard", token);
   const user = useSelector((state) => state.globalSlice.user);
-  const [likeDislikePost] = useMutation(LIKE_DISLIKE_POST, {
-    context: {
-      headers: {
-        authorization: `Bearer ${token}`,
+  const [likeDislikePost, { error, loading: likeDislikeLoading }] = useMutation(
+    LIKE_DISLIKE_POST,
+    {
+      context: {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       },
-    },
-  });
-
+    }
+  );
+  if (error) {
+    console.log(error);
+  }
   useEffect(() => {
     setInitPost({
       ...initPost,
@@ -179,6 +186,7 @@ export default function PostCard({ post, commentRef }) {
               className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300"
             />
           )}
+          {likeDislikeLoading && <Spinner inline={true} />}
           <span className="flex items-center -mb-1">
             {initPost?.likes?.length}
           </span>
@@ -188,6 +196,7 @@ export default function PostCard({ post, commentRef }) {
           onClick={() => {
             console.log("hi from comment button");
             commentRef.current.click();
+            parentRef.current.scrollIntoView();
             dispatch(setCommentRequestPostID({ id: post._id }));
           }}
         >

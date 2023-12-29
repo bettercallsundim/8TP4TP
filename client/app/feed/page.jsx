@@ -41,7 +41,7 @@ export default function feed() {
     },
   });
   const commentRef = useRef();
-
+  const parentRef = useRef(null);
   const posts = data?.getPostByAuthor;
   console.log(posts, user?.email);
   const dispatch = useDispatch();
@@ -56,7 +56,7 @@ export default function feed() {
 
   return (
     <div className="bg-bng text-text py-8 px-8 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">
-      <MySheet commentRef={commentRef} />
+      <MySheet parentRef={parentRef} commentRef={commentRef} />
 
       <div className="hidden md:block">
         <LeftSidebar />
@@ -67,7 +67,7 @@ export default function feed() {
         </div>
         <div className=" ">
           {posts?.map((post, ind) => (
-            <PostCard commentRef={commentRef} key={ind} post={post} />
+            <PostCard parentRef={parentRef} commentRef={commentRef} key={ind} post={post} />
           ))}
         </div>
       </div>

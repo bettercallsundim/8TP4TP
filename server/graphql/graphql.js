@@ -137,6 +137,8 @@ export const resolvers = {
         const token = generateJWT({ email: email });
         return { token, _id: newUser._id };
       } else {
+        user.picture = picture;
+        await user.save();
         const token = generateJWT({ email: email });
         console.log(token);
         return { token, _id: user._id };
@@ -165,7 +167,7 @@ export const resolvers = {
     },
     likeDislikePost: async (_, { id, email }, context) => {
       console.log("hi from likeDislikePost");
-      // console.log("context", context.headers.authorization);
+      console.log("context", context.headers.authorization);
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const user = await UserModel.findOne({ email: email });

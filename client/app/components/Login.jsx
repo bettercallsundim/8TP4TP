@@ -80,6 +80,7 @@ export default function Login() {
                   }
                 ) => {
                   console.log("token", newToken);
+                  dispatch(setToken({ token: newToken }));
                   setTokenData(newToken);
                   setDataToLocal("token", { token: newToken });
                   setDataToLocal("user", {
@@ -95,7 +96,6 @@ export default function Login() {
                   );
                 },
               });
-              dispatch(setToken({ token:tokenData }));
 
               router.push("/feed");
             }}
