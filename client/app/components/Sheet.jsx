@@ -165,6 +165,7 @@ const MySheet = memo(({ commentRef }) => {
               <p>
                 <Button
                   onClick={() => {
+                    if (!comment) return;
                     commentPost({
                       variables: {
                         id: commentRequestPostID,

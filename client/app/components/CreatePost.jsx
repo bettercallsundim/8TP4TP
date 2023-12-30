@@ -7,7 +7,6 @@ import axios from "axios";
 import { memo, useEffect, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { useDispatch } from "react-redux";
-import { toast } from "sonner";
 import Spinner from "./Spinner";
 const CreatePost = memo(({ refetch, loading }) => {
   const [doc, setDoc] = useState({ post: "", photo: "" });
@@ -55,8 +54,6 @@ const CreatePost = memo(({ refetch, loading }) => {
         "upload_preset",
         process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
       );
-      console.log(typeof doc?.photo?.type, "type");
-      // formData.append("public_id", "posts");
       await axios
         .post(
           `${process.env.NEXT_PUBLIC_CLOUDINARY}${
@@ -80,20 +77,10 @@ const CreatePost = memo(({ refetch, loading }) => {
                 },
               }
             ) => {
-              // dispatch(addPostRedux({ post, name, time, photo, authorPhoto }));
               refetch();
               setLoading(false);
-              toast("Successfully Posted", {
-                description: "Sunday, December 03, 2023 at 9:00 AM",
-                action: {
-                  label: "Undo",
-                  onClick: () => console.log("Undo"),
-                },
-              });
-              // console.log(data);
             },
           });
-          console.log("yoy yoy", res);
           setDoc({ post: "", photo: "" });
         })
         .catch((error) => {
@@ -102,7 +89,9 @@ const CreatePost = memo(({ refetch, loading }) => {
         });
       fileRef.current.value = "";
     } else {
-      // if user does not upload a photo
+      if (!doc.post) {
+        return;
+      }
       setLoading(true);
 
       postStatus({
@@ -119,7 +108,7 @@ const CreatePost = memo(({ refetch, loading }) => {
             },
           }
         ) => {
-          // dispatch(addPostRedux({ post, name, time, photo, authorPhoto }));
+         
           refetch();
           setLoading(false);
         },

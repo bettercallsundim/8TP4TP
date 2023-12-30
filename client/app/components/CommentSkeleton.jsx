@@ -6,8 +6,8 @@ const CommentSkeleton = memo(() => {
     <div className="flex flex-col">
       <div className="flex items-center gap-2 shrink-0	">
         <Skeleton className="h-12 w-12 rounded-full shrink-0	" />
-        <div className="space-y-2 w-full shrink-0	">
-          <Skeleton className="h-4 w-full" />
+        <div className=" w-full shrink-0	">
+          <Skeleton className="h-4 w-full mb-2" />
           <Skeleton className="h-4 w-full" />
         </div>
       </div>

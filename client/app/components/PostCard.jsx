@@ -48,9 +48,7 @@ const LIKE_DISLIKE_POST = gql`
     }
   }
 `;
-// const Sheet = () => (
 
-// );
 export default function PostCard({ post, commentRef }) {
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
@@ -106,7 +104,7 @@ export default function PostCard({ post, commentRef }) {
   }, [post]);
 
   return (
-    <div className="w-full md:w-[300px] min-h-[300px] rounded-lg px-4 py-8 bg-bng text-text mb-8 boxshadow flex flex-col">
+    <div className="w-[320px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col">
       <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300">
         <div className="pic mr-4">
           <img

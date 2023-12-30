@@ -189,6 +189,47 @@ function Nav() {
                 </Link>
               </motion.p>
             ))}
+            {user?.email && (
+              <motion.li
+                variants={{
+                  hide: {
+                    y: "25%",
+                    opacity: 0,
+                  },
+                  show: {
+                    y: "0%",
+                    opacity: 1,
+                  },
+                }}
+                className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+                onClick={handleLogout}
+              >
+                <button className="">Log Out</button>
+              </motion.li>
+            )}
+            <motion.li
+              variants={{
+                hide: {
+                  y: "25%",
+                  opacity: 0,
+                },
+                show: {
+                  y: "0%",
+                  opacity: 1,
+                },
+              }}
+              className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+              onClick={toggleTheme}
+            >
+              <button className="flex items-center">
+                {theme === "light" ? "Dark Mode" : "Light Mode"}
+                {theme === "light" ? (
+                  <MdDarkMode className="text-3xl my-auto" />
+                ) : (
+                  <MdLightMode className="text-3xl my-auto" />
+                )}
+              </button>
+            </motion.li>
           </motion.div>
         )}
       </AnimatePresence>

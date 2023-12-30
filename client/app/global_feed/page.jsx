@@ -10,6 +10,7 @@ import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
 import PostCard from "../components/PostCard";
 import MySheet from "../components/Sheet";
+import Spinner from "../components/Spinner";
 import { setUser } from "../redux/globalSlice";
 const GET_ALL_POSTS = gql`
   query getAllPosts($limit: Int!, $pageNumber: Int!) {
@@ -112,6 +113,7 @@ export default function Global_feed() {
               return <PostCard commentRef={commentRef} key={ind} post={post} />;
             }
           })}
+          {loading && <Spinner />}
           <div ref={ref} className="lastOne h-[100px] w-full"></div>
         </div>
       </div>

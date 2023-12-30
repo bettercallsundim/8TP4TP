@@ -160,7 +160,7 @@ export const resolvers = {
     },
     addPost: async (_, { post, photo = "", email }, context) => {
       console.log("add post");
-      // console.log("context", context.headers.authorization);
+
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const user = await UserModel.findOne({ email: email });
