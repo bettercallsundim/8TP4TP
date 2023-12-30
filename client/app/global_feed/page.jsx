@@ -15,6 +15,7 @@ const GET_ALL_POSTS = gql`
   query getAllPosts($limit: Int!, $pageNumber: Int!) {
     getAllPosts(limit: $limit, pageNumber: $pageNumber) {
       hasMore
+
       posts {
         post
         approved
@@ -34,49 +35,49 @@ const GET_ALL_POSTS = gql`
   }
 `;
 export default function Global_feed() {
+  const user = useSelector((state) => state.globalSlice.user);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const commentRef = useRef();
+  /// infinite scroll starts
+  const [posts, setPosts] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const limit = 5;
-  const [getAll, { loading, error, data }] = useLazyQuery(GET_ALL_POSTS);
-  const [posts, setPosts] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
-  const user = useSelector((state) => state.globalSlice.user);
+  const [hasMore, setHasMore] = useState(limit);
   const { ref, inView } = useInView({
     threshold: 0.5,
     rootMargin: "0px 0px 50px 0px",
   });
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const commentRef = useRef();
+  const [getAll, { loading, error, data, refetch }] = useLazyQuery(
+    GET_ALL_POSTS,
+    {
+      variables: { limit, pageNumber },
+    }
+  );
 
-  function delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
   async function fetchMore() {
     console.log("fetching more");
-    // await delay(2000);
-    getAll({
-      variables: { limit, pageNumber },
-    });
+    refetch();
   }
-
   useEffect(() => {
     if (data?.getAllPosts?.posts?.length > 0) {
-      console.log("data.getAllPosts", data.getAllPosts);
       setPosts((prev) => [...prev, ...data.getAllPosts.posts]);
       setHasMore(data.getAllPosts.hasMore);
     }
   }, [data]);
+
   useEffect(() => {
-    if (hasMore) {
-      fetchMore();
-    }
+    fetchMore();
   }, [pageNumber]);
   useEffect(() => {
-    if (inView) {
+    if (inView && Math.ceil(hasMore / limit) > pageNumber) {
       setPageNumber((prev) => prev + 1);
+    } else if (inView && Math.ceil(hasMore / limit) == pageNumber) {
+      fetchMore();
     }
-    console.log("inView", hasMore);
   }, [inView]);
+  /// infinite scroll ends
+
   useEffect(() => {
     const user = getDataFromLocal("user");
     if (user?.id) {
@@ -86,13 +87,13 @@ export default function Global_feed() {
   }, []);
 
   return (
-    <div className="bg-bng text-text py-8 px-12 flex items-start h-[90vh] w-full overflow-hidden ">
+    <div className="bg-bng text-text py-8 px-8 md:px-12 flex items-start h-[90vh] w-full overflow-hidden ">
       <MySheet commentRef={commentRef} />
 
       <div className="hidden md:block">
         <LeftSidebar />
       </div>
-      <div className="hidescroll overflow-y-scroll h-[inherit]">
+      <div className="hidescroll overflow-y-scroll h-[inherit] w-full md:w-[unset]">
         <div>
           <CreatePost />
         </div>

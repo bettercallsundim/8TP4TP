@@ -23,7 +23,7 @@ export const typeDefs = gql`
     comment(id: String!, email: String!, comment: String!): [Comment!]
   }
   type GetAllPosts {
-    hasMore: Boolean!
+    hasMore: Int!
     posts: [Post!]
   }
   scalar Date
@@ -91,7 +91,6 @@ export const typeDefs = gql`
 export const resolvers = {
   Query: {
     hello: (_, __, context) => {
-      // console.log(context);
       return "hello";
     },
     tokenizedSignIn: (_, __, context) => {
@@ -119,14 +118,10 @@ export const resolvers = {
         })
         .skip((parseInt(pageNumber) - 1) * parseInt(limit))
         .limit(parseInt(limit));
-      console.log(
-        postsLength,
-        "postsLength",
-        postsLength >= limit * pageNumber
-      );
+      console.log(postsLength, "postsLength", postsLength);
       return {
         posts,
-        hasMore: postsLength >= limit * pageNumber,
+        hasMore: postsLength,
       };
     },
     getPostByAuthor: async (_, { email }, context) => {

@@ -14,7 +14,7 @@ export default function page() {
             foodies
           </span>
           <img
-            className="w-[150px] mt-4 md:mt-0  rounded md:float-end"
+            className="w-[150px] mx-auto mt-12 md:mt-0  rounded md:float-end"
             src="https://media1.tenor.com/m/TzaUHHp9un4AAAAd/huh-cat-roblox-huh.gif"
             alt=""
           />
