@@ -6,7 +6,7 @@ import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
 import { memo, useEffect, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Spinner from "./Spinner";
 const CreatePost = memo(({ refetch, loading }) => {
   const [doc, setDoc] = useState({ post: "", photo: "" });
@@ -15,7 +15,8 @@ const CreatePost = memo(({ refetch, loading }) => {
   const [photo, setPhoto] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [photoURL, setPhotoURL] = useState(null);
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
+  const user=useSelector(state=>state.globalSlice.user)
   const [token, setToken] = useState(null);
 
   const addPost = gql`
@@ -108,7 +109,6 @@ const CreatePost = memo(({ refetch, loading }) => {
             },
           }
         ) => {
-         
           refetch();
           setLoading(false);
         },
@@ -118,9 +118,9 @@ const CreatePost = memo(({ refetch, loading }) => {
     }
   }
   useEffect(() => {
-    const gotUser = getDataFromLocal("user");
+    // const gotUser = getDataFromLocal("user");
     const { token: gotToken } = getDataFromLocal("token");
-    if (gotUser) setUser(gotUser);
+    // if (gotUser) setUser(gotUser);
     if (gotToken) setToken(gotToken);
   }, []);
 
