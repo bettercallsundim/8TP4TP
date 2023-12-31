@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
-import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
 import { memo, useEffect, useRef, useState } from "react";
@@ -16,8 +15,9 @@ const CreatePost = memo(({ refetch, loading }) => {
   const [isLoading, setLoading] = useState(false);
   const [photoURL, setPhotoURL] = useState(null);
   // const [user, setUser] = useState(null);
-  const user=useSelector(state=>state.globalSlice.user)
-  const [token, setToken] = useState(null);
+  const user = useSelector((state) => state.globalSlice.user);
+  const token = useSelector((state) => state.globalSlice.token);
+  // const [token, setToken] = useState(null);
 
   const addPost = gql`
     mutation addPost($post: String!, $photo: String, $email: String!) {
@@ -63,26 +63,28 @@ const CreatePost = memo(({ refetch, loading }) => {
           formData
         )
         .then(async (res) => {
-          postStatus({
-            variables: {
-              post: doc.post,
-              photo: res.data.secure_url,
-              email: user.email,
-            },
+          if (user?.email && token) {
+            postStatus({
+              variables: {
+                post: doc.post,
+                photo: res.data.secure_url,
+                email: user?.email,
+              },
 
-            update: (
-              cache,
-              {
-                data: {
-                  addPost: { post, name, time, photo, authorPhoto },
-                },
-              }
-            ) => {
-              refetch();
-              setLoading(false);
-            },
-          });
-          setDoc({ post: "", photo: "" });
+              update: (
+                cache,
+                {
+                  data: {
+                    addPost: { post, name, time, photo, authorPhoto },
+                  },
+                }
+              ) => {
+                refetch();
+                setLoading(false);
+              },
+            });
+            setDoc({ post: "", photo: "" });
+          }
         })
         .catch((error) => {
           setLoading(false);
@@ -119,9 +121,9 @@ const CreatePost = memo(({ refetch, loading }) => {
   }
   useEffect(() => {
     // const gotUser = getDataFromLocal("user");
-    const { token: gotToken } = getDataFromLocal("token");
+    // const { token: gotToken } = getDataFromLocal("token");
     // if (gotUser) setUser(gotUser);
-    if (gotToken) setToken(gotToken);
+    // if (gotToken) setToken(gotToken);
   }, []);
 
   return (
