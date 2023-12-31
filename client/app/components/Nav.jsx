@@ -99,25 +99,25 @@ function Nav() {
         <ul className="flex items-center gap-x-6">
           {links.map((link, ind) => (
             <li
-              className="hover:bg-cyan-400 duration-300 py-3 px-4 cursor-pointer"
+              className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
               key={ind}
             >
               <Link href={link.path}>{link.name}</Link>
             </li>
           ))}
           {user?.email && (
-            <li className="hover:bg-cyan-400 duration-300 py-3 px-4 cursor-pointer">
+            <li className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer">
               <button onClick={handleLogout} className="">
                 Log Out
               </button>
             </li>
           )}
-          <li className="hover:bg-cyan-400 duration-300 py-3 px-4 cursor-pointer">
+          <li className="hover:bg-primary hover:text-bng duration-300 py-2 px-4 cursor-pointer">
             <button onClick={toggleTheme} className="">
               {theme === "light" ? (
-                <MdDarkMode className="text-3xl my-auto" />
+                <MdDarkMode className="text-3xl " />
               ) : (
-                <MdLightMode className="text-3xl my-auto" />
+                <MdLightMode className="text-3xl " />
               )}
             </button>
           </li>

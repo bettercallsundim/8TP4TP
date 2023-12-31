@@ -66,6 +66,7 @@ export default function feed() {
         <div>
           <CreatePost loading={loading} refetch={refetch} />
         </div>
+
         <div className=" ">
           {loading && array?.map((_, ind) => <PostSkeleton key={ind} />)}
           {posts?.map((post, ind) => (

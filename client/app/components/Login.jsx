@@ -54,7 +54,7 @@ export default function Login() {
           }}
         />
 
-        {!userFromState?.email && (
+        {(!userFromState?.email || !tokenData) && (
           <GoogleLogin
             onSuccess={({ credential }) => {
               const notify = () =>

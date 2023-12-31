@@ -36,8 +36,8 @@ const globalSlice = createSlice({
       state.commentRequestPostID = id;
     },
     logOut(state) {
-      state.user = "";
-      state.token = "";
+      state.user = null;
+      state.token = null;
       console.log("from redux : logout called");
     },
   },
