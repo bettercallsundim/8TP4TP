@@ -96,6 +96,10 @@ export const resolvers = {
     tokenizedSignIn: (_, __, context) => {
       console.log("yo yo", context.headers.authorization);
       console.log("yo yo verify");
+      if (!context.headers.authorization.split(" ")[1]) {
+        console.log("token not verified");
+        return "invalid";
+      }
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       console.log(
         "yo yo verify",

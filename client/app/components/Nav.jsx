@@ -13,6 +13,7 @@ import { HomeIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { logOut } from "../redux/globalSlice";
+import UserContext from "./UserContext";
 const mblLinks = [
   {
     name: "Home",
@@ -93,7 +94,7 @@ function Nav() {
     },
   ];
   return (
-    <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
+      <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
       <div className="logo">food-O-graphy</div>
       <div className="links hidden md:block">
         <ul className="flex items-center gap-x-6">

@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import Nav from "./components/Nav";
 import OauthProvider from "./components/OauthProvider";
 import ReduxProvider from "./components/ReduxProvider";
@@ -20,7 +19,6 @@ export default function RootLayout({ children }) {
             <ThemeProvider>
               <Nav />
               {children}
-              
             </ThemeProvider>
           </body>
         </html>

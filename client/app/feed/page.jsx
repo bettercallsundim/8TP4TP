@@ -1,16 +1,14 @@
 "use client";
 
-import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
 import PostCard from "../components/PostCard";
 import PostSkeleton from "../components/PostSkeleton";
 import MySheet from "../components/Sheet";
-import { setUser } from "../redux/globalSlice";
 const GET_USER_POSTS = gql`
   query getPostByAuthor($email: String!) {
     getPostByAuthor(email: $email) {
@@ -46,13 +44,13 @@ export default function feed() {
   console.log(posts, user?.email);
   const dispatch = useDispatch();
   const router = useRouter();
-  useEffect(() => {
-    const user = getDataFromLocal("user");
-    if (user?.id) {
-      dispatch(setUser(user));
-      router.push("/feed");
-    }
-  }, []);
+  // useEffect(() => {
+  //   const user = getDataFromLocal("user");
+  //   if (user?.id) {
+  //     dispatch(setUser(user));
+  //     router.push("/feed");
+  //   }
+  // }, []);
   const array = [1, 2, 3];
 
   return (

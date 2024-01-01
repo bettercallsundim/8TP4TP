@@ -24,7 +24,9 @@ export default function page() {
       <div className=" relative  flex items-center justify-center md:w-[500px] h-[100px] md:h-[500px] rounded-full overflow-hidden">
         <div className="hidden md:block w-[700px] h-[100px] bg-sky-300 -rotate-45 absolute"></div>
         <div className="hidden md:block w-[700px] h-[100px] bg-sky-400 -rotate-45  absolute top-[10%]"></div>
-        <Login />
+
+          <Login />
+
       </div>
     </div>
   );

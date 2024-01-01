@@ -3,7 +3,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
-import GraphQL_wrapper from "./GraphQL_wrapper";
+import UserContext from "./UserContext";
 
 export default function ReduxProvider({ children }) {
   let client = new ApolloClient({
@@ -14,7 +14,7 @@ export default function ReduxProvider({ children }) {
   return (
     <Provider store={store}>
       <ApolloProvider client={client}>
-        <GraphQL_wrapper>{children}</GraphQL_wrapper>
+        <UserContext>{children}</UserContext>
       </ApolloProvider>
     </Provider>
   );
