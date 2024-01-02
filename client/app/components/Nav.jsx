@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import toast from "react-hot-toast";
 import { CiMenuFries } from "react-icons/ci";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdLogOut } from "react-icons/io";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -13,7 +13,6 @@ import { HomeIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { logOut } from "../redux/globalSlice";
-import UserContext from "./UserContext";
 const mblLinks = [
   {
     name: "Home",
@@ -94,7 +93,7 @@ function Nav() {
     },
   ];
   return (
-      <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
+    <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
       <div className="logo">food-O-graphy</div>
       <div className="links hidden md:block">
         <ul className="flex items-center gap-x-6">
@@ -205,7 +204,13 @@ function Nav() {
                 className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
                 onClick={handleLogout}
               >
-                <button className="">Log Out</button>
+                <button className="flex items-center gap-x-4">
+                  {" "}
+                  <span>
+                    <IoMdLogOut className=" my-auto text-primary" />
+                  </span>{" "}
+                  <span className="text-text">Log Out</span>
+                </button>
               </motion.li>
             )}
             <motion.li
@@ -222,13 +227,15 @@ function Nav() {
               className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
               onClick={toggleTheme}
             >
-              <button className="flex items-center">
-                {theme === "light" ? "Dark Mode" : "Light Mode"}
+              <button className="flex items-center gap-x-4">
                 {theme === "light" ? (
-                  <MdDarkMode className="text-3xl my-auto" />
+                  <MdDarkMode className=" my-auto text-primary" />
                 ) : (
-                  <MdLightMode className="text-3xl my-auto" />
+                  <MdLightMode className=" my-auto text-primary" />
                 )}
+                <span className="text-text">
+                  {theme === "light" ? "Dark Mode" : "Light Mode"}
+                </span>
               </button>
             </motion.li>
           </motion.div>
