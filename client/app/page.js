@@ -21,12 +21,14 @@ export default function page() {
         </p>
         <p className="text-center"></p>
       </div>
-      <div className=" relative  flex items-center justify-center md:w-[500px] h-[100px] md:h-[500px] rounded-full overflow-hidden">
-        <div className="hidden md:block w-[700px] h-[100px] bg-sky-300 -rotate-45 absolute"></div>
-        <div className="hidden md:block w-[700px] h-[100px] bg-sky-400 -rotate-45  absolute top-[10%]"></div>
+      <div className=" relative  flex items-center justify-center md:w-[350px] h-[100px] lg:h-[500px]  overflow-hidden">
+        <div className="hidden lg:block w-[100px] h-full bg-primary  absolute left-0"></div>
+        <div className="hidden lg:block w-[100px] h-full bg-secondary  absolute right-0"></div>
+        <div className="hidden lg:block w-[100px] h-full bg-accent   absolute right-[120px]"></div>
+        {/* <div className="hidden md:block w-[700px] h-full bg-sky-300  absolute"></div>
+        <div className="hidden md:block w-[700px] h-full bg-sky-400   absolute top-[50%]"></div> */}
 
-          <Login />
-
+        <Login />
       </div>
     </div>
   );
