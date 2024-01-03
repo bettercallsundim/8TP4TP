@@ -22,6 +22,9 @@ const context = ({ req }) => {
 await server.start();
 app.use(
   "/graphql",
+  cors({
+    origin: "*",
+  }),
   expressMiddleware(server, {
     context,
   })
