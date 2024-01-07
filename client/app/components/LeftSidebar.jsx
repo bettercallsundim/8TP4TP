@@ -29,15 +29,15 @@ const links = [
 ];
 const LeftSidebar = memo(({ nav }) => {
   return (
-    <div className="bg-bng h-screen w-[300px] overflow-scroll mr-14 border-r-2 hidescroll">
+    <div className="bg-bng h-screen w-[300px] overflow-scroll mr-14 border-r-2 border-slate-400 hidescroll">
       {links.map((link) => (
         <Link
           prefetch={false}
           href={link.link}
-          className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+          className="flex items-center gap-x-4 px-4 py-3 hover:bg-pink-400   rounded-l-lg rounded-r-lg"
         >
           <span className="text-primary">{link.icon}</span>
-          <h1 className="text-text">{link.name}</h1>
+          <h1 className="text-text ">{link.name}</h1>
         </Link>
       ))}
     </div>

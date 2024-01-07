@@ -3,7 +3,7 @@ import { memo } from "react";
 
 const PostSkeleton = memo(() => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col max-w-[300px] min-h-[300px]  px-6 ">
       <div className="flex items-center gap-2 shrink-0	">
         <Skeleton className="h-12 w-12 rounded-full shrink-0	" />
         <div className=" w-full shrink-0	">

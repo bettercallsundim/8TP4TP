@@ -13,7 +13,11 @@ const PostSchema = new mongoose.Schema(
       ref: "User",
     },
     authorPhoto: String,
-    tags: [],
+    tags: [
+      {
+        type: String,
+      },
+    ],
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,

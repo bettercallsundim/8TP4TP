@@ -9,8 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
 import PostCard from "../components/PostCard";
+import PostSkeleton from "../components/PostSkeleton";
 import MySheet from "../components/Sheet";
-import Spinner from "../components/Spinner";
 import { setUser } from "../redux/globalSlice";
 const GET_ALL_POSTS = gql`
   query getAllPosts($limit: Int!, $pageNumber: Int!) {
@@ -86,6 +86,7 @@ export default function Global_feed() {
       router.push("/feed");
     }
   }, []);
+  const array = [1, 2, 3];
 
   return (
     <div className="bg-bng text-text py-8 px-4 md:px-12 flex items-start h-[90vh] w-full overflow-hidden ">
@@ -113,7 +114,7 @@ export default function Global_feed() {
               return <PostCard commentRef={commentRef} key={ind} post={post} />;
             }
           })}
-          {loading && <Spinner />}
+          {loading && array?.map((_, ind) => <PostSkeleton key={ind} />)}
           <div ref={ref} className="lastOne h-[100px] w-full"></div>
         </div>
       </div>

@@ -44,7 +44,7 @@ export default function Login() {
       setTokenData(gotToken);
     }
   }, []);
-  if (!tokenData) {
+  if (!tokenData || !userFromState?.email) {
     return (
       <div className="my-auto mx-auto">
         <Toaster

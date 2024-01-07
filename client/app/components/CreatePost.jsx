@@ -144,7 +144,7 @@ const CreatePost = memo(({ refetch, loading }) => {
           type="text"
         ></textarea>
         <br />
-        <div className="flex items-center gap-x-8">
+        <div className="flex items-center gap-x-4">
           {photoURL && (
             <div>
               <img
@@ -186,7 +186,7 @@ const CreatePost = memo(({ refetch, loading }) => {
           </label>
           <Button
             size="small"
-            className="hover:bg-accent hover:text-text bg-text text-bng  px-6 pr-6 rounded-lg font-medium "
+            className="hover:bg-secondary hover:text-text bg-text text-bng py-1  px-4 dark:hover:bg-pink-400  rounded-lg font-medium "
             variant="contained"
             type="submit"
           >
