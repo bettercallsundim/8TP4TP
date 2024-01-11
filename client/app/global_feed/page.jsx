@@ -1,5 +1,4 @@
 "use client";
-
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
