@@ -7,7 +7,7 @@ const port = 4000;
 const app = express();
 app.use(
   cors({
-    origin: ["https://food-o-graphy.vercel.app", "http://localhost:3000"],
+    origin: "*",
   })
 );
 app.use(express.json());
@@ -23,7 +23,7 @@ await server.start();
 app.use(
   "/graphql",
   cors({
-    origin: ["https://food-o-graphy.vercel.app", "http://localhost:3000"],
+    origin: "*",
   }),
   expressMiddleware(server, {
     context,
