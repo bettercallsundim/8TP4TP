@@ -1,11 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
 import { DateTime } from "luxon";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentDots } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { setCommentRequestPostID } from "../redux/globalSlice";
+import MySheet from "./Sheet";
 import Spinner from "./Spinner";
 const GET_POST_BY_ID = gql`
   query getPostById($id: String!) {
@@ -49,7 +50,7 @@ const LIKE_DISLIKE_POST = gql`
   }
 `;
 
-export default function PostCard({ post, commentRef }) {
+export default function PostCard({ post }) {
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
   const [initPost, setInitPost] = useState({
@@ -83,6 +84,7 @@ export default function PostCard({ post, commentRef }) {
   const token = useSelector((state) => state.globalSlice.token);
   console.log("token from postcaard", token);
   const user = useSelector((state) => state.globalSlice.user);
+  const commentRef = useRef();
   const [likeDislikePost, { error, loading: likeDislikeLoading }] = useMutation(
     LIKE_DISLIKE_POST,
     {
@@ -105,6 +107,13 @@ export default function PostCard({ post, commentRef }) {
 
   return (
     <div className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col">
+      <MySheet
+        initPost={initPost}
+        setInitPost={setInitPost}
+        commentRef={commentRef}
+        commentRequestPostID={initPost._id}
+      />
+
       <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300">
         <div className="pic mr-4">
           <img
@@ -194,7 +203,6 @@ export default function PostCard({ post, commentRef }) {
           onClick={() => {
             console.log("hi from comment button");
             commentRef.current.click();
-            dispatch(setCommentRequestPostID({ id: post._id }));
           }}
         >
           <FaCommentDots className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />
