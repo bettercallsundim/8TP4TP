@@ -102,16 +102,9 @@ export default function Global_feed() {
         <div className=" ">
           {posts?.map((post, ind) => {
             if (ind == posts.length - 1) {
-              return (
-                <PostCard
-                  ref={ref}
-                  commentRef={commentRef}
-                  key={ind}
-                  post={post}
-                />
-              );
+              return <PostCard ref={ref} key={ind} post={post} />;
             } else {
-              return <PostCard commentRef={commentRef} key={ind} post={post} />;
+              return <PostCard key={ind} post={post} />;
             }
           })}
           {loading && array?.map((_, ind) => <PostSkeleton key={ind} />)}
