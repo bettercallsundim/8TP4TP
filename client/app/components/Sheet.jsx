@@ -28,8 +28,14 @@ const COMMENT_POST = gql`
   }
 `;
 const MySheet = memo(
-  ({ commentRequestPostID, commentRef, initPost, setInitPost }) => {
-    const [isOpen, setIsOpen] = useState(false);
+  ({
+    commentRequestPostID,
+    commentRef,
+    initPost,
+    setInitPost,
+    isOpen,
+    setIsOpen,
+  }) => {
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
     const token = useSelector((state) => state.globalSlice.token);
@@ -75,15 +81,15 @@ const MySheet = memo(
     };
     const array = [1, 2, 4, 5];
     useEffect(() => {
-      if (commentRequestPostID) {
+      if (commentRequestPostID && isOpen) {
         refetch({
           variables: { id: commentRequestPostID },
         });
         scrollToBottom();
       }
-    }, [commentRequestPostID]);
+    }, [commentRequestPostID, isOpen]);
     useEffect(() => {
-      if (commentData) {
+      if (commentData && isOpen) {
         setComments(commentData.getPostById.comments);
       }
     }, [commentData]);
@@ -100,108 +106,110 @@ const MySheet = memo(
               Open
             </Button>
           </SheetTrigger>
-          <SheetContent
-            onOpenAutoFocus={(e) => {
-              e.preventDefault();
-              scrollToBottom();
-            }}
-            className="bg-bng text-text overflow-y-scroll w-[80%]"
-          >
-            <SheetHeader>
-              <SheetTitle>Comments</SheetTitle>
-              <SheetDescription></SheetDescription>
-            </SheetHeader>
-            <div className="">
-              <div className="comments mt-4">
-                {loading &&
-                  array?.map((_, ind) => <CommentSkeleton key={ind} />)}
+          {isOpen && (
+            <SheetContent
+              onOpenAutoFocus={(e) => {
+                e.preventDefault();
+                scrollToBottom();
+              }}
+              className="bg-bng text-text overflow-y-scroll w-[80%]"
+            >
+              <SheetHeader>
+                <SheetTitle>Comments</SheetTitle>
+                <SheetDescription></SheetDescription>
+              </SheetHeader>
+              <div className="">
+                <div className="comments mt-4">
+                  {loading &&
+                    array?.map((_, ind) => <CommentSkeleton key={ind} />)}
 
-                {comments?.map((comment, ind) => {
-                  console.log("comment author photo : ", comment);
-                  return (
-                    <div className="mb-8">
-                      <p className="flex items-center gap-x-2 ">
-                        <span>
-                          <img
-                            className="w-[40px] h-[40px] rounded-full"
-                            src={comment?.photo}
-                            alt=""
-                          />
-                        </span>
-                        <p className="flex flex-col gap-1">
-                          <p className="font-medium bg-primary text-white rounded-lg px-2 inline-block">
-                            {comment?.name}
-                          </p>
-                          <p className="text-[10px] bg-slate-700 text-white rounded-lg px-2 inline-block ">
-                            {DateTime.fromMillis(
-                              parseInt(comment.time)
-                            ).toLocaleString(DateTime.DATETIME_MED)}
+                  {comments?.map((comment, ind) => {
+                    console.log("comment author photo : ", comment);
+                    return (
+                      <div className="mb-8">
+                        <p className="flex items-center gap-x-2 ">
+                          <span>
+                            <img
+                              className="w-[40px] h-[40px] rounded-full"
+                              src={comment?.photo}
+                              alt=""
+                            />
+                          </span>
+                          <p className="flex flex-col gap-1">
+                            <p className="font-medium bg-primary text-white rounded-lg px-2 inline-block">
+                              {comment?.name}
+                            </p>
+                            <p className="text-[10px] bg-slate-700 text-white rounded-lg px-2 inline-block ">
+                              {DateTime.fromMillis(
+                                parseInt(comment.time)
+                              ).toLocaleString(DateTime.DATETIME_MED)}
+                            </p>
                           </p>
                         </p>
-                      </p>
-                      <p className="mt-2 ml-12 text-text bg-sky-400 dark:text-black dark:bg-sky-300 p-2 rounded">
-                        {comment?.comment}
-                      </p>
-                    </div>
-                  );
-                })}
-                <div ref={lastElm}></div>
+                        <p className="mt-2 ml-12 text-text bg-sky-400 dark:text-black dark:bg-sky-300 p-2 rounded">
+                          {comment?.comment}
+                        </p>
+                      </div>
+                    );
+                  })}
+                  <div ref={lastElm}></div>
+                </div>
+                <div className="comment-form">
+                  <form>
+                    <textarea
+                      className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
+                      rows="2"
+                      placeholder="Write a commnent ..."
+                      onChange={(e) => setComment(e.target.value)}
+                      value={comment}
+                      name="comment"
+                      autofocus={false}
+                    ></textarea>
+                  </form>
+                  <p>
+                    <Button
+                      onClick={() => {
+                        if (!comment) return;
+                        commentPost({
+                          variables: {
+                            id: commentRequestPostID,
+                            email: user.email,
+                            comment: comment,
+                          },
+                          update: (cache, data) => {
+                            console.log("hi from comment", data);
+                            const commentArray = data.data.comment;
+                            setComments(commentArray);
+                            setInitPost({
+                              ...initPost,
+                              comments: commentArray,
+                            });
+                            console.log("init post : ", initPost);
+                          },
+                        });
+                        scrollToBottom();
+                        setComment("");
+                      }}
+                      className="bg-accent text-text"
+                      variant="contained"
+                    >
+                      Comment
+                    </Button>
+                    <span className="ml-2">
+                      {loadingNewComment && <Spinner inline={true} />}
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div className="comment-form">
-                <form>
-                  <textarea
-                    className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
-                    rows="2"
-                    placeholder="Write a commnent ..."
-                    onChange={(e) => setComment(e.target.value)}
-                    value={comment}
-                    name="comment"
-                    autofocus={false}
-                  ></textarea>
-                </form>
-                <p>
-                  <Button
-                    onClick={() => {
-                      if (!comment) return;
-                      commentPost({
-                        variables: {
-                          id: commentRequestPostID,
-                          email: user.email,
-                          comment: comment,
-                        },
-                        update: (cache, data) => {
-                          console.log("hi from comment", data);
-                          const commentArray = data.data.comment;
-                          setComments(commentArray);
-                          setInitPost({
-                            ...initPost,
-                            comments: commentArray,
-                          });
-                          console.log("init post : ", initPost);
-                        },
-                      });
-                      scrollToBottom();
-                      setComment("");
-                    }}
-                    className="bg-accent text-text"
-                    variant="contained"
-                  >
-                    Comment
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button className="hidden" type="submit">
+                    Save changes
                   </Button>
-                  <span className="ml-2">
-                    {loadingNewComment && <Spinner inline={true} />}
-                  </span>
-                </p>
-              </div>
-            </div>
-            <SheetFooter>
-              <SheetClose asChild>
-                <Button className="hidden" type="submit">
-                  Save changes
-                </Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          )}
         </Sheet>
         <div></div>
       </div>

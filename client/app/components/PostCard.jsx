@@ -5,7 +5,6 @@ import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentDots } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { setCommentRequestPostID } from "../redux/globalSlice";
 import MySheet from "./Sheet";
 import Spinner from "./Spinner";
 const GET_POST_BY_ID = gql`
@@ -51,6 +50,7 @@ const LIKE_DISLIKE_POST = gql`
 `;
 
 export default function PostCard({ post }) {
+  if (!post) return null;
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
   const [initPost, setInitPost] = useState({
@@ -66,6 +66,7 @@ export default function PostCard({ post }) {
     isPaid: null,
     _id: "",
   });
+  const [isOpen, setIsOpen] = useState(false);
   // const [getPost, { data: getPostData }] = useLazyQuery(GET_POST_BY_ID);
   // const commentRequestPostID = useSelector(
   //   (state) => state.globalSlice.commentRequestPostID
@@ -108,6 +109,8 @@ export default function PostCard({ post }) {
   return (
     <div className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col">
       <MySheet
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
         initPost={initPost}
         setInitPost={setInitPost}
         commentRef={commentRef}
