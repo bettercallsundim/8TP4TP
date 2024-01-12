@@ -50,7 +50,7 @@ const LIKE_DISLIKE_POST = gql`
 `;
 
 export default function PostCard({ post }) {
-  if (!post) return null;
+  // if (!post) return null;
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
   const [initPost, setInitPost] = useState({
