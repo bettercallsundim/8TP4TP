@@ -35,7 +35,7 @@ const UserContext = ({ children }) => {
   useEffect(() => {
     const { token } = getDataFromLocal("token");
     if (token) setJwt_Token(token);
-    else refetch();
+    // else refetch();
   }, []);
   console.log("isTokenValid", isTokenValid);
   useEffect(() => {
@@ -48,8 +48,8 @@ const UserContext = ({ children }) => {
       (jwt_token || !jwt_token) &&
       isTokenValid?.tokenizedSignIn == "invalid"
     ) {
-      // const notify = () => toast.success("Invalid Token");
-      // notify();
+      console.log(jwt_token, "jwt_token")
+      console.log(jwt_token, "jwt_token")
       dispatch(logOut());
       removeDataFromLocal("token");
       removeDataFromLocal("user");
@@ -63,6 +63,9 @@ const UserContext = ({ children }) => {
       }
     }
   }, [isTokenValid]);
+      console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token)
+      console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token)
+      console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token)
   return children;
 };
 
