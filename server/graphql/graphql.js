@@ -21,6 +21,7 @@ export const typeDefs = gql`
     addPost(post: String!, photo: String, email: String!): Post!
     likeDislikePost(id: String!, email: String!): likeDislikePost!
     comment(id: String!, email: String!, comment: String!): [Comment!]
+    editPost(id: String!, _id: String!, post: String!): Post!
   }
   type GetAllPosts {
     hasMore: Int!
@@ -244,6 +245,28 @@ export const resolvers = {
         } else {
           return null;
         }
+      }
+    },
+    editPost: async (_, { id, _id, post }, context) => {
+      console.log("hi from edit post");
+
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (verify) {
+        const postFound = await PostModel.findOne({ _id: id });
+        console.log("hi from edit post too", _id);
+        console.log("hi from edit post too", postFound.author);
+
+        if (postFound.author.toString() === _id) {
+          const updatedPost = await PostModel.findOneAndUpdate(
+            { _id: id },
+            { $set: { post } },
+            { new: true }
+          );
+          console.log("post edit success");
+          return updatedPost._doc;
+        }
+      } else {
+        return null;
       }
     },
   },

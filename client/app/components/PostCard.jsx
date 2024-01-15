@@ -2,9 +2,12 @@ import { gql, useMutation } from "@apollo/client";
 import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { CiMenuKebab } from "react-icons/ci";
 import { FaCommentDots } from "react-icons/fa";
+
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
+import EditMenu from "./EditMenu";
 import MySheet from "./Sheet";
 import Spinner from "./Spinner";
 const GET_POST_BY_ID = gql`
@@ -67,25 +70,13 @@ export default function PostCard({ post }) {
     _id: "",
   });
   const [isOpen, setIsOpen] = useState(false);
-  // const [getPost, { data: getPostData }] = useLazyQuery(GET_POST_BY_ID);
-  // const commentRequestPostID = useSelector(
-  //   (state) => state.globalSlice.commentRequestPostID
-  // );
-  // useEffect(() => {
-  //   if (commentRequestPostID == initPost._id) {
-  //     getPost({
-  //       variables: { id: commentRequestPostID },
-  //     });
-  //     if (getPostData) {
-  //       console.log("getPostData", getPostData);
-  //     }
-  //   }
-  // }, [commentRequestPostID]);
-
+  const [editMenuOpen, setEditMenuOpen] = useState(false);
   const token = useSelector((state) => state.globalSlice.token);
   console.log("token from postcaard", token);
   const user = useSelector((state) => state.globalSlice.user);
   const commentRef = useRef();
+  const editMenuRef = useRef();
+  const [sheetType, setSheetType] = useState();
   const [likeDislikePost, { error, loading: likeDislikeLoading }] = useMutation(
     LIKE_DISLIKE_POST,
     {
@@ -107,8 +98,34 @@ export default function PostCard({ post }) {
   }, [post]);
 
   return (
-    <div className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col">
+    <div
+      onClick={() => {
+        if (editMenuOpen) {
+          setEditMenuOpen(false);
+          setSheetType("edit");
+        }
+      }}
+      className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col relative"
+    >
+      <button
+        onClick={() => {
+          setEditMenuOpen(!editMenuOpen);
+        }}
+      >
+        <CiMenuKebab className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6" />
+      </button>
+
+      <EditMenu
+        sheetType={sheetType}
+        setSheetType={setSheetType}
+        commentRef={commentRef}
+        editMenuRef={editMenuRef}
+        setEditMenuOpen={setEditMenuOpen}
+        editMenuOpen={editMenuOpen}
+      />
       <MySheet
+        sheetType={sheetType}
+        setSheetType={setSheetType}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         initPost={initPost}
@@ -125,12 +142,12 @@ export default function PostCard({ post }) {
           />
         </div>
         <div>
-          <p className="name font-semibold">
+          <p className="name font-semibold text-sm">
             <span className="bg-primary text-bng rounded-lg px-2">
               {initPost.name}
             </span>
           </p>
-          <p className="name text-text">
+          <p className="name text-text text-sm">
             {DateTime.fromMillis(parseInt(initPost.time)).toLocaleString(
               DateTime.DATETIME_MED
             )}
@@ -206,6 +223,8 @@ export default function PostCard({ post }) {
           onClick={() => {
             console.log("hi from comment button");
             commentRef.current.click();
+            setSheetType("comment");
+
           }}
         >
           <FaCommentDots className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />

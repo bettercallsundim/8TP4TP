@@ -27,6 +27,13 @@ const COMMENT_POST = gql`
     }
   }
 `;
+const EDIT_POST = gql`
+  mutation editPost($id: String!, $_id: String!, $post: String!) {
+    editPost(id: $id, _id: $_id, post: $post) {
+      post
+    }
+  }
+`;
 const MySheet = memo(
   ({
     commentRequestPostID,
@@ -35,11 +42,14 @@ const MySheet = memo(
     setInitPost,
     isOpen,
     setIsOpen,
+    sheetType,
   }) => {
     const [comment, setComment] = useState("");
+    const [post, setPost] = useState(initPost?.post);
     const [comments, setComments] = useState([]);
     const token = useSelector((state) => state.globalSlice.token);
     const user = useSelector((state) => state.globalSlice.user);
+    const closeSheet = useRef();
     const [commentPost, { loading: loadingNewComment }] = useMutation(
       COMMENT_POST,
       {
@@ -53,9 +63,20 @@ const MySheet = memo(
         },
       }
     );
+    const [editPost, { loading: editPostLoading }] = useMutation(EDIT_POST, {
+      onError: (err) => {
+        console.log(err);
+      },
+      context: {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    });
     const GET_POST_BY_ID = gql`
       query getPostById($id: String!) {
         getPostById(id: $id) {
+          post
           comments {
             comment
             name
@@ -91,6 +112,7 @@ const MySheet = memo(
     useEffect(() => {
       if (commentData && isOpen) {
         setComments(commentData.getPostById.comments);
+        setPost(commentData.getPostById.post);
       }
     }, [commentData]);
 
@@ -106,7 +128,7 @@ const MySheet = memo(
               Open
             </Button>
           </SheetTrigger>
-          {isOpen && (
+          {isOpen && sheetType == "comment" && (
             <SheetContent
               onOpenAutoFocus={(e) => {
                 e.preventDefault();
@@ -203,7 +225,74 @@ const MySheet = memo(
               </div>
               <SheetFooter>
                 <SheetClose asChild>
-                  <Button className="hidden" type="submit">
+                  <Button ref={closeSheet} className="hidden" type="submit">
+                    Save changes
+                  </Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          )}
+          {isOpen && sheetType == "edit" && (
+            <SheetContent
+              onOpenAutoFocus={(e) => {
+                e.preventDefault();
+              }}
+              className="bg-bng text-text overflow-y-scroll w-[80%]"
+            >
+              <SheetHeader>
+                <SheetTitle>Edit Post</SheetTitle>
+                <SheetDescription></SheetDescription>
+              </SheetHeader>
+              <div className="">
+                <div className="comments mt-4"></div>
+                <div className="comment-form">
+                  <form>
+                    <textarea
+                      className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
+                      rows="2"
+                      placeholder="Edit post ..."
+                      onChange={(e) => setPost(e.target.value)}
+                      value={post}
+                      name="post"
+                      autofocus={false}
+                    ></textarea>
+                  </form>
+                  <p>
+                    <Button
+                      onClick={() => {
+                        if (!post) return;
+                        editPost({
+                          variables: {
+                            id: commentRequestPostID,
+                            _id: user._id,
+                            post,
+                          },
+                          update: (cache, data) => {
+                            console.log("hi from editPost", data);
+                            const fetchedPost = data.data.post;
+                            setPost(fetchedPost);
+                            setInitPost({
+                              ...initPost,
+                              post,
+                            });
+                          },
+                        });
+                        closeSheet.current.click();
+                      }}
+                      className="bg-accent text-text"
+                      variant="contained"
+                    >
+                      Edit Post
+                    </Button>
+                    <span className="ml-2">
+                      {editPostLoading && <Spinner inline={true} />}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button ref={closeSheet} className="hidden" type="submit">
                     Save changes
                   </Button>
                 </SheetClose>
