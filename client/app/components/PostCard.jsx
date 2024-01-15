@@ -105,13 +105,13 @@ export default function PostCard({ post }) {
           setSheetType("edit");
         }
       }}
-      className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col relative z-[9999]"
+      className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col relative "
     >
       <button
         onClick={() => {
           setEditMenuOpen(!editMenuOpen);
         }}
-        className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6 z-[99999]"
+        className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6 z-[2]"
       >
         <CiMenuKebab />
       </button>
