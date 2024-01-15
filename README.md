@@ -12,10 +12,10 @@ Democratic social network platform for foodies.
 - Edit posts.
 - Comment on posts.
 - Separate page for own posts and public posts.
-  [ Food specific features are WIP ]
+- [ Food specific features are WIP ]
 
 ## Tech Stack
 
-**Client:** Next.js ( App Router ), Redux Toolkit, TailwindCSS, shadcn
+**Client:** Next.js ( App Router ), Redux Toolkit, Apollo Client, TailwindCSS, shadcn
 
 **Server:** mongoDB, Express.js, GraphQL

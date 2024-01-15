@@ -93,53 +93,55 @@ function Nav() {
     },
   ];
   return (
-    <nav className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
-      <div className="logo">food-O-graphy</div>
-      <div className="links hidden md:block">
-        <ul className="flex items-center gap-x-6">
-          {links.map((link, ind) => (
-            <Link
-              className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
-              href={link.path}
-              key={ind}
-            >
-              {link.name}
-            </Link>
-          ))}
-          {user?.email && (
+    <nav className="">
+      <div className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
+        <div className="logo">food-O-graphy</div>
+        <div className="links hidden md:block">
+          <ul className="flex items-center gap-x-6">
+            {links.map((link, ind) => (
+              <Link
+                className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
+                href={link.path}
+                key={ind}
+              >
+                {link.name}
+              </Link>
+            ))}
+            {user?.email && (
+              <button
+                className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            )}
             <button
-              className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
-              onClick={handleLogout}
+              onClick={toggleTheme}
+              className="hover:bg-primary hover:text-bng duration-300 py-2 px-4 cursor-pointer"
             >
-              Log Out
+              {theme === "light" ? (
+                <MdDarkMode className="text-3xl " />
+              ) : (
+                <MdLightMode className="text-3xl " />
+              )}
             </button>
-          )}
+          </ul>
+        </div>
+        <div className="menuButton md:hidden">
           <button
-            onClick={toggleTheme}
-            className="hover:bg-primary hover:text-bng duration-300 py-2 px-4 cursor-pointer"
+            className="md:hidden"
+            onClick={() => {
+              console.log("clicked");
+              setShowMenu(!showMenu);
+            }}
           >
-            {theme === "light" ? (
-              <MdDarkMode className="text-3xl " />
+            {showMenu ? (
+              <IoMdClose className="text-3xl" />
             ) : (
-              <MdLightMode className="text-3xl " />
+              <CiMenuFries className="text-3xl" />
             )}
           </button>
-        </ul>
-      </div>
-      <div className="menuButton md:hidden">
-        <button
-          className="md:hidden"
-          onClick={() => {
-            console.log("clicked");
-            setShowMenu(!showMenu);
-          }}
-        >
-          {showMenu ? (
-            <IoMdClose className="text-3xl" />
-          ) : (
-            <CiMenuFries className="text-3xl" />
-          )}
-        </button>
+        </div>
       </div>
       <AnimatePresence>
         {showMenu && (
@@ -167,7 +169,7 @@ function Nav() {
             initial="hide"
             animate="show"
             exit="hide"
-            className="bg-bng h-screen fixed inset-0 top-20 z-[100] md:hidden"
+            className="bg-bng h-screen  md:hidden"
           >
             {mblLinks.map((link) => (
               <motion.p

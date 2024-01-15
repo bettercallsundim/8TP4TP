@@ -10,7 +10,7 @@ export default function EditMenu({
     <div
       className={
         editMenuOpen
-          ? `rounded-lg border border-text w-1/2 bg-bng text-text absolute top-4 right-4 p-4`
+          ? `rounded-lg border border-text w-1/2 bg-bng text-text absolute z-[9999999999] top-4 right-4 p-4`
           : "hidden"
       }
     >

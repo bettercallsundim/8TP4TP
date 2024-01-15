@@ -105,16 +105,16 @@ export default function PostCard({ post }) {
           setSheetType("edit");
         }
       }}
-      className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col relative"
+      className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col relative z-[9999]"
     >
       <button
         onClick={() => {
           setEditMenuOpen(!editMenuOpen);
         }}
+        className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6 z-[99999]"
       >
-        <CiMenuKebab className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6" />
+        <CiMenuKebab />
       </button>
-
       <EditMenu
         sheetType={sheetType}
         setSheetType={setSheetType}
@@ -134,7 +134,7 @@ export default function PostCard({ post }) {
         commentRequestPostID={initPost._id}
       />
 
-      <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300">
+      <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300 ">
         <div className="pic mr-4">
           <img
             className="w-[40px] h-[40px] rounded-full"
@@ -224,7 +224,6 @@ export default function PostCard({ post }) {
             console.log("hi from comment button");
             commentRef.current.click();
             setSheetType("comment");
-
           }}
         >
           <FaCommentDots className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />
