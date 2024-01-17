@@ -22,6 +22,7 @@ export const typeDefs = gql`
     likeDislikePost(id: String!, email: String!): likeDislikePost!
     comment(id: String!, email: String!, comment: String!): [Comment!]
     editPost(id: String!, _id: String!, post: String!): Post!
+    deletePost(id: String!, _id: String!): Boolean!
   }
   type GetAllPosts {
     hasMore: Int!
@@ -95,22 +96,14 @@ export const resolvers = {
       return "hello";
     },
     tokenizedSignIn: (_, __, context) => {
-      console.log("yo yo", context.headers.authorization);
-      console.log("yo yo verify");
       if (!context.headers.authorization.split(" ")[1]) {
-        console.log("token not verified");
         return "invalid";
       }
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
-      console.log(
-        "yo yo verify",
-        verifyJWT(context.headers.authorization.split(" ")[1])
-      );
+
       if (verify) {
-        console.log("token verified");
         return "valid";
       } else {
-        console.log("token not verified");
         return "invalid";
       }
     },
@@ -137,7 +130,6 @@ export const resolvers = {
       return posts;
     },
     getPostById: async (_, { id }, context) => {
-      console.log("hi from where", id);
       const post = await PostModel.findOne({ _id: id });
       return post;
     },
@@ -159,7 +151,6 @@ export const resolvers = {
         user.picture = picture;
         await user.save();
         const token = generateJWT({ email: email });
-        console.log(token);
         return { token, _id: user._id };
       }
     },
@@ -267,6 +258,21 @@ export const resolvers = {
         }
       } else {
         return null;
+      }
+    },
+    deletePost: async (_, { id, _id }, context) => {
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (verify) {
+        const postFound = await PostModel.findOne({ _id: id });
+        console.log("post delete success", postFound.author.toString(), _id);
+        if (postFound.author.toString() === _id) {
+          await PostModel.findOneAndDelete({ _id: id });
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
       }
     },
   },

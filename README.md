@@ -12,6 +12,7 @@ Democratic social network platform for foodies.
 - Edit posts.
 - Comment on posts.
 - Separate page for own posts and public posts.
+- Infinite scrolling on Global Feed page (as there can be huge number of post in news feed)
 - [ Food specific features are WIP ]
 
 ## Tech Stack

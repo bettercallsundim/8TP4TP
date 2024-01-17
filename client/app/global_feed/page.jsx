@@ -30,6 +30,7 @@ const GET_ALL_POSTS = gql`
         photo
         time
         _id
+        author
       }
     }
   }

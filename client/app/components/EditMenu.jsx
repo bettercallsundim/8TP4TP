@@ -1,11 +1,33 @@
 "use client";
 
+import { gql, useMutation } from "@apollo/client";
+import { useSelector } from "react-redux";
+const DELETE_POST = gql`
+  mutation deletePost($id: String!, $_id: String!) {
+    deletePost(id: $id, _id: $_id)
+  }
+`;
 export default function EditMenu({
   editMenuOpen,
   setEditMenuOpen,
   editMenuRef,
   commentRef,
+  postId,
+  refetch,
 }) {
+  const token = useSelector((state) => state.globalSlice.token);
+
+  const user = useSelector((state) => state.globalSlice.user);
+  const [deletePost, { error, loading: deletingPost }] = useMutation(
+    DELETE_POST,
+    {
+      context: {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    }
+  );
   return (
     <div
       className={
@@ -22,7 +44,21 @@ export default function EditMenu({
       >
         Edit
       </button>
-      <button className="hover:bg-text hover:text-bng w-full duration-300 rounded-md">
+      <button
+        onClick={() => {
+          deletePost({
+            variables: {
+              id: postId,
+              _id: user?._id,
+            },
+            update: () => {
+              if(refetch) refetch();
+            },
+          });
+
+        }}
+        className="hover:bg-text hover:text-bng w-full duration-300 rounded-md"
+      >
         Delete
       </button>
     </div>

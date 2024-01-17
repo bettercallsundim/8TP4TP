@@ -52,7 +52,7 @@ const LIKE_DISLIKE_POST = gql`
   }
 `;
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, refetch }) {
   // if (!post) return null;
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
@@ -65,6 +65,7 @@ export default function PostCard({ post }) {
     comments: null,
     dislikes: null,
     authorPhoto: "",
+    author: "",
     approved: false,
     isPaid: null,
     _id: "",
@@ -107,15 +108,19 @@ export default function PostCard({ post }) {
       }}
       className="max-w-[300px] min-h-[300px] rounded-lg px-6 py-8 bg-bng text-text mb-8 boxshadow flex flex-col relative "
     >
-      <button
-        onClick={() => {
-          setEditMenuOpen(!editMenuOpen);
-        }}
-        className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6 z-[2]"
-      >
-        <CiMenuKebab />
-      </button>
+      {initPost.author === user?._id && (
+        <button
+          onClick={() => {
+            setEditMenuOpen(!editMenuOpen);
+          }}
+          className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6 z-[2]"
+        >
+          <CiMenuKebab />
+        </button>
+      )}
       <EditMenu
+        refetch={refetch}
+        postId={initPost._id}
         sheetType={sheetType}
         setSheetType={setSheetType}
         commentRef={commentRef}

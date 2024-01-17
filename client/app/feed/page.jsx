@@ -16,6 +16,7 @@ const GET_USER_POSTS = gql`
       comments {
         name
       }
+      author
       isPaid
       likes
       name
@@ -57,7 +58,7 @@ export default function feed() {
         <div className=" ">
           {loading && array?.map((_, ind) => <PostSkeleton key={ind} />)}
           {posts?.map((post, ind) => (
-            <PostCard key={ind} post={post} />
+            <PostCard key={ind} post={post} refetch={refetch}/>
           ))}
         </div>
       </div>

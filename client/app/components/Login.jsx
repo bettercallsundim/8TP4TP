@@ -61,7 +61,6 @@ export default function Login() {
                 toast.success("Logged in successfully. Redirecting...");
               notify();
               const decoded = jwtDecode(credential);
-              console.log("decodeee", decoded);
               dispatch(setUser(decoded));
               const { email, name, picture, sub: id } = decoded;
               signIn({
@@ -79,7 +78,6 @@ export default function Login() {
                     },
                   }
                 ) => {
-                  console.log("token", newToken);
                   dispatch(setToken({ token: newToken }));
                   setTokenData(newToken);
                   setDataToLocal("token", { token: newToken });
