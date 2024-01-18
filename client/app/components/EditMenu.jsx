@@ -52,10 +52,11 @@ export default function EditMenu({
               _id: user?._id,
             },
             update: () => {
-              if(refetch) refetch();
+              if (refetch) {
+                refetch();
+              }
             },
           });
-
         }}
         className="hover:bg-text hover:text-bng w-full duration-300 rounded-md"
       >

@@ -62,10 +62,11 @@ export default function Global_feed() {
   }
   useEffect(() => {
     if (data?.getAllPosts?.posts?.length > 0) {
+      console.log("huh?");
       setPosts((prev) => [...prev, ...data.getAllPosts.posts]);
       setHasMore(data.getAllPosts.hasMore);
     }
-  }, [data]);
+  }, [data?.getAllPosts?.posts?.length]);
 
   useEffect(() => {
     fetchMore();
@@ -74,7 +75,7 @@ export default function Global_feed() {
     if (inView && Math.ceil(hasMore / limit) > pageNumber) {
       setPageNumber((prev) => prev + 1);
     } else if (inView && Math.ceil(hasMore / limit) == pageNumber) {
-      fetchMore();
+      // fetchMore();
     }
   }, [inView]);
   /// infinite scroll ends
@@ -99,6 +100,7 @@ export default function Global_feed() {
         <div>
           <CreatePost />
         </div>
+
         <div className=" ">
           {posts?.map((post, ind) => {
             if (ind == posts.length - 1) {
