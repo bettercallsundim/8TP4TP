@@ -32,7 +32,6 @@ const CreatePost = memo(({ refetch, loading }) => {
   `;
   const [postStatus] = useMutation(addPost, {
     onError: (err) => {
-      console.log(err);
       setLoading(false);
     },
     context: {
@@ -44,7 +43,6 @@ const CreatePost = memo(({ refetch, loading }) => {
   async function uploadPost(e) {
     e.preventDefault();
 
-    console.log(doc, "doc");
     // if user uploads a photo
     if (fileRef.current.files.length > 0 && doc.photo) {
       setLoading(true);
@@ -81,6 +79,7 @@ const CreatePost = memo(({ refetch, loading }) => {
               ) => {
                 refetch();
                 setLoading(false);
+                setPhotoURL("");
               },
             });
             setDoc({ post: "", photo: "" });
@@ -88,7 +87,6 @@ const CreatePost = memo(({ refetch, loading }) => {
         })
         .catch((error) => {
           setLoading(false);
-          console.error("Error uploading file", error);
         });
       fileRef.current.value = "";
     } else {
@@ -166,7 +164,6 @@ const CreatePost = memo(({ refetch, loading }) => {
             <input
               ref={fileRef}
               onChange={(e) => {
-                console.log(e.target.files[0]);
 
                 if (e.target.files[0].type.includes("image")) {
                   setDoc({ ...doc, photo: e.target.files[0] });

@@ -55,19 +55,15 @@ export default function Global_feed() {
       variables: { limit, pageNumber },
     }
   );
-
   async function fetchMore() {
-    console.log("fetching more");
     refetch();
   }
   useEffect(() => {
     if (data?.getAllPosts?.posts?.length > 0) {
-      console.log("huh?");
       setPosts((prev) => [...prev, ...data.getAllPosts.posts]);
       setHasMore(data.getAllPosts.hasMore);
     }
   }, [data?.getAllPosts?.posts?.length]);
-
   useEffect(() => {
     fetchMore();
   }, [pageNumber]);
