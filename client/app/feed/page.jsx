@@ -23,6 +23,7 @@ const GET_USER_POSTS = gql`
       photo
       time
       _id
+      category
     }
   }
 `;
@@ -58,7 +59,7 @@ export default function feed() {
         <div className=" ">
           {loading && array?.map((_, ind) => <PostSkeleton key={ind} />)}
           {posts?.map((post, ind) => (
-            <PostCard key={ind} post={post} refetch={refetch}/>
+            <PostCard key={ind} post={post} refetch={refetch} />
           ))}
         </div>
       </div>

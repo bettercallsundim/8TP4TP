@@ -1,11 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Toaster } from "@/components/ui/toaster";
 import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
 import { memo, useEffect, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
+
 import Spinner from "./Spinner";
 const CreatePost = memo(({ refetch, loading }) => {
   const [doc, setDoc] = useState({ post: "", photo: "" });
@@ -13,26 +16,32 @@ const CreatePost = memo(({ refetch, loading }) => {
   const dispatch = useDispatch();
   const [photo, setPhoto] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const [category, setCategory] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
-  // const [user, setUser] = useState(null);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
-  // const [token, setToken] = useState(null);
 
   const addPost = gql`
-    mutation addPost($post: String!, $photo: String, $email: String!) {
-      addPost(post: $post, photo: $photo, email: $email) {
+    mutation addPost(
+      $post: String!
+      $photo: String
+      $email: String!
+      $category: String!
+    ) {
+      addPost(post: $post, photo: $photo, email: $email, category: $category) {
         post
         photo
         time
         name
         authorPhoto
+        category
       }
     }
   `;
   const [postStatus] = useMutation(addPost, {
     onError: (err) => {
       setLoading(false);
+      console.log(err);
     },
     context: {
       headers: {
@@ -44,7 +53,7 @@ const CreatePost = memo(({ refetch, loading }) => {
     e.preventDefault();
 
     // if user uploads a photo
-    if (fileRef.current.files.length > 0 && doc.photo) {
+    if (fileRef.current.files.length > 0 && doc.photo && category) {
       setLoading(true);
 
       const formData = new FormData();
@@ -67,13 +76,14 @@ const CreatePost = memo(({ refetch, loading }) => {
                 post: doc.post,
                 photo: res.data.secure_url,
                 email: user?.email,
+                category,
               },
 
               update: (
                 cache,
                 {
                   data: {
-                    addPost: { post, name, time, photo, authorPhoto },
+                    addPost: { post, name, time, photo, authorPhoto, category },
                   },
                 }
               ) => {
@@ -83,6 +93,7 @@ const CreatePost = memo(({ refetch, loading }) => {
               },
             });
             setDoc({ post: "", photo: "" });
+            setCategory(null);
           }
         })
         .catch((error) => {
@@ -90,7 +101,7 @@ const CreatePost = memo(({ refetch, loading }) => {
         });
       fileRef.current.value = "";
     } else {
-      if (!doc.post) {
+      if (!doc.post && !category) {
         return;
       }
       setLoading(true);
@@ -99,13 +110,13 @@ const CreatePost = memo(({ refetch, loading }) => {
         variables: {
           post: doc.post,
           email: user.email,
+          category,
         },
-
         update: (
           cache,
           {
             data: {
-              addPost: { post, name, time, authorPhoto },
+              addPost: { post, name, time, authorPhoto, category },
             },
           }
         ) => {
@@ -113,8 +124,9 @@ const CreatePost = memo(({ refetch, loading }) => {
           setLoading(false);
         },
       });
-
+      console.log("here", category);
       setDoc({ post: "", photo: "" });
+      setCategory(null);
     }
   }
   useEffect(() => {
@@ -142,6 +154,24 @@ const CreatePost = memo(({ refetch, loading }) => {
           type="text"
         ></textarea>
         <br />
+        <div>
+          <RadioGroup className="option-one flex items-center my-2">
+            <div
+              onClick={() => setCategory("Street Food")}
+              className="flex items-center space-x-2"
+            >
+              <RadioGroupItem value="option-one" id="option-one" />
+              <Label htmlFor="option-one">Street food</Label>
+            </div>
+            <div
+              onClick={() => setCategory("Restaurant")}
+              className="flex items-center space-x-2"
+            >
+              <RadioGroupItem value="option-two" id="option-two" />
+              <Label htmlFor="option-two">Restaurant</Label>
+            </div>
+          </RadioGroup>
+        </div>
         <div className="flex items-center gap-x-4">
           {photoURL && (
             <div>
@@ -164,7 +194,6 @@ const CreatePost = memo(({ refetch, loading }) => {
             <input
               ref={fileRef}
               onChange={(e) => {
-
                 if (e.target.files[0].type.includes("image")) {
                   setDoc({ ...doc, photo: e.target.files[0] });
                   setPhoto(e.target.files[0]);

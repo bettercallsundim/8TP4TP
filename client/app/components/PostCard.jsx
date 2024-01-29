@@ -47,6 +47,7 @@ const LIKE_DISLIKE_POST = gql`
         photo
         time
         _id
+        category
       }
     }
   }
@@ -69,6 +70,7 @@ export default function PostCard({ post, refetch }) {
     approved: false,
     isPaid: null,
     _id: "",
+    category: "",
   });
   const [isOpen, setIsOpen] = useState(false);
   const [editMenuOpen, setEditMenuOpen] = useState(false);
@@ -138,7 +140,6 @@ export default function PostCard({ post, refetch }) {
         commentRef={commentRef}
         commentRequestPostID={initPost._id}
       />
-
       <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300 ">
         <div className="pic mr-4">
           <img
@@ -171,7 +172,8 @@ export default function PostCard({ post, refetch }) {
           />
         </div>
       )}
-      <div className="footer flex items-center justify-between mt-auto">
+
+      <div className="footer flex items-center justify-between mt-auto pb-2">
         <span className="flex items-center gap-2">
           {initPost?.likes?.includes(user?._id) ? (
             <AiFillLike
@@ -240,6 +242,7 @@ export default function PostCard({ post, refetch }) {
           <FaCircleExclamation className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />
         </span>
       </div>
+      <div className="-mb-6">#{initPost?.category && initPost?.category}</div>
     </div>
   );
 }

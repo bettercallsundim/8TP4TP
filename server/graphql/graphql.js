@@ -18,7 +18,12 @@ export const typeDefs = gql`
       picture: String!
       name: String!
     ): UserSignedIn!
-    addPost(post: String!, photo: String, email: String!): Post!
+    addPost(
+      post: String!
+      photo: String
+      email: String!
+      category: String!
+    ): Post!
     likeDislikePost(id: String!, email: String!): likeDislikePost!
     comment(id: String!, email: String!, comment: String!): [Comment!]
     editPost(id: String!, _id: String!, post: String!): Post!
@@ -69,6 +74,7 @@ export const typeDefs = gql`
     approved: Boolean!
     name: String!
     authorPhoto: String!
+    category: String!
   }
   type CreatedPost {
     post: String!
@@ -154,8 +160,8 @@ export const resolvers = {
         return { token, _id: user._id };
       }
     },
-    addPost: async (_, { post, photo = "", email }, context) => {
-      console.log("add post");
+    addPost: async (_, { post, photo = "", email, category }, context) => {
+      console.log("add post", category);
 
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
@@ -167,6 +173,7 @@ export const resolvers = {
             author: user._id,
             name: user.name,
             authorPhoto: user.picture,
+            category,
           });
           await newPost.save();
           return newPost._doc;

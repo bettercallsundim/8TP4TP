@@ -13,6 +13,11 @@ const PostSchema = new mongoose.Schema(
       ref: "User",
     },
     authorPhoto: String,
+    category: {
+      enum: ["Street Food", "Restaurant"],
+      type: String,
+      required: true,
+    },
     tags: [
       {
         type: String,
