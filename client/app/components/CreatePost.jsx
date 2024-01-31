@@ -16,6 +16,8 @@ const CreatePost = memo(({ refetch, loading }) => {
   const dispatch = useDispatch();
   const [photo, setPhoto] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const streetCheck = useRef();
+  const restaurantCheck = useRef();
   const [category, setCategory] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
   const user = useSelector((state) => state.globalSlice.user);
@@ -94,6 +96,8 @@ const CreatePost = memo(({ refetch, loading }) => {
             });
             setDoc({ post: "", photo: "" });
             setCategory(null);
+            streetCheck.current.checked = false;
+            restaurantCheck.current.checked = false;
           }
         })
         .catch((error) => {
@@ -127,6 +131,8 @@ const CreatePost = memo(({ refetch, loading }) => {
       console.log("here", category);
       setDoc({ post: "", photo: "" });
       setCategory(null);
+      streetCheck.current.checked = false;
+      restaurantCheck.current.checked = false;
     }
   }
   useEffect(() => {
@@ -161,6 +167,7 @@ const CreatePost = memo(({ refetch, loading }) => {
               className="flex items-center space-x-2"
             >
               <RadioGroupItem
+                ref={streetCheck}
                 onClick={() => setCategory("Street Food")}
                 value="option-one"
                 id="option-one"
@@ -177,6 +184,7 @@ const CreatePost = memo(({ refetch, loading }) => {
               className="flex items-center space-x-2"
             >
               <RadioGroupItem
+                ref={restaurantCheck}
                 onClick={() => setCategory("Restaurant")}
                 value="option-two"
                 id="option-two"
