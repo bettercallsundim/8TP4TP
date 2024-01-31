@@ -160,15 +160,33 @@ const CreatePost = memo(({ refetch, loading }) => {
               onClick={() => setCategory("Street Food")}
               className="flex items-center space-x-2"
             >
-              <RadioGroupItem value="option-one" id="option-one" />
-              <Label htmlFor="option-one">Street food</Label>
+              <RadioGroupItem
+                onClick={() => setCategory("Street Food")}
+                value="option-one"
+                id="option-one"
+              />
+              <Label
+                onClick={() => setCategory("Street Food")}
+                htmlFor="option-one"
+              >
+                Street food
+              </Label>
             </div>
             <div
               onClick={() => setCategory("Restaurant")}
               className="flex items-center space-x-2"
             >
-              <RadioGroupItem value="option-two" id="option-two" />
-              <Label htmlFor="option-two">Restaurant</Label>
+              <RadioGroupItem
+                onClick={() => setCategory("Restaurant")}
+                value="option-two"
+                id="option-two"
+              />
+              <Label
+                onClick={() => setCategory("Restaurant")}
+                htmlFor="option-two"
+              >
+                Restaurant
+              </Label>
             </div>
           </RadioGroup>
         </div>
