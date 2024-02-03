@@ -15,7 +15,6 @@ const GET_ALL_POSTS = gql`
   query getAllPosts($limit: Int!, $pageNumber: Int!) {
     getAllPosts(limit: $limit, pageNumber: $pageNumber) {
       hasMore
-
       posts {
         post
         approved
@@ -32,6 +31,10 @@ const GET_ALL_POSTS = gql`
         _id
         author
         category
+        tags {
+          label
+          value
+        }
       }
     }
   }

@@ -9,9 +9,11 @@ import { memo, useEffect, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 
+import CreatableTag from "./CreatableTag";
 import Spinner from "./Spinner";
 const CreatePost = memo(({ refetch, loading }) => {
   const [doc, setDoc] = useState({ post: "", photo: "" });
+  const [tags, setTags] = useState([]);
   const fileRef = useRef(null);
   const dispatch = useDispatch();
   const [photo, setPhoto] = useState("");
@@ -29,14 +31,25 @@ const CreatePost = memo(({ refetch, loading }) => {
       $photo: String
       $email: String!
       $category: String!
+      $tags: [TagInput!]
     ) {
-      addPost(post: $post, photo: $photo, email: $email, category: $category) {
+      addPost(
+        post: $post
+        photo: $photo
+        email: $email
+        category: $category
+        tags: $tags
+      ) {
         post
         photo
         time
         name
         authorPhoto
         category
+        tags{
+          label
+          value
+        }
       }
     }
   `;
@@ -79,6 +92,7 @@ const CreatePost = memo(({ refetch, loading }) => {
                 photo: res.data.secure_url,
                 email: user?.email,
                 category,
+                tags,
               },
 
               update: (
@@ -115,6 +129,7 @@ const CreatePost = memo(({ refetch, loading }) => {
           post: doc.post,
           email: user.email,
           category,
+          tags,
         },
         update: (
           cache,
@@ -161,6 +176,7 @@ const CreatePost = memo(({ refetch, loading }) => {
         ></textarea>
         <br />
         <div>
+          <CreatableTag tags={tags} setTags={setTags} />
           <RadioGroup className="option-one flex items-center my-2">
             <div
               onClick={() => setCategory("Street Food")}

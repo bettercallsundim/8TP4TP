@@ -24,6 +24,10 @@ const GET_USER_POSTS = gql`
       time
       _id
       category
+      tags {
+        label
+        value
+      }
     }
   }
 `;

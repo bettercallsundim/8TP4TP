@@ -18,11 +18,7 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tags: [
-      {
-        type: String,
-      },
-    ],
+    tags: [],
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,

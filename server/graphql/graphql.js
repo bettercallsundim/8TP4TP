@@ -23,6 +23,7 @@ export const typeDefs = gql`
       photo: String
       email: String!
       category: String!
+      tags: [TagInput!]
     ): Post!
     likeDislikePost(id: String!, email: String!): likeDislikePost!
     comment(id: String!, email: String!, comment: String!): [Comment!]
@@ -69,12 +70,20 @@ export const typeDefs = gql`
     isPaid: [String!]
     shared_by: [String!]
     time: String!
-    tags: [String!]
+    tags: [Tag!]
     location: String!
     approved: Boolean!
     name: String!
     authorPhoto: String!
     category: String!
+  }
+  type Tag {
+    label: String!
+    value: String!
+  }
+  input TagInput {
+    label: String!
+    value: String!
   }
   type CreatedPost {
     post: String!
@@ -160,7 +169,11 @@ export const resolvers = {
         return { token, _id: user._id };
       }
     },
-    addPost: async (_, { post, photo = "", email, category }, context) => {
+    addPost: async (
+      _,
+      { post, photo = "", email, category, tags },
+      context
+    ) => {
       console.log("add post", category);
 
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
@@ -174,8 +187,10 @@ export const resolvers = {
             name: user.name,
             authorPhoto: user.picture,
             category,
+            tags,
           });
           await newPost.save();
+          console.log("post success", newPost._doc);
           return newPost._doc;
         } else {
           return null;

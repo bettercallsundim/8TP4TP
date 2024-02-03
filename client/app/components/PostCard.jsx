@@ -48,6 +48,10 @@ const LIKE_DISLIKE_POST = gql`
         time
         _id
         category
+        tags {
+          label
+          value
+        }
       }
     }
   }
@@ -71,6 +75,7 @@ export default function PostCard({ post, refetch }) {
     isPaid: null,
     _id: "",
     category: "",
+    tags: [],
   });
   const [isOpen, setIsOpen] = useState(false);
   const [editMenuOpen, setEditMenuOpen] = useState(false);
@@ -172,7 +177,15 @@ export default function PostCard({ post, refetch }) {
           />
         </div>
       )}
-
+      <div className="flex items-center flex-wrap  gap-2 text-xs">
+        {initPost.tags?.map((tag, index) => {
+          return (
+            <span className="px-2 py-1 bgn-secondary rounded-xl">
+              #{tag.value}
+            </span>
+          );
+        })}
+      </div>
       <div className="footer flex items-center justify-between mt-auto pb-2">
         <span className="flex items-center gap-2">
           {initPost?.likes?.includes(user?._id) ? (

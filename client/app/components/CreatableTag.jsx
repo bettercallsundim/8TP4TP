@@ -1,23 +1,51 @@
-import AsyncCreatableSelect from "react-select/async-creatable";
-import { colourOptions } from "../data";
+"use client";
+import React from "react";
 
-const filterColors = (inputValue) => {
-  return colourOptions.filter((i) =>
-    i.label.toLowerCase().includes(inputValue.toLowerCase())
-  );
+import CreatableSelect from "react-select/creatable";
+
+const components = {
+  DropdownIndicator: null,
 };
 
-const promiseOptions = (inputValue) =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(filterColors(inputValue));
-    }, 1000);
-  });
+const createOption = (label) => ({
+  label,
+  value: label,
+});
 
-export default () => (
-  <AsyncCreatableSelect
-    cacheOptions
-    defaultOptions
-    loadOptions={promiseOptions}
-  />
-);
+export default function CreatableTag({ tags, setTags }) {
+  const [inputValue, setInputValue] = React.useState("");
+
+  const handleKeyDown = (event) => {
+    if (!inputValue) return;
+    switch (event.key) {
+      case "Enter":
+      case "Tab":
+        setTags((prev) => [...prev, createOption(inputValue)]);
+        setInputValue("");
+        event.preventDefault();
+    }
+  };
+  const handleKeyDown2 = (event) => {
+    if (!inputValue) return;
+
+    setTags((prev) => [...prev, createOption(inputValue)]);
+    setInputValue("");
+    event.preventDefault();
+  };
+
+  return (
+    <CreatableSelect
+      components={components}
+      inputValue={inputValue}
+      isClearable
+      isMulti
+      menuIsOpen={false}
+      onChange={(newValue) => setTags(newValue)}
+      onBlur={handleKeyDown2}
+      onInputChange={(newValue) => setInputValue(newValue)}
+      onKeyDown={handleKeyDown}
+      placeholder="Type something and press enter..."
+      value={tags}
+    />
+  );
+}
