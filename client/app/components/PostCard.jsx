@@ -177,16 +177,17 @@ export default function PostCard({ post, refetch }) {
           />
         </div>
       )}
-      <div className="flex items-center flex-wrap  gap-2 text-xs">
+      <div className="flex items-center flex-wrap  gap-2 text-xs mt-auto">
         {initPost.tags?.map((tag, index) => {
           return (
             <span className="px-2 py-1 bgn-secondary rounded-xl">
               #{tag.value}
             </span>
           );
-        })}
+        })}{" "}
+        #{initPost?.category && initPost?.category}
       </div>
-      <div className="footer flex items-center justify-between mt-auto pb-2">
+      <div className="footer flex items-center justify-between  pb-2">
         <span className="flex items-center gap-2">
           {initPost?.likes?.includes(user?._id) ? (
             <AiFillLike
@@ -255,7 +256,6 @@ export default function PostCard({ post, refetch }) {
           <FaCircleExclamation className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300" />
         </span>
       </div>
-      <div className="-mb-6">#{initPost?.category && initPost?.category}</div>
     </div>
   );
 }
