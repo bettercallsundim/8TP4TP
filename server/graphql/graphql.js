@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import mongoose from "mongoose";
 import "../db.js";
 import PostModel from "../models/Post.model.js";
 import UserModel from "../models/User.model.js";
@@ -10,6 +11,7 @@ export const typeDefs = gql`
     getAllPosts(limit: Int!, pageNumber: Int!): GetAllPosts
     getPostById(id: String!): Post!
     getPostByAuthor(email: String!): [Post!]
+    getPostByAuthorId(_id: String!): [Post!]
   }
   type Mutation {
     signIn(
@@ -144,6 +146,15 @@ export const resolvers = {
       });
       return posts;
     },
+    getPostByAuthorId: async (_, { _id }, context) => {
+      const user = await UserModel.findOne({
+        _id: new mongoose.Types.ObjectId(_id),
+      }).populate("posts");
+      // const posts = await PostModel.find({ author: user._id }).sort({
+      //   createdAt: -1,
+      // });
+      return user.posts;
+    },
     getPostById: async (_, { id }, context) => {
       const post = await PostModel.findOne({ _id: id });
       return post;
@@ -189,7 +200,9 @@ export const resolvers = {
             category,
             tags,
           });
+          user.posts.push(newPost._id);
           await newPost.save();
+          await user.save();
           console.log("post success", newPost._doc);
           return newPost._doc;
         } else {

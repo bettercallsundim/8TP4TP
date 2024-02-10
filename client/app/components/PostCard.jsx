@@ -1,10 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { DateTime } from "luxon";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { CiMenuKebab } from "react-icons/ci";
 import { FaCommentDots } from "react-icons/fa";
-
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import EditMenu from "./EditMenu";
@@ -154,9 +154,12 @@ export default function PostCard({ post, refetch }) {
         </div>
         <div>
           <p className="name font-semibold text-sm">
-            <span className="bg-primary text-bng rounded-lg px-2">
-              {initPost.name}
-            </span>
+            <Link href={`profile/${initPost.author}`}>
+              {" "}
+              <span className="bg-primary text-bng rounded-lg px-2">
+                {initPost.name}
+              </span>
+            </Link>
           </p>
           <p className="name text-text text-sm">
             {DateTime.fromMillis(parseInt(initPost.time)).toLocaleString(
