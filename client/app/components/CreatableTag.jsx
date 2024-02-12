@@ -44,7 +44,7 @@ export default function CreatableTag({ tags, setTags }) {
       onBlur={handleKeyDown2}
       onInputChange={(newValue) => setInputValue(newValue)}
       onKeyDown={handleKeyDown}
-      placeholder="Type something and press enter..."
+      placeholder="Type a tag and press enter..."
       value={tags}
     />
   );

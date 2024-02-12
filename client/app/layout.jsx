@@ -6,8 +6,8 @@ import "./globals.css";
 import "./index.css";
 
 export const metadata = {
-  title: "foodOgraphy",
-  description: "foodOgraphy",
+  title: "8TP4TP",
+  description: "Democratic social network",
 };
 
 export default function RootLayout({ children }) {

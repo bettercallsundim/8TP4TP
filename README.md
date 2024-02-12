@@ -1,6 +1,6 @@
-# Food-O-graphy
+# 8TP4TP : By The People, For The People
 
-Democratic social network platform for foodies.
+Democratic social network platform.
 
 ## Features
 
@@ -13,7 +13,6 @@ Democratic social network platform for foodies.
 - Comment on posts.
 - Separate page for own posts and public posts.
 - Infinite scrolling on Global Feed page (as there can be huge number of post in news feed)
-- [ Food specific features are WIP ]
 
 ## Tech Stack
 
