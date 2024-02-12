@@ -30,7 +30,6 @@ const GET_ALL_POSTS = gql`
         time
         _id
         author
-        category
         tags {
           label
           value

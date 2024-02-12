@@ -47,7 +47,6 @@ const LIKE_DISLIKE_POST = gql`
         photo
         time
         _id
-        category
         tags {
           label
           value
@@ -188,7 +187,6 @@ export default function PostCard({ post, refetch }) {
             </span>
           );
         })}{" "}
-        #{initPost?.category && initPost?.category}
       </div>
       <div className="footer flex items-center justify-between  pb-2">
         <span className="flex items-center gap-2">

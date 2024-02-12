@@ -9,9 +9,10 @@ export default function page() {
             Democratic
           </span>{" "}
           Social network
-          <br /> ... but for{" "}
-          <span className="bg-primary text-text px-2 border-b-4 border-text">
-            foodies
+          <br />{" "}
+          <span className=" text-gray-500 px-2 border-text">
+            {" "}
+            ... wait democratic ?
           </span>
           <img
             className="w-[150px] mx-auto mt-12 md:mt-0  rounded md:float-end"

@@ -24,7 +24,6 @@ export const typeDefs = gql`
       post: String!
       photo: String
       email: String!
-      category: String!
       tags: [TagInput!]
     ): Post!
     likeDislikePost(id: String!, email: String!): likeDislikePost!
@@ -149,7 +148,10 @@ export const resolvers = {
     getPostByAuthorId: async (_, { _id }, context) => {
       const user = await UserModel.findOne({
         _id: new mongoose.Types.ObjectId(_id),
-      }).populate("posts");
+      }).populate({
+        path: "posts",
+        options: { sort: { createdAt: -1 } },
+      });
       // const posts = await PostModel.find({ author: user._id }).sort({
       //   createdAt: -1,
       // });
@@ -180,12 +182,8 @@ export const resolvers = {
         return { token, _id: user._id };
       }
     },
-    addPost: async (
-      _,
-      { post, photo = "", email, category, tags },
-      context
-    ) => {
-      console.log("add post", category);
+    addPost: async (_, { post, photo = "", email, tags }, context) => {
+      console.log("add post");
 
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
@@ -197,7 +195,6 @@ export const resolvers = {
             author: user._id,
             name: user.name,
             authorPhoto: user.picture,
-            category,
             tags,
           });
           user.posts.push(newPost._id);

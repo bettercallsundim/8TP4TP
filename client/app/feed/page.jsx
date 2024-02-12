@@ -23,7 +23,6 @@ const GET_USER_POSTS = gql`
       photo
       time
       _id
-      category
       tags {
         label
         value

@@ -1,7 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Toaster } from "@/components/ui/toaster";
 import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
@@ -30,23 +28,15 @@ const CreatePost = memo(({ refetch, loading }) => {
       $post: String!
       $photo: String
       $email: String!
-      $category: String!
       $tags: [TagInput!]
     ) {
-      addPost(
-        post: $post
-        photo: $photo
-        email: $email
-        category: $category
-        tags: $tags
-      ) {
+      addPost(post: $post, photo: $photo, email: $email, tags: $tags) {
         post
         photo
         time
         name
         authorPhoto
-        category
-        tags{
+        tags {
           label
           value
         }
@@ -68,7 +58,7 @@ const CreatePost = memo(({ refetch, loading }) => {
     e.preventDefault();
 
     // if user uploads a photo
-    if (fileRef.current.files.length > 0 && doc.photo && category) {
+    if (fileRef.current.files.length > 0 && doc.photo) {
       setLoading(true);
 
       const formData = new FormData();
@@ -91,7 +81,6 @@ const CreatePost = memo(({ refetch, loading }) => {
                 post: doc.post,
                 photo: res.data.secure_url,
                 email: user?.email,
-                category,
                 tags,
               },
 
@@ -99,7 +88,7 @@ const CreatePost = memo(({ refetch, loading }) => {
                 cache,
                 {
                   data: {
-                    addPost: { post, name, time, photo, authorPhoto, category },
+                    addPost: { post, name, time, photo, authorPhoto },
                   },
                 }
               ) => {
@@ -110,8 +99,6 @@ const CreatePost = memo(({ refetch, loading }) => {
             });
             setDoc({ post: "", photo: "" });
             setCategory(null);
-            streetCheck.current.checked = false;
-            restaurantCheck.current.checked = false;
           }
         })
         .catch((error) => {
@@ -119,7 +106,7 @@ const CreatePost = memo(({ refetch, loading }) => {
         });
       fileRef.current.value = "";
     } else {
-      if (!doc.post && !category) {
+      if (!doc.post) {
         return;
       }
       setLoading(true);
@@ -128,14 +115,13 @@ const CreatePost = memo(({ refetch, loading }) => {
         variables: {
           post: doc.post,
           email: user.email,
-          category,
           tags,
         },
         update: (
           cache,
           {
             data: {
-              addPost: { post, name, time, authorPhoto, category },
+              addPost: { post, name, time, authorPhoto },
             },
           }
         ) => {
@@ -146,8 +132,6 @@ const CreatePost = memo(({ refetch, loading }) => {
       console.log("here", category);
       setDoc({ post: "", photo: "" });
       setCategory(null);
-      streetCheck.current.checked = false;
-      restaurantCheck.current.checked = false;
     }
   }
   useEffect(() => {
@@ -177,7 +161,7 @@ const CreatePost = memo(({ refetch, loading }) => {
         <br />
         <div>
           <CreatableTag tags={tags} setTags={setTags} />
-          <RadioGroup className="option-one flex items-center my-2">
+          {/* <RadioGroup className="option-one flex items-center my-2">
             <div
               onClick={() => setCategory("Street Food")}
               className="flex items-center space-x-2"
@@ -212,7 +196,7 @@ const CreatePost = memo(({ refetch, loading }) => {
                 Restaurant
               </Label>
             </div>
-          </RadioGroup>
+          </RadioGroup> */}
         </div>
         <div className="flex items-center gap-x-4">
           {photoURL && (

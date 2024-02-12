@@ -16,7 +16,7 @@ const PostSchema = new mongoose.Schema(
     category: {
       enum: ["Street Food", "Restaurant"],
       type: String,
-      required: true,
+      required: false,
     },
     tags: [],
     likes: [
