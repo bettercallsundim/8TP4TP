@@ -2,32 +2,57 @@
 import LeftSidebar from "@/app/components/LeftSidebar";
 import PostCard from "@/app/components/PostCard";
 import PostSkeleton from "@/app/components/PostSkeleton";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 const GET_USER_POSTS = gql`
   query getPostByAuthorId($_id: String!) {
     getPostByAuthorId(_id: $_id) {
-      post
-      approved
-      authorPhoto
-      dislikes
-      comments {
-        name
-      }
-      author
-      isPaid
-      likes
       name
-      photo
-      time
-      _id
-      tags {
-        label
-        value
+      email
+      picture
+      follows {
+        name
+        _id
+      }
+      followed_by {
+        name
+        _id
+      }
+      posts {
+        post
+        approved
+        authorPhoto
+        dislikes
+        comments {
+          name
+        }
+        author
+        isPaid
+        likes
+        name
+        photo
+        time
+        _id
+        tags {
+          label
+          value
+        }
       }
     }
   }
 `;
+const FOLLOW_UNFOLLOW = gql`
+  mutation followUnfollow($by: String!, $to: String!) {
+    followUnfollow(by: $by, to: $to) {
+      follow
+    }
+  }
+`;
 export default function Profile({ params }) {
+  const user = useSelector((state) => state.globalSlice.user);
+  const token = useSelector((state) => state.globalSlice.token);
+  const [followed, setFollowed] = useState(false);
   const { loading, error, data, refetch } = useQuery(GET_USER_POSTS, {
     onError: (err) => {
       console.log(err);
@@ -36,7 +61,31 @@ export default function Profile({ params }) {
       _id: params.id,
     },
   });
-  const posts = data?.getPostByAuthorId;
+
+  const [
+    followUnfollow,
+    { error: followUnfollowError, loading: followUnfollowLoading },
+  ] = useMutation(FOLLOW_UNFOLLOW, {
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+  });
+  if (followUnfollowError) {
+    console.log(followUnfollowError);
+  }
+  const userGot = data?.getPostByAuthorId;
+  console.log("followed", userGot?.followed_by);
+  console.log("followeddd", user?._id);
+  useEffect(() => {
+    const isFollowing = userGot?.followed_by?.find((f) => f._id === user?._id);
+    if (isFollowing) {
+      setFollowed(true);
+    } else {
+      setFollowed(false);
+    }
+  }, [userGot, user]);
   const array = [1, 2, 3];
 
   return (
@@ -45,12 +94,46 @@ export default function Profile({ params }) {
         <LeftSidebar />
       </div>
       <div className="hidescroll overflow-y-scroll h-[inherit] w-full ">
+        <div className="my-12">
+          <div className="pic flex items-center justify-between">
+            <img
+              src={userGot?.picture}
+              alt="profile"
+              className="rounded-full h-20 w-20"
+            />
+            <span>
+              {
+                params.id!=user?._id &&  (<button
+                onClick={() => {
+                  followUnfollow({
+                    variables: {
+                      by: user._id,
+                      to: params.id,
+                    },
+                    update: (cache, data) => {
+                      const flwUnflw = data.data.followUnfollow.follow;
+                      if (flwUnflw) {
+                        setFollowed(true);
+                      } else {
+                        setFollowed(false);
+                      }
+                    },
+                  });
+                }}
+              >
+                {followed ? "Unfollow" : "Follow"}
+              </button>)
+              }
+            </span>
+          </div>
+          <div className="info">{userGot?.name}</div>
+        </div>
         <div>
           <h1 className="text-2xl font-bold text-text">Posts</h1>
         </div>
         <div className=" ">
           {loading && array?.map((_, ind) => <PostSkeleton key={ind} />)}
-          {posts?.map((post, ind) => (
+          {userGot?.posts?.map((post, ind) => (
             <PostCard key={ind} post={post} refetch={refetch} />
           ))}
         </div>

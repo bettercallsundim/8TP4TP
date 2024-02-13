@@ -11,7 +11,7 @@ export const typeDefs = gql`
     getAllPosts(limit: Int!, pageNumber: Int!): GetAllPosts
     getPostById(id: String!): Post!
     getPostByAuthor(email: String!): [Post!]
-    getPostByAuthorId(_id: String!): [Post!]
+    getPostByAuthorId(_id: String!): User!
   }
   type Mutation {
     signIn(
@@ -27,9 +27,13 @@ export const typeDefs = gql`
       tags: [TagInput!]
     ): Post!
     likeDislikePost(id: String!, email: String!): likeDislikePost!
+    followUnfollow(by: String!, to: String!): follow!
     comment(id: String!, email: String!, comment: String!): [Comment!]
     editPost(id: String!, _id: String!, post: String!): Post!
     deletePost(id: String!, _id: String!): Boolean!
+  }
+  type follow {
+    follow: Boolean!
   }
   type GetAllPosts {
     hasMore: Int!
@@ -53,6 +57,7 @@ export const typeDefs = gql`
     followed_by: [User!]
     token: String!
     role: Role!
+    _id: String!
   }
 
   type UserSignedIn {
@@ -148,14 +153,22 @@ export const resolvers = {
     getPostByAuthorId: async (_, { _id }, context) => {
       const user = await UserModel.findOne({
         _id: new mongoose.Types.ObjectId(_id),
-      }).populate({
-        path: "posts",
-        options: { sort: { createdAt: -1 } },
-      });
+      })
+        .populate({
+          path: "posts",
+          options: { sort: { createdAt: -1 } },
+        })
+        .populate({
+          path: "follows",
+        })
+        .populate({
+          path: "followed_by",
+        });
+      console.log("user", user._doc);
       // const posts = await PostModel.find({ author: user._id }).sort({
       //   createdAt: -1,
       // });
-      return user.posts;
+      return user._doc;
     },
     getPostById: async (_, { id }, context) => {
       const post = await PostModel.findOne({ _id: id });
@@ -237,6 +250,58 @@ export const resolvers = {
                 post: updatedPost,
               };
             }
+          }
+        } else {
+          return null;
+        }
+      }
+    },
+    followUnfollow: async (_, { by, to }, context) => {
+      console.log("context", context.headers.authorization);
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (verify) {
+        const userBy = await UserModel.findOne({
+          _id: new mongoose.Types.ObjectId(by),
+        });
+        const userTo = await UserModel.findOne({
+          _id: new mongoose.Types.ObjectId(to),
+        });
+        if (userBy && userTo) {
+          console.log("🚀 ~ followUnfollow: ~ user2:");
+
+          if (userBy.follows.includes(userTo._id)) {
+            const user = await UserModel.findOneAndUpdate(
+              { _id: userBy._id },
+              { $pull: { follows: userTo._id } },
+              { new: true }
+            );
+            const user2 = await UserModel.findOneAndUpdate(
+              { _id: userTo._id },
+              { $pull: { followed_by: userBy._id } },
+              { new: true }
+            );
+            console.log("🚀 ~ if followUnfollow: ~:", user);
+            console.log("🚀 ~ if followUnfollow: ~:", user2);
+
+            return {
+              follow: false,
+            };
+          } else {
+            const user = await UserModel.findOneAndUpdate(
+              { _id: userBy._id },
+              { $push: { follows: userTo._id } },
+              { new: true }
+            );
+            const user2 = await UserModel.findOneAndUpdate(
+              { _id: userTo._id },
+              { $push: { followed_by: userBy._id } },
+              { new: true }
+            );
+            console.log("🚀 ~ else followUnfollow: ~:", user);
+            console.log("🚀 ~ else followUnfollow: ~:", user2);
+            return {
+              follow: true,
+            };
           }
         } else {
           return null;

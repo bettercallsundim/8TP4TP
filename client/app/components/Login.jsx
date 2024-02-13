@@ -54,56 +54,53 @@ export default function Login() {
           }}
         />
 
-        {(!userFromState?.email || !tokenData) && (
-          <GoogleLogin
-            onSuccess={({ credential }) => {
-              const notify = () =>
-                toast.success("Logged in successfully. Redirecting...");
-              notify();
-              const decoded = jwtDecode(credential);
-              dispatch(setUser(decoded));
-              const { email, name, picture, sub: id } = decoded;
-              signIn({
-                variables: {
+        <GoogleLogin
+          onSuccess={({ credential }) => {
+            const notify = () =>
+              toast.success("Logged in successfully. Redirecting...");
+            notify();
+            const decoded = jwtDecode(credential);
+            dispatch(setUser(decoded));
+            const { email, name, picture, sub: id } = decoded;
+            signIn({
+              variables: {
+                name,
+                email,
+                picture,
+                googleId: id,
+              },
+              update: (
+                cache,
+                {
+                  data: {
+                    signIn: { token: newToken, _id },
+                  },
+                }
+              ) => {
+                dispatch(setToken({ token: newToken }));
+                setTokenData(newToken);
+                setDataToLocal("token", { token: newToken });
+                setDataToLocal("user", {
                   name,
                   email,
                   picture,
                   googleId: id,
-                },
-                update: (
-                  cache,
-                  {
-                    data: {
-                      signIn: { token: newToken, _id },
-                    },
-                  }
-                ) => {
-                  dispatch(setToken({ token: newToken }));
-                  setTokenData(newToken);
-                  setDataToLocal("token", { token: newToken });
-                  setDataToLocal("user", {
-                    name,
-                    email,
-                    picture,
-                    googleId: id,
-                    _id: _id,
-                  });
+                  _id: _id,
+                });
 
-                  dispatch(
-                    setUser({ name, email, picture, googleId: id, _id: _id })
-                  );
-                },
-              });
+                dispatch(
+                  setUser({ name, email, picture, googleId: id, _id: _id })
+                );
+              },
+            });
 
-              router.push("/feed");
-            }}
-            onError={() => {
-              const notifyFail = () => toast.error("Logged in failed");
-              notifyFail();
-            }}
-            useOneTap
-          />
-        )}
+            router.push("/feed");
+          }}
+          onError={() => {
+            const notifyFail = () => toast.error("Logged in failed");
+            notifyFail();
+          }}
+        />
       </div>
     );
   }
