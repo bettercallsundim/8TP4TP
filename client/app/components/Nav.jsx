@@ -95,7 +95,9 @@ function Nav() {
   return (
     <nav className="">
       <div className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
-        <div className="logo font-bold text-2xl">8TP4TP</div>
+        <div className="logo font-bold text-2xl">
+          <Link href="/">8TP4TP</Link>
+        </div>
         <div className="links hidden md:block">
           <ul className="flex items-center gap-x-6">
             {links.map((link, ind) => (

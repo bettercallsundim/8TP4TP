@@ -102,32 +102,45 @@ export default function Profile({ params }) {
               className="rounded-full h-20 w-20"
             />
             <span>
-              {
-                params.id!=user?._id &&  (<button
-                onClick={() => {
-                  followUnfollow({
-                    variables: {
-                      by: user._id,
-                      to: params.id,
-                    },
-                    update: (cache, data) => {
-                      const flwUnflw = data.data.followUnfollow.follow;
-                      if (flwUnflw) {
-                        setFollowed(true);
-                      } else {
-                        setFollowed(false);
-                      }
-                    },
-                  });
-                }}
-              >
-                {followed ? "Unfollow" : "Follow"}
-              </button>)
-              }
+              <span className="text-sm font-medium mb-4">
+                Follows : {userGot?.follows?.length}
+              </span>
+              <br />
+              <span className="text-sm font-medium">
+                Follower : {userGot?.followed_by?.length}
+              </span>
+            </span>
+            <span>
+              {params.id != user?._id && (
+                <button
+                  className="bg-text text-bng hover:bg-primary text-sm rounded-xl py-1 px-2"
+                  onClick={() => {
+                    followUnfollow({
+                      variables: {
+                        by: user._id,
+                        to: params.id,
+                      },
+                      update: (cache, data) => {
+                        const flwUnflw = data.data.followUnfollow.follow;
+                        if (flwUnflw) {
+                          setFollowed(true);
+                        } else {
+                          setFollowed(false);
+                        }
+                      },
+                    });
+                  }}
+                >
+                  {followed ? "Unfollow" : "Follow"}
+                </button>
+              )}
             </span>
           </div>
-          <div className="info">{userGot?.name}</div>
+          <div className="info">
+            <span className="font-semibold ">{userGot?.name}</span>
+          </div>
         </div>
+        <hr className="my-4" />
         <div>
           <h1 className="text-2xl font-bold text-text">Posts</h1>
         </div>

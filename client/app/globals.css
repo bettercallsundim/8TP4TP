@@ -39,12 +39,12 @@
   scrollbar-width: none; /* Firefox */
 }
 .light .boxshadow {
-  box-shadow: inset 11px 0px 15px 0px rgba(0, 0, 0, 0.1),
-    0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 11px 22px 15px 11px rgba(0, 0, 0, -0.7),
+    5px 4px 10px 0px rgba(0, 0, 0, 0.3);
 }
 .dark .boxshadow {
-  box-shadow: inset 5px 0px 15px 0px rgba(189, 189, 189, 0.1),
-    0px 0px 10px 0px rgba(191, 191, 191, 0.1);
+  box-shadow: inset 5px 0px 15px 0px rgba(189, 189, 189, -0.7),
+    1px 1px 7px 1px rgba(255, 255, 255, 0.1);
 }
 .poppins {
   font-family: "Poppins", sans-serif;

@@ -1,6 +1,7 @@
 "use client";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
@@ -48,6 +49,9 @@ export default function feed() {
   const router = useRouter();
 
   const array = [1, 2, 3];
+  useEffect(() => {
+    if (!user) router.push("/");
+  }, [user]);
 
   return (
     <div className="bg-bng text-text py-8 px-4 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">

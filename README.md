@@ -10,6 +10,7 @@ Democratic social network platform.
 - Post statuses with photo. [hosted in cloudinary]
 - Like / Unlike posts.
 - Edit/Delete posts.
+- Follow/Unfollow users.
 - Comment on posts.
 - Separate page for own posts and public posts.
 - Infinite scrolling on Global Feed page (as there can be huge number of post in news feed)

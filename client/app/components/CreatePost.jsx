@@ -20,6 +20,7 @@ const CreatePost = memo(({ refetch, loading }) => {
   const restaurantCheck = useRef();
   const [category, setCategory] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
+  const [showTagInput, setShowTagInput] = useState(false);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
 
@@ -56,6 +57,7 @@ const CreatePost = memo(({ refetch, loading }) => {
   });
   async function uploadPost(e) {
     e.preventDefault();
+    setShowTagInput(false);
 
     // if user uploads a photo
     if (fileRef.current.files.length > 0 && doc.photo) {
@@ -150,6 +152,9 @@ const CreatePost = memo(({ refetch, loading }) => {
         encType="multipart/form-data"
       >
         <textarea
+          onFocus={() => {
+            setShowTagInput(true);
+          }}
           className=" border-2 border-gray-300 p-3 w-full rounded-lg outline-none bg-bng text-text"
           rows="3"
           placeholder="Write a post ..."
@@ -160,7 +165,7 @@ const CreatePost = memo(({ refetch, loading }) => {
         ></textarea>
         <br />
         <div>
-          <CreatableTag tags={tags} setTags={setTags} />
+          {showTagInput && <CreatableTag tags={tags} setTags={setTags} />}
           {/* <RadioGroup className="option-one flex items-center my-2">
             <div
               onClick={() => setCategory("Street Food")}
