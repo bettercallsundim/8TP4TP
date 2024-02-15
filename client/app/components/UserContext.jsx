@@ -64,8 +64,7 @@ const UserContext = ({ children }) => {
     }
   }, [isTokenValid]);
       console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token)
-      console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token)
-      console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token)
+      
   return children;
 };
 

@@ -1,4 +1,5 @@
 "use client";
+import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -50,7 +51,10 @@ export default function feed() {
 
   const array = [1, 2, 3];
   useEffect(() => {
-    if (!user) router.push("/");
+    const token = getDataFromLocal("token");
+    if (!user || !token) {
+      router.push("/");
+    }
   }, [user]);
 
   return (
