@@ -48,8 +48,7 @@ const UserContext = ({ children }) => {
       (jwt_token || !jwt_token) &&
       isTokenValid?.tokenizedSignIn == "invalid"
     ) {
-      console.log(jwt_token, "jwt_token")
-      console.log(jwt_token, "jwt_token")
+      console.log(jwt_token, "jwt_token");
       dispatch(logOut());
       removeDataFromLocal("token");
       removeDataFromLocal("user");
@@ -63,8 +62,8 @@ const UserContext = ({ children }) => {
       }
     }
   }, [isTokenValid]);
-      console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token)
-      
+  console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token);
+
   return children;
 };
 

@@ -51,10 +51,12 @@ export default function feed() {
 
   const array = [1, 2, 3];
   useEffect(() => {
-    const token = getDataFromLocal("token");
-    if (!user || !token) {
-      router.push("/");
-    }
+    setTimeout(() => {
+      const token = getDataFromLocal("token");
+      if (!user || !token) {
+        router.push("/");
+      }
+    }, 500);
   }, [user]);
 
   return (
