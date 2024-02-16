@@ -9,15 +9,15 @@
     --text: #15050e;
     --background: #fefbfd;
     --primary: #cf3a94;
-    --secondary: #a2e490;
-    --accent: #67da9f;
+    --secondary: rgb(218, 79, 102);
+    --accent: #da67ae;
   }
   .dark {
     --text: #faeaf3;
     --background: #040103;
     --primary: #c53089;
-    --secondary: #2d6f1b;
-    --accent: #25985c;
+    --secondary: rgb(218, 79, 102);
+    --accent: #f15778;
   }
 }
 
