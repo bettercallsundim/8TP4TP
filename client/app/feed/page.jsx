@@ -50,13 +50,17 @@ export default function feed() {
   const router = useRouter();
 
   const array = [1, 2, 3];
+  function delay(seconds) {
+    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+  }
   useEffect(() => {
-    setTimeout(() => {
-      const token = getDataFromLocal("token");
-      if (!user || !token) {
-        router.push("/");
-      }
-    }, 500);
+    delay(0.5);
+    const token = getDataFromLocal("token");
+    delay(0.5);
+
+    if (!user && !token) {
+      router.push("/");
+    }
   }, [user]);
 
   return (

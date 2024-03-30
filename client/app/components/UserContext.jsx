@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { logOut, setToken, setUser } from "../redux/globalSlice";
-function delay(seconds) {
-  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-}
+
 const UserContext = ({ children }) => {
   const [jwt_token, setJwt_Token] = useState(null);
   const router = useRouter();
@@ -58,7 +56,6 @@ const UserContext = ({ children }) => {
       return;
     } else {
       const user = getDataFromLocal("user");
-      delay(0.5);
       if (user) {
         dispatch(setUser(user));
         dispatch(setToken({ token: jwt_token }));
