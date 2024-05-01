@@ -10,7 +10,7 @@ const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Initialize Socket.IO client
-    const newSocket = io(process.env.NEXT_PUBLIC_BACKEND);
+    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET);
     newSocket?.on("connect", () => {
       console.log("from socket: hello world");
     });
