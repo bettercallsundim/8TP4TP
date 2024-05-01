@@ -10,7 +10,7 @@ const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Initialize Socket.IO client
-    const newSocket = io("http://localhost:4000");
+    const newSocket = io(process.env.NEXT_PUBLIC_BACKEND);
     newSocket?.on("connect", () => {
       console.log("from socket: hello world");
     });
