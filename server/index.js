@@ -40,12 +40,13 @@
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import cors from "cors";
+import * as dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { resolvers, typeDefs } from "./graphql/graphql.js";
-
-const port = 4000;
+dotenv.config();
+const port = process.env.PORT || 4000;
 const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
