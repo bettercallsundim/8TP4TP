@@ -3,6 +3,7 @@ import LeftSidebar from "@/app/components/LeftSidebar";
 import PostCard from "@/app/components/PostCard";
 import PostSkeleton from "@/app/components/PostSkeleton";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 const GET_USER_POSTS = gql`
@@ -134,6 +135,12 @@ export default function Profile({ params }) {
                   {followed ? "Unfollow" : "Follow"}
                 </button>
               )}
+              <Link
+                href={`/message/${params.id}`}
+                className="bg-text text-bng hover:bg-primary text-sm rounded-xl py-1 px-2"
+              >
+                Message
+              </Link>
             </span>
           </div>
           <div className="info">

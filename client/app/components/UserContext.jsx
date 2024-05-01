@@ -35,7 +35,6 @@ const UserContext = ({ children }) => {
   useEffect(() => {
     const { token } = getDataFromLocal("token");
     if (token) setJwt_Token(token);
-    // else refetch();
   }, []);
   console.log("isTokenValid", isTokenValid);
   useEffect(() => {
@@ -43,7 +42,6 @@ const UserContext = ({ children }) => {
       isTokenValid?.tokenizedSignIn,
       "isTokenValid?.tokenizedSignIn "
     );
-    // || (!jwt_token && isTokenValid?.tokenizedSignIn == "invalid")
     if (
       (jwt_token || !jwt_token) &&
       isTokenValid?.tokenizedSignIn == "invalid"
@@ -52,7 +50,6 @@ const UserContext = ({ children }) => {
       dispatch(logOut());
       removeDataFromLocal("token");
       removeDataFromLocal("user");
-      // router.push("/");
       return;
     } else {
       const user = getDataFromLocal("user");
@@ -62,7 +59,6 @@ const UserContext = ({ children }) => {
       }
     }
   }, [isTokenValid]);
-  console.log("🚀 ~ useEffect ~ jwt_token:", jwt_token);
 
   return children;
 };

@@ -1,6 +1,8 @@
 import gql from "graphql-tag";
 import mongoose from "mongoose";
 import "../db.js";
+import ConversationModel from "../models/Conversation.model.js";
+import MessageModel from "../models/Message.model.js";
 import PostModel from "../models/Post.model.js";
 import UserModel from "../models/User.model.js";
 import { generateJWT, verifyJWT } from "../utils/auth.js";
@@ -12,7 +14,11 @@ export const typeDefs = gql`
     getPostById(id: String!): Post!
     getPostByAuthor(email: String!): [Post!]
     getPostByAuthorId(_id: String!): User!
+    getConversations(_id: String!): [Conversation!]
+    getConversation(_id1: String!, _id2: String!): Conversation
+    getMessages(conversationId: String!): [Message!]
   }
+
   type Mutation {
     signIn(
       email: String!
@@ -31,20 +37,49 @@ export const typeDefs = gql`
     comment(id: String!, email: String!, comment: String!): [Comment!]
     editPost(id: String!, _id: String!, post: String!): Post!
     deletePost(id: String!, _id: String!): Boolean!
+    createConversation(members: [String!]): Conversation!
+    sendMessage(
+      conversationId: String!
+      sender: String!
+      text: String!
+    ): Message!
   }
+
+  type Conversation {
+    _id: String!
+    members: [String!]
+  }
+
+  type Message {
+    _id: String!
+    conversationId: String!
+    sender: String!
+    text: String!
+  }
+
+  type Message {
+    conversationId: String!
+    sender: String!
+    text: String!
+  }
+
   type follow {
     follow: Boolean!
   }
+
   type GetAllPosts {
     hasMore: Int!
     posts: [Post!]
   }
+
   scalar Date
+
   enum Role {
     user
     admin
     visitor
   }
+
   type User {
     name: String!
     email: String!
@@ -173,6 +208,64 @@ export const resolvers = {
     getPostById: async (_, { id }, context) => {
       const post = await PostModel.findOne({ _id: id });
       return post;
+    },
+    getConversations: async (_, { _id }, context) => {
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (!verify) return null;
+      const conversations = await ConversationModel.aggregate([
+        {
+          $match: {
+            members: { $in: [mongoose.Schema.Types.ObjectId(_id)] },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "members.0",
+            foreignField: "_id",
+            as: "user1",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "members.1",
+            foreignField: "_id",
+            as: "user2",
+          },
+        },
+        {
+          $project: {
+            members: 1,
+            user1: { $arrayElemAt: ["$user1", 0] },
+            user2: { $arrayElemAt: ["$user2", 0] },
+          },
+        },
+      ]);
+      return conversations;
+    },
+    getConversation: async (_, { _id1, _id2 }, context) => {
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      console.log("🚀 ~ getConversation: ~ verify:", verify);
+      if (!verify) return null;
+
+      const conversation = await ConversationModel.findOne({
+        members: { $all: [_id1, _id2] },
+      });
+      console.log(
+        "🚀 ~ getConversation: ~ conversation:",
+        conversation,
+        _id1,
+        _id2
+      );
+      if (!conversation) return null;
+      return conversation;
+    },
+    getMessages: async (_, { conversationId }, context) => {
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (!verify) return null;
+      const messages = await MessageModel.find({ conversationId });
+      return messages;
     },
   },
   Mutation: {
@@ -371,6 +464,30 @@ export const resolvers = {
       } else {
         return false;
       }
+    },
+    createConversation: async (_, { members }, context) => {
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (!verify) return null;
+      const conversation = await ConversationModel.findOne({
+        members: { $all: members },
+      });
+      if (conversation) return conversation;
+      const newConversation = new ConversationModel({
+        members,
+      });
+      await newConversation.save();
+      return newConversation;
+    },
+    sendMessage: async (_, { conversationId, sender, text }, context) => {
+      const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
+      if (!verify) return null;
+      const newMessage = new MessageModel({
+        conversationId,
+        sender,
+        text,
+      });
+      await newMessage.save();
+      return newMessage;
     },
   },
 };
