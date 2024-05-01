@@ -164,7 +164,6 @@ export const resolvers = {
       }
     },
     getAllPosts: async (_, { limit, pageNumber }, context) => {
-      console.log("hi from getAllPosts", limit, pageNumber);
       const postsLength = await PostModel.find({}).countDocuments();
       const posts = await PostModel.find({})
         .sort({
@@ -172,7 +171,6 @@ export const resolvers = {
         })
         .skip((parseInt(pageNumber) - 1) * parseInt(limit))
         .limit(parseInt(limit));
-      console.log(postsLength, "postsLength", postsLength);
       return {
         posts,
         hasMore: postsLength,
@@ -199,7 +197,6 @@ export const resolvers = {
         .populate({
           path: "followed_by",
         });
-      console.log("user", user._doc);
       // const posts = await PostModel.find({ author: user._id }).sort({
       //   createdAt: -1,
       // });
@@ -246,18 +243,12 @@ export const resolvers = {
     },
     getConversation: async (_, { _id1, _id2 }, context) => {
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
-      console.log("🚀 ~ getConversation: ~ verify:", verify);
       if (!verify) return null;
 
       const conversation = await ConversationModel.findOne({
         members: { $all: [_id1, _id2] },
       });
-      console.log(
-        "🚀 ~ getConversation: ~ conversation:",
-        conversation,
-        _id1,
-        _id2
-      );
+
       if (!conversation) return null;
       return conversation;
     },
@@ -289,8 +280,6 @@ export const resolvers = {
       }
     },
     addPost: async (_, { post, photo = "", email, tags }, context) => {
-      console.log("add post");
-
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const user = await UserModel.findOne({ email: email });
@@ -306,7 +295,6 @@ export const resolvers = {
           user.posts.push(newPost._id);
           await newPost.save();
           await user.save();
-          console.log("post success", newPost._doc);
           return newPost._doc;
         } else {
           return null;
@@ -314,8 +302,6 @@ export const resolvers = {
       }
     },
     likeDislikePost: async (_, { id, email }, context) => {
-      console.log("hi from likeDislikePost");
-      console.log("context", context.headers.authorization);
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const user = await UserModel.findOne({ email: email });
@@ -350,7 +336,6 @@ export const resolvers = {
       }
     },
     followUnfollow: async (_, { by, to }, context) => {
-      console.log("context", context.headers.authorization);
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const userBy = await UserModel.findOne({
@@ -360,8 +345,6 @@ export const resolvers = {
           _id: new mongoose.Types.ObjectId(to),
         });
         if (userBy && userTo) {
-          console.log("🚀 ~ followUnfollow: ~ user2:");
-
           if (userBy.follows.includes(userTo._id)) {
             const user = await UserModel.findOneAndUpdate(
               { _id: userBy._id },
@@ -373,8 +356,6 @@ export const resolvers = {
               { $pull: { followed_by: userBy._id } },
               { new: true }
             );
-            console.log("🚀 ~ if followUnfollow: ~:", user);
-            console.log("🚀 ~ if followUnfollow: ~:", user2);
 
             return {
               follow: false,
@@ -390,8 +371,7 @@ export const resolvers = {
               { $push: { followed_by: userBy._id } },
               { new: true }
             );
-            console.log("🚀 ~ else followUnfollow: ~:", user);
-            console.log("🚀 ~ else followUnfollow: ~:", user2);
+
             return {
               follow: true,
             };
@@ -402,7 +382,6 @@ export const resolvers = {
       }
     },
     comment: async (_, { id, email, comment }, context) => {
-      console.log("hi from comment");
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const user = await UserModel.findOne({ email: email });
@@ -420,7 +399,6 @@ export const resolvers = {
               { $push: { comments: newComment } },
               { new: true }
             );
-            console.log("comment success");
             return updatedPost._doc.comments;
           }
         } else {
@@ -429,13 +407,9 @@ export const resolvers = {
       }
     },
     editPost: async (_, { id, _id, post }, context) => {
-      console.log("hi from edit post");
-
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const postFound = await PostModel.findOne({ _id: id });
-        console.log("hi from edit post too", _id);
-        console.log("hi from edit post too", postFound.author);
 
         if (postFound.author.toString() === _id) {
           const updatedPost = await PostModel.findOneAndUpdate(
@@ -443,7 +417,6 @@ export const resolvers = {
             { $set: { post } },
             { new: true }
           );
-          console.log("post edit success");
           return updatedPost._doc;
         }
       } else {
@@ -454,7 +427,6 @@ export const resolvers = {
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (verify) {
         const postFound = await PostModel.findOne({ _id: id });
-        console.log("post delete success", postFound.author.toString(), _id);
         if (postFound.author.toString() === _id) {
           await PostModel.findOneAndDelete({ _id: id });
           return true;

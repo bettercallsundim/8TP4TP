@@ -7,6 +7,7 @@ const globalSlice = createSlice({
     token: "",
     posts: [],
     commentRequestPostID: "",
+    socket: null,
   },
   reducers: {
     setUser(state, { payload: { email, name, picture, googleId, _id } }) {
@@ -40,6 +41,9 @@ const globalSlice = createSlice({
       state.token = null;
       console.log("from redux : logout called");
     },
+    setSocket(state, { payload: { socket } }) {
+      state.socket = socket;
+    },
   },
 });
 export const {
@@ -48,5 +52,6 @@ export const {
   setToken,
   addPostRedux,
   setCommentRequestPostID,
+  setSocket,
 } = globalSlice.actions;
 export default globalSlice.reducer;

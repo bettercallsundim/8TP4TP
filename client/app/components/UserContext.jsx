@@ -4,9 +4,11 @@ import { gql, useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { logOut, setToken, setUser } from "../redux/globalSlice";
+import io from "socket.io-client";
+import { logOut, setSocket, setToken, setUser } from "../redux/globalSlice";
 
 const UserContext = ({ children }) => {
+  const [socket, setSocket] = useState(null);
   const [jwt_token, setJwt_Token] = useState(null);
   const router = useRouter();
   const tokenizedSignInGql = gql`

@@ -1,8 +1,9 @@
 "use client";
 import LeftSidebar from "@/app/components/LeftSidebar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
+import { useSocket } from "@/app/components/SocketProvider";
 import { gql, useMutation, useQuery } from "@apollo/client";
 const GET_CONVERSATION = gql`
   query getConversation($_id1: String!, $_id2: String!) {
@@ -45,6 +46,7 @@ const Message = ({ params: { id } }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
+  const socket = useSocket();
   const { loading, error, data, refetch } = useQuery(GET_CONVERSATION, {
     onError: (err) => {
       console.log(err);
@@ -97,7 +99,6 @@ const Message = ({ params: { id } }) => {
       },
     },
   });
-  console.log(data, "graphql message");
 
   async function sendMsg() {
     if (data?.getConversation === null) {
@@ -113,9 +114,7 @@ const Message = ({ params: { id } }) => {
                 sender: user?._id,
                 text: message,
               },
-              update: (cache, data) => {
-                console.log(data, "from send message data");
-              },
+              update: (cache, data) => {},
             });
           }
         },
@@ -127,11 +126,12 @@ const Message = ({ params: { id } }) => {
           sender: user?._id,
           text: message,
         },
-        update: (cache, data) => {
-          console.log(data, "from send message data");
-        },
+        update: (cache, data) => {},
       });
     }
+    socket?.emit("send-message", { message, to: id, from: user?._id });
+    setMessage("");
+    setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
   }
   useEffect(() => {
     if (user?._id) {
@@ -143,7 +143,6 @@ const Message = ({ params: { id } }) => {
       setConversationId(data?.getConversation?._id);
     }
   }, [data]);
-  console.log(getMessagesData, "from get messages data");
 
   useEffect(() => {
     if (conversationId) {
@@ -153,6 +152,16 @@ const Message = ({ params: { id } }) => {
   useEffect(() => {
     if (getMessagesData?.getMessages) setMessages(getMessagesData?.getMessages);
   }, [getMessagesData]);
+  useEffect(() => {
+    // socket?.on("connect", () => {
+    //   console.log("from socket: hello world");
+    // });
+    socket?.emit("join", user?._id);
+    socket?.on("receive-message", (msg) => {
+      console.log("🚀 ~ socket?.on ~ msg:", msg);
+      setMessages((prev) => [...prev, msg]);
+    });
+  }, [socket]);
   return (
     <div className="bg-bng text-text py-8 px-4 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">
       <div className="hidden md:block">
