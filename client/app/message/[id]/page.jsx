@@ -179,7 +179,7 @@ const Message = ({ params: { id } }) => {
     // socket?.on("connect", () => {
     //   console.log("from socket: hello world");
     // });
-    
+
     socket?.on("receive-message", (msg) => {
       console.log("🚀 ~ socket?.on ~ msg:", msg);
       setMessages((prev) => [...prev, msg]);
@@ -193,7 +193,7 @@ const Message = ({ params: { id } }) => {
       <div className="hidden md:block">
         <LeftSidebar />
       </div>
-      <div className="hidescroll #overflow-y-scroll h-full w-full ">
+      <div className="hidescroll #overflow-y-scroll h-[calc(100vh-100px)] md:h-full w-full ">
         {/* ////user details */}
         <div className="user-details shadow-lg px-8 py-4">
           <div className="flex items-center">
