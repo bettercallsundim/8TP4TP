@@ -2,6 +2,7 @@ import { HomeIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { memo } from "react";
 import { useSelector } from "react-redux";
+import Conversations from "./Conversations";
 
 const LeftSidebar = memo(({ nav }) => {
   const user = useSelector((state) => state.globalSlice.user);
@@ -43,6 +44,7 @@ const LeftSidebar = memo(({ nav }) => {
           <h1 className="text-text ">{link.name}</h1>
         </Link>
       ))}
+      <Conversations/>
     </div>
   );
 });

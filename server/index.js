@@ -79,6 +79,8 @@ io.on("connection", (socket) => {
   console.log("A user connected");
   socket.on("join", (userId) => {
     onlineUsers[userId] = socket.id;
+    socket.userId = userId;
+    io.emit("online-users", onlineUsers);
     console.log(onlineUsers);
   });
   socket.on("send-message", ({ message, to, from }) => {
@@ -91,7 +93,10 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("disconnect", () => {
-    delete onlineUsers[socket.id];
+    delete onlineUsers[socket.userId];
+    io.emit("online-users", onlineUsers);
+
+    console.log("🚀 ~ socket.on ~ onlineUsers:", onlineUsers);
     console.log("User disconnected");
   });
 });

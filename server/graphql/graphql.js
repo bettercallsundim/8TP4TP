@@ -14,9 +14,10 @@ export const typeDefs = gql`
     getPostById(id: String!): Post!
     getPostByAuthor(email: String!): [Post!]
     getPostByAuthorId(_id: String!): User!
-    getConversations(_id: String!): [Conversation!]
+    getConversations(_id: String!): [Conversations!]
     getConversation(_id1: String!, _id2: String!): Conversation
     getMessages(conversationId: String!): [Message!]
+    getUser(_id: String!): User
   }
 
   type Mutation {
@@ -57,10 +58,10 @@ export const typeDefs = gql`
     text: String!
   }
 
-  type Message {
-    conversationId: String!
-    sender: String!
-    text: String!
+  type Conversations {
+    members: [String!]
+    user1: User!
+    user2: User!
   }
 
   type follow {
@@ -140,6 +141,7 @@ export const typeDefs = gql`
     comment: String!
     time: String!
   }
+
   type likeDislikePost {
     liked: Boolean!
     post: Post!
@@ -206,13 +208,18 @@ export const resolvers = {
       const post = await PostModel.findOne({ _id: id });
       return post;
     },
+    getUser: async (_, { _id }, context) => {
+      const user = await UserModel.findById(_id);
+      if (!user) return null;
+      return user;
+    },
     getConversations: async (_, { _id }, context) => {
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
       if (!verify) return null;
       const conversations = await ConversationModel.aggregate([
         {
           $match: {
-            members: { $in: [mongoose.Schema.Types.ObjectId(_id)] },
+            members: { $in: [new mongoose.Types.ObjectId(_id)] },
           },
         },
         {
