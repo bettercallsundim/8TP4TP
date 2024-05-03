@@ -155,7 +155,7 @@ export const resolvers = {
     },
     tokenizedSignIn: (_, __, context) => {
       if (!context.headers.authorization.split(" ")[1]) {
-        return "invalid";
+        return "none";
       }
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
 

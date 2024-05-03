@@ -44,16 +44,13 @@ const UserContext = ({ children }) => {
       isTokenValid?.tokenizedSignIn,
       "isTokenValid?.tokenizedSignIn "
     );
-    if (
-      (jwt_token || !jwt_token) &&
-      isTokenValid?.tokenizedSignIn == "invalid"
-    ) {
+    if (isTokenValid?.tokenizedSignIn == "invalid") {
       console.log(jwt_token, "jwt_token");
       dispatch(logOut());
       removeDataFromLocal("token");
       removeDataFromLocal("user");
       return;
-    } else {
+    } else if (isTokenValid?.tokenizedSignIn == "valid") {
       const user = getDataFromLocal("user");
       if (user) {
         dispatch(setUser(user));
