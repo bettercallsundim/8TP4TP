@@ -49,6 +49,10 @@ export const typeDefs = gql`
   type Conversation {
     _id: String!
     members: [String!]
+    lastMessage: String!
+    lastMessageTime: String!
+    lastMessageSender: String!
+    isSeen: Boolean!
   }
 
   type Message {
@@ -60,6 +64,10 @@ export const typeDefs = gql`
 
   type Conversations {
     members: [String!]
+    lastMessage: String!
+    lastMessageTime: String!
+    lastMessageSender: String!
+    isSeen: Boolean!
     user1: User!
     user2: User!
   }
@@ -241,6 +249,10 @@ export const resolvers = {
         {
           $project: {
             members: 1,
+            lastMessage: 1,
+            lastMessageTime: 1,
+            lastMessageSender: 1,
+            isSeen: 1,
             user1: { $arrayElemAt: ["$user1", 0] },
             user2: { $arrayElemAt: ["$user2", 0] },
           },
@@ -255,8 +267,12 @@ export const resolvers = {
       const conversation = await ConversationModel.findOne({
         members: { $all: [_id1, _id2] },
       });
-
       if (!conversation) return null;
+      if (conversation.lastMessageSender.toString() !== _id2) {
+        conversation.isSeen = true;
+        await conversation.save();
+      }
+
       return conversation;
     },
     getMessages: async (_, { conversationId }, context) => {
@@ -465,7 +481,13 @@ export const resolvers = {
         sender,
         text,
       });
-      await newMessage.save();
+      const conversation = await ConversationModel.findById(conversationId);
+      conversation.lastMessage = text;
+      conversation.lastMessageTime = new Date();
+      conversation.lastMessageSender = sender;
+      conversation.isSeen = false;
+      Promise.all([conversation.save(), newMessage.save()]);
+
       return newMessage;
     },
   },

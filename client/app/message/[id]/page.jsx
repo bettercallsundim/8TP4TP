@@ -55,7 +55,7 @@ const Message = ({ params: { id } }) => {
   const [message, setMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
   const msgRef = useRef(null);
-  const socket = useSocket();
+  const {socket} = useSocket();
   const {
     loading: userLoading,
     error: userError,

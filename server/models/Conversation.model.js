@@ -8,6 +8,20 @@ const ConversationSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    lastMessage: {
+      type: String,
+    },
+    lastMessageTime: {
+      type: Date,
+    },
+    lastMessageSender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    isSeen: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
