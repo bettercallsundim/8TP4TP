@@ -31,11 +31,11 @@ const UserContext = ({ children }) => {
   );
 
   useEffect(() => {
-    if (tokenFromState) {
-      console.log("lol token", tokenFromState);
-      refetch();
-    }
-  }, [tokenFromState]);
+    // if (jwt_token) {
+    console.log("lol token", jwt_token);
+    refetch();
+    // }
+  }, [jwt_token]);
   useEffect(() => {
     const { token } = getDataFromLocal("token");
     if (token) setJwt_Token(token);
@@ -53,12 +53,12 @@ const UserContext = ({ children }) => {
       removeDataFromLocal("user");
       setJwt_Token(null);
       return;
-    } else if (isTokenValid?.tokenizedSignIn == "valid") {
-      // const user = getDataFromLocal("user");
-      // if (user) {
-      //   dispatch(setUser(user));
-      //   dispatch(setToken({ token: jwt_token }));
-      // }
+    } else if (isTokenValid?.tokenizedSignIn == "valid" && jwt_token) {
+      const user = getDataFromLocal("user");
+      if (user) {
+        dispatch(setUser(user));
+        dispatch(setToken({ token: jwt_token }));
+      }
     }
     // else {
     //   dispatch(logOut());
