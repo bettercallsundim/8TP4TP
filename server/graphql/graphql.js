@@ -296,8 +296,8 @@ export const resolvers = {
         const token = generateJWT({ email: email });
         return { token, _id: newUser._id };
       } else {
-        user.picture = picture;
-        await user.save();
+        // user.picture = picture;
+        // await user.save();
         const token = generateJWT({ email: email });
         return { token, _id: user._id };
       }

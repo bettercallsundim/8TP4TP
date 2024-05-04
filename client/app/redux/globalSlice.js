@@ -38,7 +38,7 @@ const globalSlice = createSlice({
     },
     logOut(state) {
       state.user = null;
-      state.token = null;
+      state.token = "";
       console.log("from redux : logout called");
     },
     setSocket(state, { payload: { socket } }) {

@@ -56,6 +56,8 @@ const UserContext = ({ children }) => {
         dispatch(setUser(user));
         dispatch(setToken({ token: jwt_token }));
       }
+    } else {
+      dispatch(logOut());
     }
   }, [isTokenValid]);
 
