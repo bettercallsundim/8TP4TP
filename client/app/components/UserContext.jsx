@@ -24,7 +24,7 @@ const UserContext = ({ children }) => {
     {
       context: {
         headers: {
-          authorization: `Bearer ${tokenFromState}`,
+          authorization: `Bearer ${jwt_token}`,
         },
       },
     }
