@@ -10,6 +10,8 @@ import { logOut, setSocket, setToken, setUser } from "../redux/globalSlice";
 const UserContext = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [jwt_token, setJwt_Token] = useState(null);
+  const tokenFromState = useSelector((state) => state.globalSlice.token);
+
   const router = useRouter();
   const tokenizedSignInGql = gql`
     query TokenizedSignIn {
@@ -22,18 +24,18 @@ const UserContext = ({ children }) => {
     {
       context: {
         headers: {
-          authorization: `Bearer ${jwt_token}`,
+          authorization: `Bearer ${tokenFromState}`,
         },
       },
     }
   );
 
   useEffect(() => {
-    if (jwt_token) {
-      console.log("lol token", jwt_token);
+    if (tokenFromState) {
+      console.log("lol token", tokenFromState);
       refetch();
     }
-  }, [jwt_token]);
+  }, [tokenFromState]);
   useEffect(() => {
     const { token } = getDataFromLocal("token");
     if (token) setJwt_Token(token);
@@ -52,11 +54,11 @@ const UserContext = ({ children }) => {
       setJwt_Token(null);
       return;
     } else if (isTokenValid?.tokenizedSignIn == "valid") {
-      const user = getDataFromLocal("user");
-      if (user) {
-        dispatch(setUser(user));
-        dispatch(setToken({ token: jwt_token }));
-      }
+      // const user = getDataFromLocal("user");
+      // if (user) {
+      //   dispatch(setUser(user));
+      //   dispatch(setToken({ token: jwt_token }));
+      // }
     }
     // else {
     //   dispatch(logOut());
