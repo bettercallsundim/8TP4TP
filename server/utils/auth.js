@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 export const generateJWT = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "1m",
+    expiresIn: "1d",
   });
 };
 

@@ -31,10 +31,10 @@ const UserContext = ({ children }) => {
   );
 
   useEffect(() => {
-    // if (jwt_token) {
-    console.log("lol token", jwt_token);
-    refetch();
-    // }
+    if (jwt_token) {
+      console.log("lol token", jwt_token);
+      refetch();
+    }
   }, [jwt_token]);
   useEffect(() => {
     const { token } = getDataFromLocal("token");
@@ -63,8 +63,10 @@ const UserContext = ({ children }) => {
     // else {
     //   dispatch(logOut());
     //   setJwt_Token(null);
+    //   removeDataFromLocal("token");
+    //   removeDataFromLocal("user");
     // }
-  }, [isTokenValid]);
+  }, [isTokenValid, jwt_token]);
 
   return children;
 };
