@@ -49,6 +49,7 @@ const UserContext = ({ children }) => {
       dispatch(logOut());
       removeDataFromLocal("token");
       removeDataFromLocal("user");
+      setJwt_Token(null);
       return;
     } else if (isTokenValid?.tokenizedSignIn == "valid") {
       const user = getDataFromLocal("user");
@@ -56,9 +57,11 @@ const UserContext = ({ children }) => {
         dispatch(setUser(user));
         dispatch(setToken({ token: jwt_token }));
       }
-    } else {
-      dispatch(logOut());
     }
+    // else {
+    //   dispatch(logOut());
+    //   setJwt_Token(null);
+    // }
   }, [isTokenValid]);
 
   return children;
