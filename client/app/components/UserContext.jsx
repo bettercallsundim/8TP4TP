@@ -10,7 +10,7 @@ import { logOut, setSocket, setToken, setUser } from "../redux/globalSlice";
 const UserContext = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [jwt_token, setJwt_Token] = useState(null);
-  const tokenFromState = useSelector((state) => state.globalSlice.token);
+  // const tokenFromState = useSelector((state) => state.globalSlice.token);
 
   const router = useRouter();
   const tokenizedSignInGql = gql`
