@@ -39,12 +39,12 @@ export default function Login() {
     },
   });
   useEffect(() => {
-    const { token: gotToken } = getDataFromLocal("token");
-    if (gotToken) {
-      setTokenData(gotToken);
+    const tokenData = getDataFromLocal("token");
+    if (tokenData?.token) {
+      setTokenData(tokenData.token);
     }
   }, []);
-  if (!tokenData || !userFromState?.email) {
+  if (!tokenData && !userFromState?.email) {
     return (
       <div className="my-auto mx-auto">
         <Toaster

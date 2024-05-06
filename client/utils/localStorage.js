@@ -14,11 +14,13 @@ export function setDataToLocal(key, value) {
   return false;
 }
 export function getDataFromLocal(key) {
-  if (localStorage.getItem(key)) {
+  try {
     const data = JSON.parse(localStorage.getItem(key));
     return data;
+  } catch (error) {
+    localStorage.removeItem(key);
+    return;
   }
-  return false;
 }
 export function removeDataFromLocal(key) {
   if (localStorage.getItem(key)) {

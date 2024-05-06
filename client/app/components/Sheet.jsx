@@ -155,6 +155,7 @@ const MySheet = memo(
                               className="w-[40px] h-[40px] rounded-full"
                               src={comment?.photo}
                               alt=""
+                              refferrerpolicy="no-referrer"
                             />
                           </span>
                           <p className="flex flex-col gap-1">

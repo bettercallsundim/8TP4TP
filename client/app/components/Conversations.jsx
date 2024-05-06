@@ -2,6 +2,7 @@
 import { useSocket } from "@/app/components/SocketProvider";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -30,6 +31,7 @@ const GET_CONVERSATIONS = gql`
 `;
 const Conversations = () => {
   const { socket, onlineUsers } = useSocket();
+  const router = useRouter()
   console.log("🚀 ~ Conversations ~ socket:", socket);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
@@ -124,6 +126,7 @@ const Conversations = () => {
             <button
               key={ind}
               onClick={() => {
+                router.push(`/message/${friendsConvo[friend]._id}`);
                 // refetch()
               }}
             >

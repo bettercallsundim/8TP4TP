@@ -2,11 +2,12 @@ import { gql, useMutation } from "@apollo/client";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
-import { CiMenuKebab } from "react-icons/ci";
+import { AiFillLike, AiOutlineLike, AiTwotoneEdit } from "react-icons/ai";
+
 import { FaCommentDots } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
+
 import EditMenu from "./EditMenu";
 import MySheet from "./Sheet";
 import Spinner from "./Spinner";
@@ -121,7 +122,7 @@ export default function PostCard({ post, refetch }) {
           }}
           className=" text-2xl cursor-pointer text-accent hover:scale-105 duration-300 inline-block absolute right-4 top-6 z-[2]"
         >
-          <CiMenuKebab />
+          <AiTwotoneEdit />
         </button>
       )}
       <EditMenu
@@ -147,12 +148,13 @@ export default function PostCard({ post, refetch }) {
       <div className="flex items-center header mb-4 pb-2 border-b-2 border-b-gray-300 ">
         <div className="pic mr-4">
           <img
-            className="w-[40px] h-[40px] rounded-full"
+            className="w-[50px] h-[50px] rounded-full"
             src={initPost.authorPhoto}
+            referrerPolicy="no-referrer"
           />
         </div>
         <div>
-          <p className="name font-semibold text-sm">
+          <p className="name font-semibold text-sm mb-1">
             <Link href={`profile/${initPost.author}`}>
               {" "}
               <span className="bg-primary text-bng rounded-lg px-2">
@@ -160,7 +162,7 @@ export default function PostCard({ post, refetch }) {
               </span>
             </Link>
           </p>
-          <p className="name text-text text-sm">
+          <p className="name text-text text-xs">
             {DateTime.fromMillis(parseInt(initPost.time)).toLocaleString(
               DateTime.DATETIME_MED
             )}

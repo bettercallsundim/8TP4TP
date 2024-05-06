@@ -10,39 +10,40 @@ import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 
 import { HomeIcon } from "@radix-ui/react-icons";
-import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { logOut } from "../redux/globalSlice";
-const mblLinks = [
-  {
-    name: "Home",
-    link: "/",
-    icon: <HomeIcon />,
-    description: "",
-  },
-  {
-    name: "Feed",
-    link: "/feed",
-    icon: <HomeIcon />,
-    description: "",
-  },
-  {
-    name: "My Profile",
-    link: "/profile",
-    icon: <HomeIcon />,
-    description: "",
-  },
-  {
-    name: "Global Feed",
-    link: "/global_feed",
-    icon: <HomeIcon />,
-    description: "",
-  },
-];
+
 function Nav() {
+  const user = useSelector((state) => state.globalSlice.user);
+
+  const mblLinks = [
+    {
+      name: "Home",
+      link: "/",
+      icon: <HomeIcon />,
+      description: "",
+    },
+    {
+      name: "Feed",
+      link: "/feed",
+      icon: <HomeIcon />,
+      description: "",
+    },
+    {
+      name: "My Profile",
+      link: "/profile/" + user?._id,
+      icon: <HomeIcon />,
+      description: "",
+    },
+    {
+      name: "Global Feed",
+      link: "/global_feed",
+      icon: <HomeIcon />,
+      description: "",
+    },
+  ];
   const router = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
-  const user = useSelector((state) => state.globalSlice.user);
   const handleLogout = () => {
     console.log("logging out");
     googleLogout();
@@ -145,109 +146,57 @@ function Nav() {
           </button>
         </div>
       </div>
-      <AnimatePresence>
-        {showMenu && (
-          <motion.div
-            variants={{
-              hide: {
-                x: "-100%",
-                transition: {
-                  type: "spring",
-                  bounce: 0.1,
-                  when: "afterChildren",
-                  staggerChildren: 0.001,
-                },
-              },
-              show: {
-                x: "0%",
-                transition: {
-                  type: "spring",
-                  bounce: 0.1,
-                  when: "beforeChildren",
-                  staggerChildren: 0.001,
-                },
-              },
-            }}
-            initial="hide"
-            animate="show"
-            exit="hide"
-            className="bg-bng h-screen  md:hidden"
-          >
-            {mblLinks.map((link) => (
-              <motion.p
-                variants={{
-                  hide: {
-                    y: "25%",
-                    opacity: 0,
-                  },
-                  show: {
-                    y: "0%",
-                    opacity: 1,
-                  },
-                }}
-              >
-                <Link
-                  prefetch={false}
-                  href={link.link}
-                  className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
-                >
-                  <span className="text-primary">{link.icon}</span>
-                  <h1 className="text-text">{link.name}</h1>
-                </Link>
-              </motion.p>
-            ))}
-            {user?.email && (
-              <motion.li
-                variants={{
-                  hide: {
-                    y: "25%",
-                    opacity: 0,
-                  },
-                  show: {
-                    y: "0%",
-                    opacity: 1,
-                  },
-                }}
+      {showMenu && (
+        <div className="bg-bng h-full shadow-lg  md:hidden py-4">
+          {mblLinks.map((link) => (
+            <p onClick={() => setShowMenu(false)}>
+              <Link
+                prefetch={false}
+                href={link.link}
                 className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
-                onClick={handleLogout}
               >
-                <button className="flex items-center gap-x-4">
-                  {" "}
-                  <span>
-                    <IoMdLogOut className=" my-auto text-primary" />
-                  </span>{" "}
-                  <span className="text-text">Log Out</span>
-                </button>
-              </motion.li>
-            )}
-            <motion.li
-              variants={{
-                hide: {
-                  y: "25%",
-                  opacity: 0,
-                },
-                show: {
-                  y: "0%",
-                  opacity: 1,
-                },
-              }}
+                <span className="text-primary">{link.icon}</span>
+                <h1 className="text-text">{link.name}</h1>
+              </Link>
+            </p>
+          ))}
+          {user?.email && (
+            <li
               className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
-              onClick={toggleTheme}
+              onClick={() => {
+                handleLogout();
+                setShowMenu(false);
+              }}
             >
               <button className="flex items-center gap-x-4">
-                {theme === "light" ? (
-                  <MdDarkMode className=" my-auto text-primary" />
-                ) : (
-                  <MdLightMode className=" my-auto text-primary" />
-                )}
-                <span className="text-text">
-                  {theme === "light" ? "Dark Mode" : "Light Mode"}
-                </span>
+                {" "}
+                <span>
+                  <IoMdLogOut className=" my-auto text-primary" />
+                </span>{" "}
+                <span className="text-text">Log Out</span>
               </button>
-            </motion.li>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </li>
+          )}
+          <li
+            className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+            onClick={() => {
+              toggleTheme();
+              setShowMenu(false);
+            }}
+          >
+            <button className="flex items-center gap-x-4">
+              {theme === "light" ? (
+                <MdDarkMode className=" my-auto text-primary" />
+              ) : (
+                <MdLightMode className=" my-auto text-primary" />
+              )}
+              <span className="text-text">
+                {theme === "light" ? "Dark Mode" : "Light Mode"}
+              </span>
+            </button>
+          </li>
+        </div>
+      )}
     </nav>
   );
 }

@@ -34,6 +34,7 @@ const GET_USER_POSTS = gql`
 `;
 export default function feed() {
   const user = useSelector((state) => state.globalSlice.user);
+  console.log("🚀 ~ feed ~ user:", user)
 
   const { loading, error, data, refetch } = useQuery(GET_USER_POSTS, {
     onError: (err) => {

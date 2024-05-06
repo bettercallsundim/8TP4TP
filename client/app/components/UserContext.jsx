@@ -37,8 +37,9 @@ const UserContext = ({ children }) => {
     }
   }, [jwt_token]);
   useEffect(() => {
-    const { token } = getDataFromLocal("token");
-    if (token) setJwt_Token(token);
+    const tokenData = getDataFromLocal("token");
+    console.log("🚀 ~ useEffect ~ token:", tokenData)
+    if (tokenData?.token) setJwt_Token(tokenData.token);
   }, []);
   console.log("isTokenValid", isTokenValid);
   useEffect(() => {
@@ -55,6 +56,7 @@ const UserContext = ({ children }) => {
       return;
     } else if (isTokenValid?.tokenizedSignIn == "valid" && jwt_token) {
       const user = getDataFromLocal("user");
+      console.log("🚀 ~ useEffect ~ user:", user)
       if (user) {
         dispatch(setUser(user));
         dispatch(setToken({ token: jwt_token }));
