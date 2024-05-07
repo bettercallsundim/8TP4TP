@@ -147,7 +147,7 @@ function Nav() {
         </div>
       </div>
       {showMenu && (
-        <div className="bg-bng h-full shadow-lg  md:hidden py-4">
+        <div className="bg-bng h-full shadow-lg  md:hidden py-4 ">
           {mblLinks.map((link) => (
             <p onClick={() => setShowMenu(false)}>
               <Link

@@ -191,7 +191,7 @@ const Message = ({ params: { id } }) => {
   }, [messages]);
   console.log(friendsConvo, "friendsConvo");
   return (
-    <div className="bg-bng text-text py-4 px-4 md:px-12 flex items-start h-[calc(100vh-4rem)] w-full overflow-hidden ">
+    <div className="bg-bng text-text py-4 px-4 md:px-12 flex items-start h-[calc(100vh-70px)] md:h-[calc(100vh-50px)]  w-full overflow-hidden ">
       <div className="hidden md:block">
         <LeftSidebar />
       </div>
@@ -228,7 +228,7 @@ const Message = ({ params: { id } }) => {
         </div>
         <div
           ref={msgRef}
-          className="messages h-[80%] overflow-y-scroll px-8 pt-2"
+          className="messages h-[78%] overflow-y-scroll px-8 pt-2"
         >
           {messages.map((msg) => (
             <div className={` flex items-center gap-y-4 gap-x-8 mb-8`}>
@@ -264,7 +264,7 @@ const Message = ({ params: { id } }) => {
             </div>
           ))}
         </div>
-        <div className="input-message py-2 flex items-center gap-4">
+        <div className="input-message pt-4 pb-8 md:pb-4 flex items-center gap-4">
           <input
             className="w-full rounded-lg p-2 text-black border border-gray-400"
             value={message}
