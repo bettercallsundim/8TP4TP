@@ -1,4 +1,4 @@
-# 8TP4TP : By The People, For The People
+# 8TP4TP : By The !People, For The People
 
 Democratic social network platform.
 
