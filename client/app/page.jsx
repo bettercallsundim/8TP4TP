@@ -2,15 +2,15 @@ import Login from "./components/Login";
 
 export default function page() {
   return (
-    <div className="min-h-screen min-w-full container mx-auto bg-bng text-text flex flex-col md:flex-row items-center px-4 md:px-8  justify-center md:justify-around overflow-y-hidden">
+    <div className="h-[calc(100vh-4rem)] min-w-full container mx-auto bg-bng text-text flex flex-col md:flex-row items-center px-2 md:px-8  justify-center md:justify-around overflow-y-hidden">
       <div className="">
         <p className="md:text-[50px] text-[30px]  text-primary leading-[3rem] md:leading-[5rem]">
           <span className="bg-primary text-text px-2 border-t-4 border-text">
-            Democratic
+            Democratic <br className="md:hidden" />
           </span>{" "}
           Social network
           <br />{" "}
-          <span className=" text-gray-500 px-2 border-text">
+          <span className=" text-gray-500 text-[25px] md:text-[50px] px-2 border-text">
             {" "}
             ... wait democratic ?
           </span>

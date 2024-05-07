@@ -7,7 +7,7 @@ const globalSlice = createSlice({
     token: "",
     posts: [],
     commentRequestPostID: "",
-    socket: null,
+    friendsConvo: {},
   },
   reducers: {
     setUser(state, { payload: { email, name, picture, googleId, _id } }) {
@@ -47,8 +47,8 @@ const globalSlice = createSlice({
         state.user
       );
     },
-    setSocket(state, { payload: { socket } }) {
-      state.socket = socket;
+    setFriendsConvoRedux(state, { payload: { friendsConvo } }) {
+      state.friendsConvo = { ...friendsConvo };
     },
   },
 });
@@ -58,6 +58,6 @@ export const {
   setToken,
   addPostRedux,
   setCommentRequestPostID,
-  setSocket,
+  setFriendsConvoRedux,
 } = globalSlice.actions;
 export default globalSlice.reducer;

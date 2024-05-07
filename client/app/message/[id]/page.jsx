@@ -51,11 +51,12 @@ const SEND_MESSAGE = gql`
 const Message = ({ params: { id } }) => {
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
+  const friendsConvo = useSelector((state) => state.globalSlice.friendsConvo);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
   const msgRef = useRef(null);
-  const {socket} = useSocket();
+  const { socket } = useSocket();
   const {
     loading: userLoading,
     error: userError,
@@ -188,24 +189,47 @@ const Message = ({ params: { id } }) => {
   useEffect(() => {
     msgRef.current.scrollTop = msgRef.current.scrollHeight;
   }, [messages]);
+  console.log(friendsConvo, "friendsConvo");
   return (
-    <div className="bg-bng text-text py-8 px-4 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">
+    <div className="bg-bng text-text py-4 px-4 md:px-12 flex items-start h-[calc(100vh-4rem)] w-full overflow-hidden ">
       <div className="hidden md:block">
         <LeftSidebar />
       </div>
-      <div className="hidescroll #overflow-y-scroll h-[calc(100vh-100px)] md:h-full w-full ">
+      <div className="hidescroll #overflow-y-scroll #h-[calc(100vh-100px)] h-full md:h-full w-full ">
         {/* ////user details */}
-        <div className="user-details shadow-lg px-8 py-4">
-          <div className="flex items-center">
+        <div className="user-details boxshadow rounded-lg px-8 py-4">
+          <div className="flex items-center gap-4">
             <img
               src={userData?.getUser?.picture}
               alt=""
-              className="w-12 h-12 rounded-full"
+              className={`w-12 h-12 rounded-full ${
+                id &&
+                Object.keys(friendsConvo || {}).length > 0 &&
+                friendsConvo[id]?.isOnline
+                  ? "outline outline-2 outline-offset-2 outline-green-600"
+                  : "outline outline-2 outline-offset-2 outline-gray-500"
+              }`}
             />
-            <h1 className="text-xl ml-2">{userData?.getUser?.name}</h1>
+            <span className="flex flex-col">
+              <span className="text-xl">{userData?.getUser?.name}</span>
+              {id &&
+              Object.keys(friendsConvo || {}).length > 0 &&
+              friendsConvo[id]?.isOnline ? (
+                <span className="text-xs text-green-600 font-medium">
+                  Online
+                </span>
+              ) : (
+                <span className="text-xs text-gray-500 font-medium">
+                  Offline
+                </span>
+              )}
+            </span>
           </div>
         </div>
-        <div ref={msgRef} className="messages h-[80%] overflow-y-scroll px-8">
+        <div
+          ref={msgRef}
+          className="messages h-[80%] overflow-y-scroll px-8 pt-2"
+        >
           {messages.map((msg) => (
             <div className={` flex items-center gap-y-4 gap-x-8 mb-8`}>
               <div
@@ -240,9 +264,9 @@ const Message = ({ params: { id } }) => {
             </div>
           ))}
         </div>
-        <div className="input-message flex items-center gap-4">
+        <div className="input-message py-2 flex items-center gap-4">
           <input
-            className="w-full rounded-lg p-2 text-black"
+            className="w-full rounded-lg p-2 text-black border border-gray-400"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={(e) => {
@@ -254,9 +278,9 @@ const Message = ({ params: { id } }) => {
           />
           <button
             onClick={sendMsg}
-            className="bg-primary text-white rounded-lg  px-2 py-1"
+            className="bg-primary text-white rounded-lg  px-2 py-2 mr-4"
           >
-            send
+            Send
           </button>
         </div>
       </div>

@@ -4,7 +4,8 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setFriendsConvoRedux } from "../redux/globalSlice";
 
 const GET_CONVERSATIONS = gql`
   query getConversations($_id: String!) {
@@ -31,7 +32,8 @@ const GET_CONVERSATIONS = gql`
 `;
 const Conversations = () => {
   const { socket, onlineUsers } = useSocket();
-  const router = useRouter()
+  const router = useRouter();
+  const dispatch = useDispatch();
   console.log("🚀 ~ Conversations ~ socket:", socket);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
@@ -88,13 +90,6 @@ const Conversations = () => {
     }
   }, [data?.getConversations]);
 
-  // useEffect(() => {
-  //   socket?.emit("join", user?._id);
-  //   socket?.on("online-users", (onlineUser) => {
-  //     setOnlineUsers(onlineUser);
-  //     console.log(friendsConvo, "🚀 ~ socket?.on ~ onlineUser:", onlineUser);
-  //   });
-  // }, [socket, user]);
   useEffect(() => {
     console.log("🚀 ~ friendsConvo", friendsConvo);
     if (onlineUsers && Object.keys(friendsConvo).length > 0) {
@@ -102,17 +97,20 @@ const Conversations = () => {
       console.log("🚀 ~ useEffect ~ friendOnline:", friendOnline);
 
       Object.keys(friendOnline).forEach((userId) => {
+        friendOnline[userId] = { ...friendsConvo[userId] }; // Create a new object
+
         if (onlineUsers[userId]) {
           friendOnline[userId].isOnline = true;
         } else {
           friendOnline[userId].isOnline = false;
         }
       });
-      setFriendsConvo(friendOnline);
+      setFriendsConvo({ ...friendOnline });
     }
   }, [onlineUsers, needUpdate]);
   useEffect(() => {
     setFriendsConvoList(Object.keys(friendsConvo));
+    dispatch(setFriendsConvoRedux({ friendsConvo: { ...friendsConvo } }));
   }, [friendsConvo]);
   console.log(onlineUsers, "🚀 ~ Conversations ~ friendsConvo:", friendsConvo);
   return (
