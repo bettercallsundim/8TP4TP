@@ -228,17 +228,17 @@ const Message = ({ params: { id } }) => {
         </div>
         <div
           ref={msgRef}
-          className="messages h-[78%] overflow-y-scroll px-8 pt-2"
+          className="messages h-[80%] md:h-[77%] overflow-y-scroll px-2 md:px-8 pt-2"
         >
           {messages.map((msg) => (
-            <div className={` flex items-center gap-y-4 gap-x-8 mb-8`}>
+            <div className={` flex   items-center gap-y-4 gap-x-8 mb-8`}>
               <div
                 className={`${
                   msg.sender === user?._id ? "ml-auto" : "mr-auto"
-                } flex items-center gap-y-4 gap-x-8`}
+                } flex flex-wrap items-center gap-y-4 gap-x-8`}
               >
                 {msg.sender !== user?._id && (
-                  <p className="flex items-center gap-x-2 ">
+                  <p className="flex  items-center gap-x-2 ">
                     <span>
                       <img
                         referrerPolicy="no-referrer"
@@ -264,7 +264,7 @@ const Message = ({ params: { id } }) => {
             </div>
           ))}
         </div>
-        <div className="input-message pt-4 pb-8 md:pb-4 flex items-center gap-4">
+        <div className="input-message md:h-[10%] pt-4 pb-8 md:pb-4 flex items-center gap-4">
           <input
             className="w-full rounded-lg p-2 text-black border border-gray-400"
             value={message}
