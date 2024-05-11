@@ -2,7 +2,7 @@
 import { useSocket } from "@/app/components/SocketProvider";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriendsConvoRedux } from "../redux/globalSlice";
@@ -33,6 +33,8 @@ const GET_CONVERSATIONS = gql`
 const Conversations = () => {
   const { socket, onlineUsers } = useSocket();
   const router = useRouter();
+  const pathname = usePathname();
+
   const dispatch = useDispatch();
   console.log("🚀 ~ Conversations ~ socket:", socket);
   const user = useSelector((state) => state.globalSlice.user);
@@ -57,7 +59,7 @@ const Conversations = () => {
     if (user) {
       refetch();
     }
-  }, [user]);
+  }, [user, pathname]);
   useEffect(() => {
     if (data?.getConversations) {
       let friends = { ...friendsConvo };
@@ -83,7 +85,6 @@ const Conversations = () => {
           };
         }
       });
-      console.log("firinggg 2", friends);
 
       setFriendsConvo(friends);
       setNeedUpdate((prev) => prev + 1);
@@ -91,7 +92,6 @@ const Conversations = () => {
   }, [data?.getConversations]);
 
   useEffect(() => {
-    console.log("🚀 ~ friendsConvo", friendsConvo);
     if (onlineUsers && Object.keys(friendsConvo).length > 0) {
       let friendOnline = { ...friendsConvo };
       console.log("🚀 ~ useEffect ~ friendOnline:", friendOnline);
@@ -112,7 +112,6 @@ const Conversations = () => {
     setFriendsConvoList(Object.keys(friendsConvo));
     dispatch(setFriendsConvoRedux({ friendsConvo: { ...friendsConvo } }));
   }, [friendsConvo]);
-  console.log(onlineUsers, "🚀 ~ Conversations ~ friendsConvo:", friendsConvo);
   return (
     <div className="mt-8">
       <h1 className="bg-accent py-2 px-2 font-semibold text-xl my-4">

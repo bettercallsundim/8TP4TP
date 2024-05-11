@@ -55,7 +55,9 @@ const Message = ({ params: { id } }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
+  const [top, setTop] = useState(0);
   const msgRef = useRef(null);
+  const divRef = useRef(null);
   const { socket } = useSocket();
   const {
     loading: userLoading,
@@ -161,6 +163,9 @@ const Message = ({ params: { id } }) => {
     if (user?._id) {
       refetch();
     }
+    return () => {
+      refetch();
+    };
   }, [user]);
   useEffect(() => {
     if (data?.getConversation?._id) {
@@ -168,6 +173,11 @@ const Message = ({ params: { id } }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    const positionFromTop = divRef?.current?.offsetTop;
+    console.log("🚀 ~ useEffect ~ positionFromTop:", positionFromTop);
+    setTop(positionFromTop);
+  }, []);
   useEffect(() => {
     if (conversationId) {
       getMessagesRefetch();
@@ -177,27 +187,29 @@ const Message = ({ params: { id } }) => {
     if (getMessagesData?.getMessages) setMessages(getMessagesData?.getMessages);
   }, [getMessagesData]);
   useEffect(() => {
-    // socket?.on("connect", () => {
-    //   console.log("from socket: hello world");
-    // });
-
     socket?.on("receive-message", (msg) => {
-      console.log("🚀 ~ socket?.on ~ msg:", msg);
       setMessages((prev) => [...prev, msg]);
     });
   }, [socket]);
   useEffect(() => {
     msgRef.current.scrollTop = msgRef.current.scrollHeight;
+    console.log("scrolling", messages);
   }, [messages]);
   console.log(friendsConvo, "friendsConvo");
   return (
-    <div className="bg-bng text-text py-4 px-4 md:px-12 flex items-start h-[calc(100vh-70px)] md:h-[calc(100vh-50px)]  w-full overflow-hidden ">
+    <div
+      ref={divRef}
+      style={{
+        height: `calc(100vh - ${top}px)`,
+      }}
+      className="bg-bng text-text py-4 px-4 md:px-12 flex items-start   w-full overflow-hidden "
+    >
       <div className="hidden md:block">
         <LeftSidebar />
       </div>
       <div className="hidescroll #overflow-y-scroll #h-[calc(100vh-100px)] h-full md:h-full w-full ">
         {/* ////user details */}
-        <div className="user-details boxshadow rounded-lg px-8 py-4">
+        <div className="user-details h-[80px] boxshadow rounded-lg px-8 py-4">
           <div className="flex items-center gap-4">
             <img
               src={userData?.getUser?.picture}
@@ -228,7 +240,10 @@ const Message = ({ params: { id } }) => {
         </div>
         <div
           ref={msgRef}
-          className="messages h-[80%] md:h-[77%] overflow-y-scroll px-2 md:px-8 pt-2"
+          style={{
+            height: `calc(100vh - ${top + 180}px)`,
+          }}
+          className="messages  overflow-y-scroll px-2 md:px-8 pt-2"
         >
           {messages.map((msg) => (
             <div className={` flex   items-center gap-y-4 gap-x-8 mb-8`}>
@@ -264,7 +279,7 @@ const Message = ({ params: { id } }) => {
             </div>
           ))}
         </div>
-        <div className="input-message md:h-[10%] pt-4 pb-8 md:pb-4 flex items-center gap-4">
+        <div className="input-message h-[80px]  pt-4 pb-8 md:pb-4 flex items-center gap-4">
           <input
             className="w-full rounded-lg p-2 text-black border border-gray-400"
             value={message}
