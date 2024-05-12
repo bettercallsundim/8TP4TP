@@ -10,7 +10,6 @@ import { logOut, setSocket, setToken, setUser } from "../redux/globalSlice";
 const UserContext = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [jwt_token, setJwt_Token] = useState(null);
-  // const tokenFromState = useSelector((state) => state.globalSlice.token);
 
   const router = useRouter();
   const tokenizedSignInGql = gql`
@@ -32,23 +31,15 @@ const UserContext = ({ children }) => {
 
   useEffect(() => {
     if (jwt_token) {
-      console.log("lol token", jwt_token);
       refetch();
     }
   }, [jwt_token]);
   useEffect(() => {
     const tokenData = getDataFromLocal("token");
-    console.log("🚀 ~ useEffect ~ token:", tokenData)
     if (tokenData?.token) setJwt_Token(tokenData.token);
   }, []);
-  console.log("isTokenValid", isTokenValid);
   useEffect(() => {
-    console.log(
-      isTokenValid?.tokenizedSignIn,
-      "isTokenValid?.tokenizedSignIn "
-    );
     if (isTokenValid?.tokenizedSignIn == "invalid") {
-      console.log(jwt_token, "jwt_token");
       dispatch(logOut());
       removeDataFromLocal("token");
       removeDataFromLocal("user");
@@ -56,18 +47,11 @@ const UserContext = ({ children }) => {
       return;
     } else if (isTokenValid?.tokenizedSignIn == "valid" && jwt_token) {
       const user = getDataFromLocal("user");
-      console.log("🚀 ~ useEffect ~ user:", user)
       if (user) {
         dispatch(setUser(user));
         dispatch(setToken({ token: jwt_token }));
       }
     }
-    // else {
-    //   dispatch(logOut());
-    //   setJwt_Token(null);
-    //   removeDataFromLocal("token");
-    //   removeDataFromLocal("user");
-    // }
   }, [isTokenValid, jwt_token]);
 
   return children;

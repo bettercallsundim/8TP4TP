@@ -1,6 +1,6 @@
 "use client";
-
 import { gql, useMutation } from "@apollo/client";
+import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 const DELETE_POST = gql`
   mutation deletePost($id: String!, $_id: String!) {
@@ -29,7 +29,7 @@ export default function EditMenu({
     }
   );
   return (
-    <div
+    <motion.div
       className={
         editMenuOpen
           ? `rounded-lg border border-text w-1/2 bg-bng text-text absolute z-[9999999999] top-4 right-4 p-4`
@@ -62,6 +62,6 @@ export default function EditMenu({
       >
         Delete
       </button>
-    </div>
+    </motion.div>
   );
 }

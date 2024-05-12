@@ -131,7 +131,6 @@ const CreatePost = memo(({ refetch, loading }) => {
           setLoading(false);
         },
       });
-      console.log("here", category);
       setDoc({ post: "", photo: "" });
       setCategory(null);
     }

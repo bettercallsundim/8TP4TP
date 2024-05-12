@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useSocket } from "@/app/components/SocketProvider";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 const GET_USER = gql`
   query getUser($_id: String!) {
     getUser(_id: $_id) {
@@ -72,7 +72,6 @@ const Message = ({ params: { id } }) => {
       _id: id,
     },
   });
-  console.log("🚀 ~ Message ~ userData:", userData);
   const { loading, error, data, refetch } = useQuery(GET_CONVERSATION, {
     onError: (err) => {
       console.log(err);
@@ -87,18 +86,18 @@ const Message = ({ params: { id } }) => {
       },
     },
   });
-  const {
-    loading: getMessagesLoading,
-    error: getMessagesError,
-    data: getMessagesData,
-    refetch: getMessagesRefetch,
-  } = useQuery(GET_MESSAGES, {
+  const [
+    getMessagesRefetch,
+    {
+      loading: getMessagesLoading,
+      error: getMessagesError,
+      data: getMessagesData,
+    },
+  ] = useLazyQuery(GET_MESSAGES, {
     onError: (err) => {
       console.log(err);
     },
-    variables: {
-      conversationId,
-    },
+
     context: {
       headers: {
         authorization: `Bearer ${token}`,
@@ -175,12 +174,15 @@ const Message = ({ params: { id } }) => {
 
   useEffect(() => {
     const positionFromTop = divRef?.current?.offsetTop;
-    console.log("🚀 ~ useEffect ~ positionFromTop:", positionFromTop);
     setTop(positionFromTop);
   }, []);
   useEffect(() => {
     if (conversationId) {
-      getMessagesRefetch();
+      getMessagesRefetch({
+        variables: {
+          conversationId,
+        },
+      });
     }
   }, [conversationId]);
   useEffect(() => {
@@ -193,9 +195,7 @@ const Message = ({ params: { id } }) => {
   }, [socket]);
   useEffect(() => {
     msgRef.current.scrollTop = msgRef.current.scrollHeight;
-    console.log("scrolling", messages);
   }, [messages]);
-  console.log(friendsConvo, "friendsConvo");
   return (
     <div
       ref={divRef}
@@ -245,8 +245,11 @@ const Message = ({ params: { id } }) => {
           }}
           className="messages  overflow-y-scroll px-2 md:px-8 pt-2"
         >
-          {messages.map((msg) => (
-            <div className={` flex   items-center gap-y-4 gap-x-8 mb-8`}>
+          {messages.map((msg, ind) => (
+            <div
+              key={ind}
+              className={` flex   items-center gap-y-4 gap-x-8 mb-8`}
+            >
               <div
                 className={`${
                   msg.sender === user?._id ? "ml-auto" : "mr-auto"

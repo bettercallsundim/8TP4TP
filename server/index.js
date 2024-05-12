@@ -81,10 +81,8 @@ io.on("connection", (socket) => {
     onlineUsers[userId] = socket.id;
     socket.userId = userId;
     io.emit("online-users", onlineUsers);
-    console.log(onlineUsers);
   });
   socket.on("send-message", ({ message, to, from }) => {
-    console.log(message, to, from);
     const toSocketId = onlineUsers[to];
     if (toSocketId) {
       socket
@@ -96,7 +94,6 @@ io.on("connection", (socket) => {
     delete onlineUsers[socket.userId];
     io.emit("online-users", onlineUsers);
 
-    console.log("🚀 ~ socket.on ~ onlineUsers:", onlineUsers);
     console.log("User disconnected");
   });
 });

@@ -146,7 +146,6 @@ const MySheet = memo(
                     array?.map((_, ind) => <CommentSkeleton key={ind} />)}
 
                   {comments?.map((comment, ind) => {
-                    console.log("comment author photo : ", comment);
                     return (
                       <div className="mb-8">
                         <p className="flex items-center gap-x-2 ">
@@ -200,14 +199,12 @@ const MySheet = memo(
                             comment: comment,
                           },
                           update: (cache, data) => {
-                            console.log("hi from comment", data);
                             const commentArray = data.data.comment;
                             setComments(commentArray);
                             setInitPost({
                               ...initPost,
                               comments: commentArray,
                             });
-                            console.log("init post : ", initPost);
                           },
                         });
                         scrollToBottom();
@@ -269,7 +266,6 @@ const MySheet = memo(
                             post,
                           },
                           update: (cache, data) => {
-                            console.log("hi from editPost", data);
                             const fetchedPost = data.data.post;
                             setPost(fetchedPost);
                             setInitPost({

@@ -18,7 +18,6 @@ const globalSlice = createSlice({
         googleId,
         _id,
       };
-      console.log(state.user, "from redux");
     },
     addPostRedux(state, { payload: { post, name, time, photo, authorPhoto } }) {
       state.posts.push({
@@ -31,7 +30,6 @@ const globalSlice = createSlice({
     },
     setToken(state, { payload: { token } }) {
       state.token = token;
-      console.log("from redux :token", state.token);
     },
     setCommentRequestPostID(state, { payload: { id } }) {
       state.commentRequestPostID = id;
@@ -40,12 +38,7 @@ const globalSlice = createSlice({
       state.user = null;
       state.token = "";
 
-      console.log(
-        "from redux : logout called",
-        state.token,
-        "user",
-        state.user
-      );
+
     },
     setFriendsConvoRedux(state, { payload: { friendsConvo } }) {
       state.friendsConvo = { ...friendsConvo };

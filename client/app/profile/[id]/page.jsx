@@ -77,8 +77,6 @@ export default function Profile({ params }) {
     console.log(followUnfollowError);
   }
   const userGot = data?.getPostByAuthorId;
-  console.log("followed", userGot?.followed_by);
-  console.log("followeddd", user?._id);
   useEffect(() => {
     const isFollowing = userGot?.followed_by?.find((f) => f._id === user?._id);
     if (isFollowing) {

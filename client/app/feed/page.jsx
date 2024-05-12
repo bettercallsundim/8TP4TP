@@ -34,7 +34,6 @@ const GET_USER_POSTS = gql`
 `;
 export default function feed() {
   const user = useSelector((state) => state.globalSlice.user);
-  console.log("🚀 ~ feed ~ user:", user)
 
   const { loading, error, data, refetch } = useQuery(GET_USER_POSTS, {
     onError: (err) => {
@@ -46,7 +45,6 @@ export default function feed() {
   });
 
   const posts = data?.getPostByAuthor;
-  console.log(posts, user?.email);
   const dispatch = useDispatch();
   const router = useRouter();
 

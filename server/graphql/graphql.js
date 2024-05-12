@@ -162,10 +162,7 @@ export const resolvers = {
       return "hello";
     },
     tokenizedSignIn: (_, __, context) => {
-      console.log(
-        "🚀 ~ context.headers.authorization.split",
-        context.headers.authorization
-      );
+      
 
       if (
         !context.headers.authorization.split(" ")[1] ||
@@ -174,11 +171,7 @@ export const resolvers = {
         return "none";
       }
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
-      console.log(
-        context.headers.authorization.split(" ")[1],
-        "🚀 ~ verify:",
-        verify
-      );
+
 
       if (verify) {
         return "valid";

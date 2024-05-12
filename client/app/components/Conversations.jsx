@@ -1,6 +1,6 @@
 "use client";
 import { useSocket } from "@/app/components/SocketProvider";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
@@ -36,34 +36,47 @@ const Conversations = () => {
   const pathname = usePathname();
 
   const dispatch = useDispatch();
-  console.log("🚀 ~ Conversations ~ socket:", socket);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
   const [friendsConvo, setFriendsConvo] = useState({});
   const [friendsConvoList, setFriendsConvoList] = useState([]);
   const [needUpdate, setNeedUpdate] = useState(0);
-  const { loading, error, data, refetch } = useQuery(GET_CONVERSATIONS, {
+  const [refetch, { loading, error, data }] = useLazyQuery(GET_CONVERSATIONS, {
     onError: (err) => {
       console.log(err);
     },
-    variables: {
-      _id: user?._id,
-    },
+
     context: {
       headers: {
         authorization: `Bearer ${token}`,
       },
     },
   });
+  // const { loading, error, data, refetch } = useQuery(GET_CONVERSATIONS, {
+  //   onError: (err) => {
+  //     console.log(err);
+  //   },
+  //   variables: {
+  //     _id: user?._id,
+  //   },
+  //   context: {
+  //     headers: {
+  //       authorization: `Bearer ${token}`,
+  //     },
+  //   },
+  // });
   useEffect(() => {
     if (user) {
-      refetch();
+      refetch({
+        variables: {
+          _id: user?._id,
+        },
+      });
     }
   }, [user, pathname]);
   useEffect(() => {
     if (data?.getConversations) {
       let friends = { ...friendsConvo };
-      console.log("firinggg 1", friendsConvo);
       data?.getConversations.forEach((convo) => {
         if (convo.user1._id === user._id) {
           friends[convo.user2._id] = {
@@ -94,7 +107,6 @@ const Conversations = () => {
   useEffect(() => {
     if (onlineUsers && Object.keys(friendsConvo).length > 0) {
       let friendOnline = { ...friendsConvo };
-      console.log("🚀 ~ useEffect ~ friendOnline:", friendOnline);
 
       Object.keys(friendOnline).forEach((userId) => {
         friendOnline[userId] = { ...friendsConvo[userId] }; // Create a new object

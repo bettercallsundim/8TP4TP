@@ -4,13 +4,17 @@ import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import toast from "react-hot-toast";
+import { BiMessageDetail } from "react-icons/bi";
 import { CiMenuFries } from "react-icons/ci";
 import { IoMdClose, IoMdLogOut } from "react-icons/io";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
+import { SiGravatar } from "react-icons/si";
+import { SlFeed } from "react-icons/sl";
 import { useDispatch, useSelector } from "react-redux";
 
 import { HomeIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { FaPeopleRoof } from "react-icons/fa6";
 import { logOut } from "../redux/globalSlice";
 
 function Nav() {
@@ -26,26 +30,31 @@ function Nav() {
     {
       name: "Feed",
       link: "/feed",
-      icon: <HomeIcon />,
+      icon: <SlFeed />,
       description: "",
     },
     {
       name: "My Profile",
       link: "/profile/" + user?._id,
-      icon: <HomeIcon />,
+      icon: <SiGravatar />,
       description: "",
     },
     {
       name: "Global Feed",
       link: "/global_feed",
-      icon: <HomeIcon />,
+      icon: <FaPeopleRoof />,
+      description: "",
+    },
+    {
+      name: "Conversations",
+      link: "/conversations",
+      icon: <BiMessageDetail />,
       description: "",
     },
   ];
   const router = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
   const handleLogout = () => {
-    console.log("logging out");
     googleLogout();
     const notify = () => toast.success("Logged out successfully");
     notify();
@@ -76,7 +85,6 @@ function Nav() {
     document.documentElement.classList.remove("dark");
     document.documentElement.classList.remove("light");
     if (theme) document.documentElement.classList.add(theme);
-    console.log(theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
   const links = [
@@ -134,7 +142,6 @@ function Nav() {
           <button
             className="md:hidden"
             onClick={() => {
-              console.log("clicked");
               setShowMenu(!showMenu);
             }}
           >
