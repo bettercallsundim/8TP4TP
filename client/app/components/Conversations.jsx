@@ -51,6 +51,7 @@ const Conversations = () => {
         authorization: `Bearer ${token}`,
       },
     },
+    fetchPolicy: "no-cache",
   });
   // const { loading, error, data, refetch } = useQuery(GET_CONVERSATIONS, {
   //   onError: (err) => {
@@ -72,6 +73,7 @@ const Conversations = () => {
           _id: user?._id,
         },
       });
+      console.log("executing refetch");
     }
   }, [user, pathname]);
   useEffect(() => {
@@ -87,6 +89,7 @@ const Conversations = () => {
             isSeen: convo.isSeen,
             isOnline: false,
           };
+          console.log("executing get convo if");
         } else {
           friends[convo.user1._id] = {
             ...convo.user1,
@@ -96,14 +99,15 @@ const Conversations = () => {
             isSeen: convo.isSeen,
             isOnline: false,
           };
+          console.log("executing get convo else");
         }
       });
 
       setFriendsConvo(friends);
       setNeedUpdate((prev) => prev + 1);
     }
-  }, [data?.getConversations]);
-
+  }, [data]);
+  console.log("dataaaa", data);
   useEffect(() => {
     if (onlineUsers && Object.keys(friendsConvo).length > 0) {
       let friendOnline = { ...friendsConvo };
@@ -123,6 +127,7 @@ const Conversations = () => {
   useEffect(() => {
     setFriendsConvoList(Object.keys(friendsConvo));
     dispatch(setFriendsConvoRedux({ friendsConvo: { ...friendsConvo } }));
+    console.log("friendsConvo", friendsConvo);
   }, [friendsConvo]);
   return (
     <div className="mt-8">

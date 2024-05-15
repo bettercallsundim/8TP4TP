@@ -164,6 +164,7 @@ const Message = ({ params: { id } }) => {
     }
     return () => {
       refetch();
+      console.log("clean up")
     };
   }, [user]);
   useEffect(() => {

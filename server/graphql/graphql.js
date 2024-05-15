@@ -162,8 +162,6 @@ export const resolvers = {
       return "hello";
     },
     tokenizedSignIn: (_, __, context) => {
-      
-
       if (
         !context.headers.authorization.split(" ")[1] ||
         context.headers.authorization.split(" ")[1] === "null"
@@ -171,7 +169,6 @@ export const resolvers = {
         return "none";
       }
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);
-
 
       if (verify) {
         return "valid";
@@ -264,6 +261,7 @@ export const resolvers = {
           },
         },
       ]);
+      console.log(conversations,"conversationssss")
       return conversations;
     },
     getConversation: async (_, { _id1, _id2 }, context) => {
@@ -278,7 +276,7 @@ export const resolvers = {
         conversation.isSeen = true;
         await conversation.save();
       }
-
+      console.log("seening");
       return conversation;
     },
     getMessages: async (_, { conversationId }, context) => {
