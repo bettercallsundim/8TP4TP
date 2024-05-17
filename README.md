@@ -12,11 +12,11 @@ Democratic social network platform.
 - Edit/Delete posts.
 - Follow/Unfollow users.
 - Comment on posts.
-- Separate page for own posts and public posts.
-- Infinite scrolling on Global Feed page (as there can be huge number of post in news feed)
+- Infinite scrolling
+- One To One Chat with users
 
 ## Tech Stack
 
 **Client:** Next.js ( App Router ), Redux Toolkit, Apollo Client, TailwindCSS, shadcn
 
-**Server:** mongoDB, Express.js, GraphQL
+**Server:** mongoDB, Express.js, GraphQL, Socket.io
