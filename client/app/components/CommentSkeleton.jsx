@@ -16,7 +16,6 @@ const CommentSkeleton = memo(() => {
       </div>
     </div>
   );
-  full;
 });
 
 export default CommentSkeleton;
