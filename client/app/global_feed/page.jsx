@@ -48,6 +48,13 @@ export default function Global_feed() {
   const [pageNumber, setPageNumber] = useState(1);
   const limit = 5;
   const [hasMore, setHasMore] = useState(limit);
+  const divRef = useRef(null);
+  const [top, setTop] = useState(0);
+
+  useEffect(() => {
+    const positionFromTop = divRef?.current?.offsetTop;
+    setTop(positionFromTop);
+  }, []);
   const { ref, inView } = useInView({
     threshold: 0.5,
     rootMargin: "0px 0px 50px 0px",
@@ -89,7 +96,10 @@ export default function Global_feed() {
   const array = [1, 2, 3];
 
   return (
-    <div className="bg-bng text-text py-8 px-4 md:px-12 flex items-start h-[90vh] w-full overflow-hidden ">
+    <div ref={divRef}
+    style={{
+      height: `calc(100vh - ${top}px)`,
+    }} className="bg-bng text-text py-8 px-4 md:px-12 flex items-start #h-[90vh] w-full overflow-hidden ">
       <MySheet commentRef={commentRef} />
 
       <div className="hidden md:block">

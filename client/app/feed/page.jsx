@@ -2,7 +2,7 @@
 import { getDataFromLocal } from "@/utils/localStorage";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "../components/CreatePost";
 import LeftSidebar from "../components/LeftSidebar";
@@ -34,7 +34,13 @@ const GET_USER_POSTS = gql`
 `;
 export default function feed() {
   const user = useSelector((state) => state.globalSlice.user);
+  const divRef = useRef(null);
+  const [top, setTop] = useState(0);
 
+  useEffect(() => {
+    const positionFromTop = divRef?.current?.offsetTop;
+    setTop(positionFromTop);
+  }, []);
   const { loading, error, data, refetch } = useQuery(GET_USER_POSTS, {
     onError: (err) => {
       console.log(err);
@@ -59,7 +65,10 @@ export default function feed() {
   }, [user]);
 
   return (
-    <div className="bg-bng text-text py-8 px-4 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden ">
+    <div ref={divRef}
+      style={{
+        height: `calc(100vh - ${top}px)`,
+      }} className="bg-bng text-text py-8 px-4 md:px-12 flex items-start #md:h-[90vh] w-full overflow-hidden ">
       <div className="hidden md:block">
         <LeftSidebar />
       </div>

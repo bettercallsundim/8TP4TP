@@ -27,5 +27,10 @@ export function removeDataFromLocal(key) {
     localStorage.removeItem(key);
     return true;
   }
+
+
   return false;
 }
+
+
+

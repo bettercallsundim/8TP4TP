@@ -1,8 +1,24 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
 import Login from "./components/Login";
 
 export default function page() {
+  const divRef = useRef(null);
+  const [top, setTop] = useState(0);
+
+  useEffect(() => {
+    const positionFromTop = divRef?.current?.offsetTop;
+    setTop(positionFromTop);
+  }, []);
+
   return (
-    <div className="h-[calc(100vh-4rem)] min-w-full container mx-auto bg-bng text-text flex flex-col md:flex-row items-center px-2 md:px-8  justify-center md:justify-around overflow-y-hidden">
+    <div
+      ref={divRef}
+      style={{
+        height: `calc(100vh - ${top}px)`,
+      }}
+      className=" min-w-full container mx-auto bg-bng text-text flex flex-col md:flex-row items-center px-2 md:px-8  justify-center md:justify-around overflow-y-hidden"
+    >
       <div className="">
         <p className="md:text-[50px] text-[30px]  text-primary leading-[3rem] md:leading-[5rem]">
           <span className="bg-primary text-text px-2 border-t-4 border-text">
