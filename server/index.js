@@ -50,7 +50,8 @@ const app = express();
 
 dotenv.config();
 const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
-app.use(cors({ origin: cors_origin }));
+console.log("🚀 ~ cors_origin:", cors_origin);
+app.use(cors({ origin: cors_origin, credentials: true }));
 app.use(express.json());
 const httpServer = http.createServer(app);
 
@@ -67,7 +68,7 @@ await server.start();
 
 app.use(
   "/graphql",
-  cors({ origin: cors_origin }),
+  cors({ origin: cors_origin, credentials: true }),
   expressMiddleware(server, { context })
 );
 
