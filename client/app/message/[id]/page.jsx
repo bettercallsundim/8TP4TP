@@ -103,6 +103,7 @@ const Message = ({ params: { id } }) => {
         authorization: `Bearer ${token}`,
       },
     },
+    fetchPolicy: "no-cache",
   });
   const [
     createConversation,
@@ -154,9 +155,13 @@ const Message = ({ params: { id } }) => {
         update: (cache, data) => {},
       });
     }
-    socket?.emit("send-message", { message, to: id, from: user?._id },(ack)=>{
-      console.log("sent",ack)
-    });
+    socket?.emit(
+      "send-message",
+      { message, to: id, from: user?._id },
+      (ack) => {
+        console.log("sent", ack);
+      }
+    );
     setMessage("");
     setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
   }

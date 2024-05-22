@@ -49,9 +49,9 @@ const port = process.env.PORT || 4000;
 const app = express();
 
 dotenv.config();
-app.use(cors({ origin: "*" }));
+const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
+app.use(cors({ origin: cors_origin }));
 app.use(express.json());
-
 const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
@@ -67,13 +67,13 @@ await server.start();
 
 app.use(
   "/graphql",
-  cors({ origin: "*" }),
+  cors({ origin: cors_origin }),
   expressMiddleware(server, { context })
 );
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: cors_origin,
   },
 });
 
