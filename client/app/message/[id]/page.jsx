@@ -154,7 +154,9 @@ const Message = ({ params: { id } }) => {
         update: (cache, data) => {},
       });
     }
-    socket?.emit("send-message", { message, to: id, from: user?._id });
+    socket?.emit("send-message", { message, to: id, from: user?._id },(ack)=>{
+      console.log("sent",ack)
+    });
     setMessage("");
     setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
   }
@@ -164,7 +166,6 @@ const Message = ({ params: { id } }) => {
     }
     return () => {
       refetch();
-      console.log("clean up")
     };
   }, [user]);
   useEffect(() => {

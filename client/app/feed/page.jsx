@@ -72,7 +72,7 @@ export default function feed() {
       <div className="hidden md:block">
         <LeftSidebar />
       </div>
-      <div className="hidescroll overflow-y-scroll h-[inherit] w-full md:w-[unset]">
+      <div className="hidescroll overflow-y-scroll h-[inherit] w-full md:w-[unset] pb-8">
         <div>
           <CreatePost loading={loading} refetch={refetch} />
         </div>

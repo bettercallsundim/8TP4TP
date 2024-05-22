@@ -261,7 +261,6 @@ export const resolvers = {
           },
         },
       ]);
-      console.log(conversations,"conversationssss")
       return conversations;
     },
     getConversation: async (_, { _id1, _id2 }, context) => {
@@ -276,7 +275,6 @@ export const resolvers = {
         conversation.isSeen = true;
         await conversation.save();
       }
-      console.log("seening");
       return conversation;
     },
     getMessages: async (_, { conversationId }, context) => {
