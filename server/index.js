@@ -50,7 +50,6 @@ const app = express();
 
 dotenv.config();
 const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
-console.log("🚀 ~ cors_origin:", cors_origin);
 app.use(cors({ origin: cors_origin, credentials: true }));
 app.use(express.json());
 const httpServer = http.createServer(app);

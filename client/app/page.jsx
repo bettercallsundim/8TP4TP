@@ -28,7 +28,7 @@ export default function page() {
           <br />{" "}
           <span className=" text-gray-500 text-[25px] md:text-[50px] px-2 border-text">
             {" "}
-            ... wait democratic ?
+            ... wait that exits ?
           </span>
           <img
             className="w-[150px] mx-auto mt-12 md:mt-0  rounded md:float-end"
@@ -38,10 +38,13 @@ export default function page() {
         </p>
         <p className="text-center"></p>
       </div>
-      <div className=" relative  flex items-center justify-center md:w-[350px] h-[100px] lg:h-[500px]  overflow-hidden">
-        <div className="hidden lg:block w-[100px] h-full bg-primary  absolute left-0"></div>
-        <div className="hidden lg:block w-[100px] h-full bg-secondary  absolute right-0"></div>
-        <div className="hidden lg:block w-[100px] h-full bg-accent   absolute right-[120px]"></div>
+      <div className=" relative  flex flex-col items-center justify-center md:w-[300px] h-[100px] lg:h-[400px]  overflow-hidden">
+        <div className="hidden lg:block rounded-lg">
+          <img className="rounded-lg" src="globe.gif" alt="" />
+        </div>
+        {/* <div className="hidden lg:block w-[100px] h-full bg-primary  absolute left-0"></div> */}
+        {/* <div className="hidden lg:block w-[100px] h-full bg-secondary  absolute right-0"></div> */}
+        {/* <div className="hidden lg:block w-[100px] h-full bg-accent   absolute right-[120px]"></div> */}
         {/* <div className="hidden md:block w-[700px] h-full bg-sky-300  absolute"></div>
         <div className="hidden md:block w-[700px] h-full bg-sky-400   absolute top-[50%]"></div> */}
 
