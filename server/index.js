@@ -45,13 +45,12 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { resolvers, typeDefs } from "./graphql/graphql.js";
+dotenv.config();
+
 const port = process.env.PORT || 4000;
+const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
 const app = express();
 
-dotenv.config();
-const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
-app.use(cors({ origin: cors_origin, credentials: true }));
-app.use(express.json());
 const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
@@ -59,11 +58,21 @@ const server = new ApolloServer({
   resolvers: resolvers,
 });
 
+await server.start();
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: cors_origin,
+  },
+});
+
+app.use(cors({ origin: cors_origin, credentials: true }));
+app.use(express.json());
+
 const context = ({ req }) => {
   return req;
 };
 
-await server.start();
 
 app.use(
   "/graphql",
@@ -71,11 +80,7 @@ app.use(
   expressMiddleware(server, { context })
 );
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: cors_origin,
-  },
-});
+
 
 const onlineUsers = {};
 

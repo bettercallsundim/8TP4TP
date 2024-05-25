@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 
 import { useSocket } from "@/app/components/SocketProvider";
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+
 const GET_USER = gql`
   query getUser($_id: String!) {
     getUser(_id: $_id) {
@@ -59,6 +60,7 @@ const Message = ({ params: { id } }) => {
   const msgRef = useRef(null);
   const divRef = useRef(null);
   const { socket } = useSocket();
+
   const {
     loading: userLoading,
     error: userError,
@@ -72,6 +74,7 @@ const Message = ({ params: { id } }) => {
       _id: id,
     },
   });
+
   const { loading, error, data, refetch } = useQuery(GET_CONVERSATION, {
     onError: (err) => {
       console.log(err);
@@ -86,6 +89,7 @@ const Message = ({ params: { id } }) => {
       },
     },
   });
+
   const [
     getMessagesRefetch,
     {
@@ -105,6 +109,7 @@ const Message = ({ params: { id } }) => {
     },
     fetchPolicy: "no-cache",
   });
+
   const [
     createConversation,
     { error: createConversationError, loading: createConversationLoading },
@@ -115,6 +120,7 @@ const Message = ({ params: { id } }) => {
       },
     },
   });
+
   const [
     sendMessage,
     { error: sendMessageError, loading: sendMessageLoading },
@@ -165,6 +171,7 @@ const Message = ({ params: { id } }) => {
     setMessage("");
     setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
   }
+
   useEffect(() => {
     if (user?._id) {
       refetch();
@@ -173,6 +180,7 @@ const Message = ({ params: { id } }) => {
       refetch();
     };
   }, [user]);
+
   useEffect(() => {
     if (data?.getConversation?._id) {
       setConversationId(data?.getConversation?._id);
@@ -183,6 +191,7 @@ const Message = ({ params: { id } }) => {
     const positionFromTop = divRef?.current?.offsetTop;
     setTop(positionFromTop);
   }, []);
+
   useEffect(() => {
     if (conversationId) {
       getMessagesRefetch({
@@ -192,17 +201,21 @@ const Message = ({ params: { id } }) => {
       });
     }
   }, [conversationId]);
+
   useEffect(() => {
     if (getMessagesData?.getMessages) setMessages(getMessagesData?.getMessages);
   }, [getMessagesData]);
+
   useEffect(() => {
     socket?.on("receive-message", (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
   }, [socket]);
+
   useEffect(() => {
     msgRef.current.scrollTop = msgRef.current.scrollHeight;
   }, [messages]);
+
   return (
     <div
       ref={divRef}
