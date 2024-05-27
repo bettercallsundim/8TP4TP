@@ -3,25 +3,10 @@ import LeftSidebar from "@/app/components/LeftSidebar";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
+import MessageSidebar from "@/app/components/MessageSidebar";
 import { useSocket } from "@/app/components/SocketProvider";
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 
-const GET_USER = gql`
-  query getUser($_id: String!) {
-    getUser(_id: $_id) {
-      name
-      picture
-    }
-  }
-`;
-const GET_CONVERSATION = gql`
-  query getConversation($_id1: String!, $_id2: String!) {
-    getConversation(_id1: $_id1, _id2: $_id2) {
-      _id
-      members
-    }
-  }
-`;
 const GET_MESSAGES = gql`
   query getMessages($conversationId: String!) {
     getMessages(conversationId: $conversationId) {
@@ -50,45 +35,23 @@ const SEND_MESSAGE = gql`
   }
 `;
 const Message = ({ params: { id } }) => {
+  console.log("🚀 ~ Message ~ id:", id);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
   const friendsConvo = useSelector((state) => state.globalSlice.friendsConvo);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const [conversationId, setConversationId] = useState(null);
   const [top, setTop] = useState(0);
   const msgRef = useRef(null);
   const divRef = useRef(null);
-  const { socket } = useSocket();
-
   const {
-    loading: userLoading,
-    error: userError,
-    data: userData,
-    refetch: userRefetch,
-  } = useQuery(GET_USER, {
-    onError: (err) => {
-      console.log(err);
-    },
-    variables: {
-      _id: id,
-    },
-  });
-
-  const { loading, error, data, refetch } = useQuery(GET_CONVERSATION, {
-    onError: (err) => {
-      console.log(err);
-    },
-    variables: {
-      _id1: id,
-      _id2: user?._id,
-    },
-    context: {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    },
-  });
+    socket,
+    conversationId,
+    userData,
+    setSelectedId,
+    getConversationData,
+    selectedId,
+  } = useSocket();
 
   const [
     getMessagesRefetch,
@@ -133,7 +96,7 @@ const Message = ({ params: { id } }) => {
   });
 
   async function sendMsg() {
-    if (data?.getConversation === null) {
+    if (getConversationData?.getConversation === null) {
       createConversation({
         variables: {
           members: [id, user?._id],
@@ -173,20 +136,8 @@ const Message = ({ params: { id } }) => {
   }
 
   useEffect(() => {
-    if (user?._id) {
-      refetch();
-    }
-    return () => {
-      refetch();
-    };
-  }, [user]);
-
-  useEffect(() => {
-    if (data?.getConversation?._id) {
-      setConversationId(data?.getConversation?._id);
-    }
-  }, [data]);
-
+    if (id) setSelectedId(id);
+  }, [id]);
   useEffect(() => {
     const positionFromTop = divRef?.current?.offsetTop;
     setTop(positionFromTop);
@@ -208,7 +159,10 @@ const Message = ({ params: { id } }) => {
 
   useEffect(() => {
     socket?.on("receive-message", (msg) => {
-      setMessages((prev) => [...prev, msg]);
+      console.log("🚀 ~ socket?.on ~ msg:", msg);
+      if (msg.sender==selectedId){
+        setMessages((prev) => [...prev, msg]);
+      }
     });
   }, [socket]);
 
@@ -225,7 +179,7 @@ const Message = ({ params: { id } }) => {
       className="bg-bng text-text py-4 px-4 md:px-12 flex items-start   w-full overflow-hidden "
     >
       <div className="hidden md:block">
-        <LeftSidebar />
+        <MessageSidebar />
       </div>
       <div className="hidescroll #overflow-y-scroll #h-[calc(100vh-100px)] h-full md:h-full w-full ">
         {/* ////user details */}
