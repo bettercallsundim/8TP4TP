@@ -28,7 +28,7 @@ export default function page() {
           <br />{" "}
           <span className=" text-gray-500 text-[25px] md:text-[50px] px-2 border-text">
             {" "}
-            ... wait that exits ?
+            ... wait that exists ?
           </span>
           <img
             className="w-[150px] mx-auto mt-12 md:mt-0  rounded md:float-end"
