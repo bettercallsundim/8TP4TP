@@ -7,39 +7,11 @@ import MessageSidebar from "@/app/components/MessageSidebar";
 import { useSocket } from "@/app/components/SocketProvider";
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 
-const GET_MESSAGES = gql`
-  query getMessages($conversationId: String!) {
-    getMessages(conversationId: $conversationId) {
-      _id
-      text
-      sender
-    }
-  }
-`;
-const CREATE_CONVERSATION = gql`
-  mutation createConversation($members: [String!]) {
-    createConversation(members: $members) {
-      _id
-    }
-  }
-`;
-const SEND_MESSAGE = gql`
-  mutation sendMessage(
-    $conversationId: String!
-    $sender: String!
-    $text: String!
-  ) {
-    sendMessage(conversationId: $conversationId, sender: $sender, text: $text) {
-      _id
-    }
-  }
-`;
 const Message = ({ params: { id } }) => {
   console.log("🚀 ~ Message ~ id:", id);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
   const friendsConvo = useSelector((state) => state.globalSlice.friendsConvo);
-  const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [top, setTop] = useState(0);
   const msgRef = useRef(null);
@@ -51,89 +23,10 @@ const Message = ({ params: { id } }) => {
     setSelectedId,
     getConversationData,
     selectedId,
+    messages,
+    setMessages,
+    sendMsg,
   } = useSocket();
-
-  const [
-    getMessagesRefetch,
-    {
-      loading: getMessagesLoading,
-      error: getMessagesError,
-      data: getMessagesData,
-    },
-  ] = useLazyQuery(GET_MESSAGES, {
-    onError: (err) => {
-      console.log(err);
-    },
-
-    context: {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    },
-    fetchPolicy: "no-cache",
-  });
-
-  const [
-    createConversation,
-    { error: createConversationError, loading: createConversationLoading },
-  ] = useMutation(CREATE_CONVERSATION, {
-    context: {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    },
-  });
-
-  const [
-    sendMessage,
-    { error: sendMessageError, loading: sendMessageLoading },
-  ] = useMutation(SEND_MESSAGE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    },
-  });
-
-  async function sendMsg() {
-    if (getConversationData?.getConversation === null) {
-      createConversation({
-        variables: {
-          members: [id, user?._id],
-        },
-        update: (cache, data) => {
-          if (data?.data?.createConversation?._id) {
-            sendMessage({
-              variables: {
-                conversationId: data?.data?.createConversation?._id,
-                sender: user?._id,
-                text: message,
-              },
-              update: (cache, data) => {},
-            });
-          }
-        },
-      });
-    } else {
-      sendMessage({
-        variables: {
-          conversationId: conversationId,
-          sender: user?._id,
-          text: message,
-        },
-        update: (cache, data) => {},
-      });
-    }
-    socket?.emit(
-      "send-message",
-      { message, to: id, from: user?._id },
-      (ack) => {
-        console.log("sent", ack);
-      }
-    );
-    setMessage("");
-    setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
-  }
 
   useEffect(() => {
     if (id) setSelectedId(id);
@@ -142,29 +35,6 @@ const Message = ({ params: { id } }) => {
     const positionFromTop = divRef?.current?.offsetTop;
     setTop(positionFromTop);
   }, []);
-
-  useEffect(() => {
-    if (conversationId) {
-      getMessagesRefetch({
-        variables: {
-          conversationId,
-        },
-      });
-    }
-  }, [conversationId]);
-
-  useEffect(() => {
-    if (getMessagesData?.getMessages) setMessages(getMessagesData?.getMessages);
-  }, [getMessagesData]);
-
-  useEffect(() => {
-    socket?.on("receive-message", (msg) => {
-      console.log("🚀 ~ socket?.on ~ msg:", msg);
-      if (msg.sender==selectedId){
-        setMessages((prev) => [...prev, msg]);
-      }
-    });
-  }, [socket]);
 
   useEffect(() => {
     msgRef.current.scrollTop = msgRef.current.scrollHeight;
@@ -263,13 +133,17 @@ const Message = ({ params: { id } }) => {
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
-                sendMsg();
+                sendMsg(message);
+                setMessage("");
               }
             }}
             type="text"
           />
           <button
-            onClick={sendMsg}
+            onClick={() => {
+              sendMsg(message);
+              setMessage("");
+            }}
             className="bg-primary text-white rounded-lg  px-2 py-2 mr-4"
           >
             Send

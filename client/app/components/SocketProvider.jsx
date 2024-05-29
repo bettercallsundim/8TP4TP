@@ -1,5 +1,5 @@
 "use client";
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
@@ -43,6 +43,33 @@ const GET_USER = gql`
     }
   }
 `;
+const GET_MESSAGES = gql`
+  query getMessages($conversationId: String!) {
+    getMessages(conversationId: $conversationId) {
+      _id
+      text
+      sender
+    }
+  }
+`;
+const CREATE_CONVERSATION = gql`
+  mutation createConversation($members: [String!]) {
+    createConversation(members: $members) {
+      _id
+    }
+  }
+`;
+const SEND_MESSAGE = gql`
+  mutation sendMessage(
+    $conversationId: String!
+    $sender: String!
+    $text: String!
+  ) {
+    sendMessage(conversationId: $conversationId, sender: $sender, text: $text) {
+      _id
+    }
+  }
+`;
 const SocketContext = createContext();
 export const useSocket = () => {
   return useContext(SocketContext);
@@ -50,17 +77,32 @@ export const useSocket = () => {
 const SocketProvider = ({ children }) => {
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
-
+  const dispatch = useDispatch();
+  const [friendsConvo, setFriendsConvo] = useState({});
+  const [friendsConvoList, setFriendsConvoList] = useState([]);
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
-
+  const [messages, setMessages] = useState([]);
+  const [conversationId, setConversationId] = useState(null);
+  const [updateNeed, setUpdateNeed] = useState(null);
+  const [updateNeedSent, setUpdateNeedSent] = useState(null);
   useEffect(() => {
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET);
+    if (!socket) setSocket(newSocket);
     newSocket?.on("connect", () => {
       console.log("from socket: hello world");
     });
-    setSocket(newSocket);
+
+    newSocket?.on("receive-message", (msg) => {
+      if (msg.sender == selectedId) {
+        setMessages((prev) => [
+          ...prev,
+          { text: msg.text, sender: msg.sender },
+        ]);
+      }
+      setUpdateNeed(msg);
+    });
 
     // Clean up function to close socket connection when component unmounts
     return () => newSocket.close();
@@ -70,6 +112,10 @@ const SocketProvider = ({ children }) => {
     socket?.on("online-users", (onlineUser) => {
       setOnlineUsers(onlineUser);
     });
+    return () => {
+      socket?.off("join");
+      socket?.off("online-users");
+    };
   }, [socket, user]);
 
   /// fetching conversation of the user
@@ -94,9 +140,6 @@ const SocketProvider = ({ children }) => {
       });
     }
   }, [user]);
-  const [friendsConvo, setFriendsConvo] = useState({});
-  const [friendsConvoList, setFriendsConvoList] = useState([]);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (data?.getConversations) {
@@ -110,7 +153,10 @@ const SocketProvider = ({ children }) => {
             lastMessageTime: convo.lastMessageTime,
             lastMessageSender: convo.lastMessageSender,
             isSeen: convo.isSeen,
-            isOnline: convo.user2._id in onlineUsers,
+            isOnline:
+              Object.keys(onlineUsers).length > 0 &&
+              onlineUsers[convo.user2._id] !== "undefined" &&
+              onlineUsers[convo.user2._id],
           };
         } else {
           friends[convo.user1._id] = {
@@ -119,7 +165,10 @@ const SocketProvider = ({ children }) => {
             lastMessageTime: convo.lastMessageTime,
             lastMessageSender: convo.lastMessageSender,
             isSeen: convo.isSeen,
-            isOnline: convo.user1._id in onlineUsers,
+            isOnline:
+              Object.keys(onlineUsers).length > 0 &&
+              onlineUsers[convo.user1._id] !== "undefined" &&
+              onlineUsers[convo.user1._id],
           };
         }
       });
@@ -132,7 +181,6 @@ const SocketProvider = ({ children }) => {
   }, [friendsConvo]);
 
   //get convo after selecting id
-  const [conversationId, setConversationId] = useState(null);
 
   const [
     getConversation,
@@ -178,6 +226,132 @@ const SocketProvider = ({ children }) => {
     }
   }, [getConversationData]);
 
+  /// get messages
+  const [
+    getMessagesRefetch,
+    {
+      loading: getMessagesLoading,
+      error: getMessagesError,
+      data: getMessagesData,
+    },
+  ] = useLazyQuery(GET_MESSAGES, {
+    onError: (err) => {
+      console.log(err);
+    },
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+    fetchPolicy: "no-cache",
+  });
+  useEffect(() => {
+    if (conversationId) {
+      getMessagesRefetch({
+        variables: {
+          conversationId,
+        },
+      });
+    }
+  }, [conversationId]);
+
+  useEffect(() => {
+    if (getMessagesData?.getMessages) setMessages(getMessagesData?.getMessages);
+  }, [getMessagesData]);
+
+  ///send messages
+  const [
+    createConversation,
+    { error: createConversationError, loading: createConversationLoading },
+  ] = useMutation(CREATE_CONVERSATION, {
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  const [
+    sendMessage,
+    { error: sendMessageError, loading: sendMessageLoading },
+  ] = useMutation(SEND_MESSAGE, {
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  async function sendMsg(message) {
+    if (getConversationData?.getConversation === null) {
+      createConversation({
+        variables: {
+          members: [selectedId, user?._id],
+        },
+        update: (cache, data) => {
+          if (data?.data?.createConversation?._id) {
+            sendMessage({
+              variables: {
+                conversationId: data?.data?.createConversation?._id,
+                sender: user?._id,
+                text: message,
+              },
+              update: (cache, data) => {},
+            });
+          }
+        },
+      });
+    } else {
+      sendMessage({
+        variables: {
+          conversationId: conversationId,
+          sender: user?._id,
+          text: message,
+        },
+        update: (cache, data) => {},
+      });
+    }
+    socket?.emit("send-message", { message, to: selectedId, from: user?._id });
+    setUpdateNeedSent({ text: message, sender: user?._id });
+    setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
+  }
+
+  useEffect(() => {
+    if (updateNeed) {
+      friendsConvoList.forEach((friendId) => {
+        if (friendId === updateNeed?.sender) {
+          setFriendsConvo((prev) => ({
+            ...friendsConvo,
+            [friendId]: {
+              ...prev[friendId],
+              lastMessage: updateNeed.text,
+              lastMessageSender: friendId,
+              lastMessageTime: updateNeed.lastMessageTime,
+            },
+          }));
+        }
+      });
+      setUpdateNeed(null);
+    }
+  }, [updateNeed]);
+  useEffect(() => {
+    if (updateNeedSent) {
+      friendsConvoList.forEach((friendId) => {
+        if (friendId === selectedId) {
+          setFriendsConvo((prev) => ({
+            ...friendsConvo,
+            [friendId]: {
+              ...prev[friendId],
+              lastMessage: updateNeedSent.text,
+              lastMessageSender: user?._id,
+              lastMessageTime: Date.now(),
+            },
+          }));
+        }
+      });
+      setUpdateNeedSent(null);
+    }
+  }, [updateNeedSent]);
   return (
     <SocketContext.Provider
       value={{
@@ -190,7 +364,10 @@ const SocketProvider = ({ children }) => {
         setSelectedId,
         conversationId,
         userData,
-        getConversationData
+        getConversationData,
+        messages,
+        setMessages,
+        sendMsg,
       }}
     >
       {children}

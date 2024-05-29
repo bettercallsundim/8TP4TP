@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import mongoose from "mongoose";
 import "../db.js";
+import { io, onlineUsers } from "../index.js";
 import ConversationModel from "../models/Conversation.model.js";
 import MessageModel from "../models/Message.model.js";
 import PostModel from "../models/Post.model.js";
@@ -489,6 +490,20 @@ export const resolvers = {
       conversation.lastMessageSender = sender;
       conversation.isSeen = false;
       Promise.all([conversation.save(), newMessage.save()]);
+      const toSocketId =
+        onlineUsers[
+          conversation.members.filter(
+            (member) => member.toString() !== sender.toString()
+          )
+        ];
+      if (toSocketId) {
+        io.to(toSocketId).emit("receive-message", {
+          ...newMessage._doc,
+          lastMessageTime: conversation.lastMessageTime,
+          lastMessageSender: conversation.lastMessageSender,
+          isSeen: conversation.isSeen,
+        });
+      }
 
       return newMessage;
     },

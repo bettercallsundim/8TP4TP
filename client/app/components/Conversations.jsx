@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
 const Conversations = () => {
-  const { friendsConvo, friendsConvoList, selectedId, setSelectedId } =
-    useSocket();
+  const { friendsConvo, friendsConvoList, selectedId, setSelectedId } =useSocket();
   const router = useRouter();
   const user = useSelector((state) => state.globalSlice.user);
+  console.log("🚀 ~ Conversations ~ friendsConvo:", friendsConvo)
 
   return (
     <div className="mt-8">
@@ -52,6 +52,8 @@ const Conversations = () => {
                       <span className="w-[10px] aspect-square bg-text rounded-full #ml-auto "></span>
                     )}
                 </p>
+                <p>{friendsConvo[friend].lastMessage}</p>
+                <p>{friendsConvo[friend].lastMessageTime}</p>
               </div>
             </div>
           );
