@@ -50,6 +50,7 @@ dotenv.config();
 const port = process.env.PORT || 4000;
 const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
 const app = express();
+app.use(cors({ origin: cors_origin, credentials: true }));
 
 const httpServer = http.createServer(app);
 
@@ -66,21 +67,17 @@ const io = new Server(httpServer, {
   },
 });
 
-app.use(cors({ origin: cors_origin, credentials: true }));
 app.use(express.json());
 
 const context = ({ req }) => {
   return req;
 };
 
-
 app.use(
   "/graphql",
   cors({ origin: cors_origin, credentials: true }),
   expressMiddleware(server, { context })
 );
-
-
 
 const onlineUsers = {};
 
