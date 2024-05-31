@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import mongoose from "mongoose";
 import "../db.js";
-import { io, onlineUsers } from "../index.js";
+import { onlineUsers } from "../index.js";
 import ConversationModel from "../models/Conversation.model.js";
 import MessageModel from "../models/Message.model.js";
 import PostModel from "../models/Post.model.js";
@@ -496,8 +496,9 @@ export const resolvers = {
             (member) => member.toString() !== sender.toString()
           )
         ];
+        console.log("context.io",context.io)
       if (toSocketId) {
-        io.to(toSocketId).emit("receive-message", {
+        context.io.to(toSocketId).emit("receive-message", {
           ...newMessage._doc,
           lastMessageTime: conversation.lastMessageTime,
           lastMessageSender: conversation.lastMessageSender,
