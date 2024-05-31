@@ -80,7 +80,8 @@ app.use((req, res, next) => {
   //   res.set("Access-Control-Allow-Origin", origin);
   //   res.set("Access-Control-Allow-Credentials", true); // Enable credentials for allowed origins
   // }
-  res.set("Access-Control-Allow-Origin", "*");
+  // console.log();
+  res.set("Access-Control-Allow-Origin", cors_origin.join(","));
 
   next();
 });
