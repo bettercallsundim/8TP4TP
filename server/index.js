@@ -56,10 +56,10 @@ app.use(
     credentials: true,
   })
 );
-app.use((req, res, next) => {
-  res.header({ "Access-Control-Allow-Origin": "*" });
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header({ "Access-Control-Allow-Origin": "*" });
+//   next();
+// });
 
 const httpServer = http.createServer(app);
 
