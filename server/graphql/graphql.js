@@ -1,7 +1,6 @@
 import gql from "graphql-tag";
 import mongoose from "mongoose";
 import "../db.js";
-import { onlineUsers } from "../index.js";
 import ConversationModel from "../models/Conversation.model.js";
 import MessageModel from "../models/Message.model.js";
 import PostModel from "../models/Post.model.js";
@@ -490,13 +489,13 @@ export const resolvers = {
       conversation.lastMessageSender = sender;
       conversation.isSeen = false;
       Promise.all([conversation.save(), newMessage.save()]);
+      console.log("onlineUsers", context.io.onlineUsers);
       const toSocketId =
-        onlineUsers[
+        context.io.onlineUsers[
           conversation.members.filter(
             (member) => member.toString() !== sender.toString()
           )
         ];
-        console.log("context.io",context.io)
       if (toSocketId) {
         context.io.to(toSocketId).emit("receive-message", {
           ...newMessage._doc,

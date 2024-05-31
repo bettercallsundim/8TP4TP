@@ -134,7 +134,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { resolvers, typeDefs } from "./graphql/graphql.js";
 dotenv.config();
-export let onlineUsers = {};
+let onlineUsers = {};
 const startServer = async () => {
   const port = process.env.PORT || 4000;
   const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
@@ -165,6 +165,8 @@ const startServer = async () => {
       origin: cors_origin,
     },
   });
+  io.onlineUsers = onlineUsers;
+
   app.use(injectIoMiddleware(io));
 
   app.use(express.json());
