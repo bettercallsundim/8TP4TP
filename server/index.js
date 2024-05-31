@@ -61,7 +61,7 @@ const server = new ApolloServer({
 
 await server.start();
 
-const io = new Server(httpServer, {
+export const io = new Server(httpServer, {
   cors: {
     origin: cors_origin,
   },
@@ -79,7 +79,7 @@ app.use(
   expressMiddleware(server, { context })
 );
 
-const onlineUsers = {};
+export const onlineUsers = {};
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -90,15 +90,15 @@ io.on("connection", (socket) => {
     io.emit("online-users", onlineUsers);
   });
 
-  socket.on("send-message", ({ message, to, from }, ack) => {
-    const toSocketId = onlineUsers[to];
-    if (toSocketId) {
-      socket
-        .to(toSocketId)
-        .emit("receive-message", { text: message, sender: from });
-      ack({ success: true });
-    }
-  });
+  // socket.on("send-message", ({ message, to, from }, ack) => {
+  //   const toSocketId = onlineUsers[to];
+  //   if (toSocketId) {
+  //     socket
+  //       .to(toSocketId)
+  //       .emit("receive-message", { text: message, sender: from });
+  //     ack({ success: true });
+  //   }
+  // });
 
   socket.on("disconnect", () => {
     delete onlineUsers[socket.userId];
