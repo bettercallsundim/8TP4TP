@@ -75,7 +75,7 @@ const context = ({ req }) => {
 
 app.use(
   "/graphql",
-  cors({ origin: cors_origin, credentials: true }),
+  // cors({ origin: cors_origin, credentials: true }),
   expressMiddleware(server, { context })
 );
 
