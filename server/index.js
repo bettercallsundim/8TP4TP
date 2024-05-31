@@ -82,12 +82,13 @@ app.use((req, res, next) => {
   // }
   // console.log();
   res.set("Access-Control-Allow-Origin", cors_origin.join(","));
+  res.set("Access-Control-Allow-Credentials", true);
 
   next();
 });
 app.use(
   "/graphql",
-  // cors({ origin: cors_origin, credentials: true }),
+  cors({ origin: cors_origin, credentials: true }),
   expressMiddleware(server, { context })
 );
 
