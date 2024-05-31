@@ -34,6 +34,7 @@ const GET_USER_POSTS = gql`
 `;
 export default function feed() {
   const user = useSelector((state) => state.globalSlice.user);
+  const token = useSelector((state) => state.globalSlice.token);
   const divRef = useRef(null);
   const [top, setTop] = useState(0);
 
@@ -47,6 +48,11 @@ export default function feed() {
     },
     variables: {
       email: user?.email,
+    },
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     },
   });
 
@@ -65,10 +71,13 @@ export default function feed() {
   }, [user]);
 
   return (
-    <div ref={divRef}
+    <div
+      ref={divRef}
       style={{
         height: `calc(100vh - ${top}px)`,
-      }} className="bg-bng text-text py-8 px-4 md:px-12 flex items-start #md:h-[90vh] w-full overflow-hidden ">
+      }}
+      className="bg-bng text-text py-8 px-4 md:px-12 flex items-start #md:h-[90vh] w-full overflow-hidden "
+    >
       <div className="hidden md:block">
         <LeftSidebar />
       </div>

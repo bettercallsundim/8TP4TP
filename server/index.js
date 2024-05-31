@@ -72,27 +72,9 @@ app.use(express.json());
 const context = ({ req }) => {
   return req;
 };
-app.use((req, res, next) => {
-  // const origin = req.headers.origin;
-  // const allowedOrigins = ["https://origin1.com", "https://origin2.com"];
 
-  // if (allowedOrigins.includes(origin)) {
-  //   res.set("Access-Control-Allow-Origin", origin);
-  //   res.set("Access-Control-Allow-Credentials", true); // Enable credentials for allowed origins
-  // }
-  // console.log();
-  res.set("Access-Control-Allow-Origin", cors_origin.join(","));
-  res.set("Access-Control-Allow-Credentials", true);
-
-  next();
-});
 app.use(
   "/graphql",
-  (req, res, next) => {
-    res.set("Access-Control-Allow-Origin", cors_origin.join(","));
-    res.set("Access-Control-Allow-Credentials", true);
-    next();
-  },
   expressMiddleware(server, { context })
 );
 
