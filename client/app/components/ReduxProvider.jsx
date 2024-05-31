@@ -9,9 +9,9 @@ export default function ReduxProvider({ children }) {
   let client = new ApolloClient({
     uri: `${process.env.NEXT_PUBLIC_BACKEND}/graphql`,
     cache: new InMemoryCache(),
-    // fetchOptions: {
-    //   mode: 'no-cors',
-    // },
+    fetchOptions: {
+      mode: "no-cors",
+    },
   });
 
   return (
