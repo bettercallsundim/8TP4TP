@@ -10,7 +10,7 @@ export default function ReduxProvider({ children }) {
     uri: `${process.env.NEXT_PUBLIC_BACKEND}/graphql`,
     cache: new InMemoryCache(),
     fetchOptions: {
-      mode: "no-cors",
+      mode: "cors",
     },
   });
 
