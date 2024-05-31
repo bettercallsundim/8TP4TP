@@ -52,8 +52,8 @@ const cors_origin = [process.env.LOCAL, process.env.PRODUCTION];
 const app = express();
 app.use(
   cors({
-    origin: "*",
-    credentials: true
+    origin: cors_origin,
+    credentials: true,
   })
 );
 
