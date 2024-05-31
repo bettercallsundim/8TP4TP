@@ -124,7 +124,6 @@ httpServer.listen(port, () => {
   console.log(`GraphQL Server running at http://localhost:${port}/graphql 🚀`);
 });
 
-export default server;
 
 // v3
 // import { ApolloServer } from "@apollo/server";
