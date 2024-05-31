@@ -1,13 +1,14 @@
 "use client";
 import { useSocket } from "@/app/components/SocketProvider";
+import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
 const Conversations = () => {
-  const { friendsConvo, friendsConvoList, selectedId, setSelectedId } =useSocket();
+  const { friendsConvo, friendsConvoList, selectedId, setSelectedId } =
+    useSocket();
   const router = useRouter();
   const user = useSelector((state) => state.globalSlice.user);
-  console.log("🚀 ~ Conversations ~ friendsConvo:", friendsConvo)
 
   return (
     <div className="mt-8">
@@ -23,7 +24,7 @@ const Conversations = () => {
                 setSelectedId(friendsConvo[friend]._id);
                 router.push(`/message/${friendsConvo[friend]._id}`);
               }}
-              className="flex items-center cursor-pointer"
+              className="flex items-center cursor-pointer gap-x-2"
             >
               <div className="image">
                 <img
@@ -53,7 +54,10 @@ const Conversations = () => {
                     )}
                 </p>
                 <p>{friendsConvo[friend].lastMessage}</p>
-                <p>{friendsConvo[friend].lastMessageTime}</p>
+                <p className="text-xs">
+                  {formatDate(friendsConvo[friend].lastMessageTime)}
+                  {/* {friendsConvo[friend].lastMessageTime} */}
+                </p>
               </div>
             </div>
           );

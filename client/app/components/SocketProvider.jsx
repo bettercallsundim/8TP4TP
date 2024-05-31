@@ -1,6 +1,12 @@
 "use client";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
 import { setFriendsConvoRedux } from "../redux/globalSlice";
@@ -79,6 +85,7 @@ const SocketProvider = ({ children }) => {
   const token = useSelector((state) => state.globalSlice.token);
   const dispatch = useDispatch();
   const [friendsConvo, setFriendsConvo] = useState({});
+  console.log("🚀 ~ SocketProvider ~ friendsConvo:", friendsConvo);
   const [friendsConvoList, setFriendsConvoList] = useState([]);
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState(null);
@@ -87,21 +94,25 @@ const SocketProvider = ({ children }) => {
   const [conversationId, setConversationId] = useState(null);
   const [updateNeed, setUpdateNeed] = useState(null);
   const [updateNeedSent, setUpdateNeedSent] = useState(null);
-  useEffect(() => {
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET);
-    if (!socket) setSocket(newSocket);
-    newSocket?.on("connect", () => {
-      console.log("from socket: hello world");
-    });
-
-    newSocket?.on("receive-message", (msg) => {
+  const recieveMessage = useCallback(
+    async function recieveMessage(msg) {
       if (msg.sender == selectedId) {
+        console.log(msg, "msg");
+        console.log(messages, "messages");
         setMessages((prev) => [
           ...prev,
           { text: msg.text, sender: msg.sender },
         ]);
       }
       setUpdateNeed(msg);
+    },
+    [selectedId, messages, setMessages, setUpdateNeed]
+  );
+  useEffect(() => {
+    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET);
+    if (!socket) setSocket(newSocket);
+    newSocket?.on("connect", () => {
+      console.log("from socket: hello world");
     });
 
     // Clean up function to close socket connection when component unmounts
@@ -110,13 +121,17 @@ const SocketProvider = ({ children }) => {
   useEffect(() => {
     socket?.emit("join", user?._id);
     socket?.on("online-users", (onlineUser) => {
+      console.log("🚀 ~ socket?.on ~ onlineUser:", onlineUser);
       setOnlineUsers(onlineUser);
     });
+    socket?.on("receive-message", recieveMessage);
+
     return () => {
       socket?.off("join");
       socket?.off("online-users");
+      socket?.off("receive-message");
     };
-  }, [socket, user]);
+  }, [socket, user, selectedId, messages, setUpdateNeed, setUpdateNeedSent]);
 
   /// fetching conversation of the user
   const [refetch, { loading, error, data }] = useLazyQuery(GET_CONVERSATIONS, {
@@ -140,12 +155,17 @@ const SocketProvider = ({ children }) => {
       });
     }
   }, [user]);
-
+const [getConversationsArr,setGetConversationsArr]=useState([])
   useEffect(() => {
     if (data?.getConversations) {
+      setGetConversationsArr(data?.getConversations)
+    }
+  }, [data]);
+  useEffect(() => {
+    if (getConversationsArr) {
       let friends = { ...friendsConvo };
 
-      data?.getConversations.forEach((convo) => {
+      getConversationsArr.forEach((convo) => {
         if (convo.user1._id === user._id) {
           friends[convo.user2._id] = {
             ...convo.user2,
@@ -154,6 +174,7 @@ const SocketProvider = ({ children }) => {
             lastMessageSender: convo.lastMessageSender,
             isSeen: convo.isSeen,
             isOnline:
+              onlineUsers &&
               Object.keys(onlineUsers).length > 0 &&
               onlineUsers[convo.user2._id] !== "undefined" &&
               onlineUsers[convo.user2._id],
@@ -166,6 +187,7 @@ const SocketProvider = ({ children }) => {
             lastMessageSender: convo.lastMessageSender,
             isSeen: convo.isSeen,
             isOnline:
+              onlineUsers &&
               Object.keys(onlineUsers).length > 0 &&
               onlineUsers[convo.user1._id] !== "undefined" &&
               onlineUsers[convo.user1._id],
@@ -174,7 +196,8 @@ const SocketProvider = ({ children }) => {
       });
       setFriendsConvo(friends);
     }
-  }, [data, onlineUsers]);
+  }, [getConversationsArr]);
+
   useEffect(() => {
     setFriendsConvoList(Object.keys(friendsConvo));
     dispatch(setFriendsConvoRedux({ friendsConvo: { ...friendsConvo } }));

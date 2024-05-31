@@ -8,7 +8,6 @@ import { useSocket } from "@/app/components/SocketProvider";
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 
 const Message = ({ params: { id } }) => {
-  console.log("🚀 ~ Message ~ id:", id);
   const user = useSelector((state) => state.globalSlice.user);
   const token = useSelector((state) => state.globalSlice.token);
   const friendsConvo = useSelector((state) => state.globalSlice.friendsConvo);
