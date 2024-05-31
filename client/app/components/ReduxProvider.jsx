@@ -11,22 +11,19 @@ import { store } from "../redux/store";
 import UserContext from "./UserContext";
 
 export default function ReduxProvider({ children }) {
-  // let client = new ApolloClient({
-  //   uri: `${process.env.NEXT_PUBLIC_BACKEND}/graphql`,
-  //   cache: new InMemoryCache(),
-  //   fetchOptions: {
-  //     mode: "cors",
-  //   },
-  // });
-  const link = createHttpLink({
+  let client = new ApolloClient({
     uri: `${process.env.NEXT_PUBLIC_BACKEND}/graphql`,
-    credentials: "include",
-  });
-
-  const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link,
   });
+  // const link = createHttpLink({
+  //   uri: `${process.env.NEXT_PUBLIC_BACKEND}/graphql`,
+  //   credentials: "include",
+  // });
+
+  // const client = new ApolloClient({
+  //   cache: new InMemoryCache(),
+  //   link,
+  // });
 
   return (
     <Provider store={store}>

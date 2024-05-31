@@ -120,3 +120,5 @@ httpServer.listen(port, () => {
   console.log(`Express Server running at http://localhost:${port} 🚀`);
   console.log(`GraphQL Server running at http://localhost:${port}/graphql 🚀`);
 });
+
+export default server;
