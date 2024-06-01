@@ -141,11 +141,11 @@ const SocketProvider = ({ children }) => {
     });
     socket?.on("receive-message", recieveMessage);
 
-    // return () => {
-    //   socket?.off("join");
-    //   socket?.off("online-users");
-    //   socket?.off("receive-message");
-    // };
+    return () => {
+      socket?.off("join");
+      socket?.off("online-users");
+      socket?.off("receive-message");
+    };
     // }, [socket, user, selectedId, messages, setUpdateNeed, setUpdateNeedSent]);
   }, [socket, user]);
 
