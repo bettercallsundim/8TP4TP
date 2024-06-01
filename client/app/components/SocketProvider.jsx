@@ -85,7 +85,7 @@ const SocketProvider = ({ children }) => {
   const token = useSelector((state) => state.globalSlice.token);
   const dispatch = useDispatch();
   const [friendsConvo, setFriendsConvo] = useState({});
-  console.log("🚀 ~ SocketProvider ~ friendsConvo:", friendsConvo);
+
   const [friendsConvoList, setFriendsConvoList] = useState([]);
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState(null);
@@ -97,8 +97,6 @@ const SocketProvider = ({ children }) => {
   const recieveMessage = useCallback(
     async function recieveMessage(msg) {
       if (msg.sender == selectedId) {
-        console.log(msg, "msg");
-        console.log(messages, "messages");
         setMessages((prev) => [
           ...prev,
           { text: msg.text, sender: msg.sender },
@@ -155,10 +153,10 @@ const SocketProvider = ({ children }) => {
       });
     }
   }, [user]);
-const [getConversationsArr,setGetConversationsArr]=useState([])
+  const [getConversationsArr, setGetConversationsArr] = useState([]);
   useEffect(() => {
     if (data?.getConversations) {
-      setGetConversationsArr(data?.getConversations)
+      setGetConversationsArr(data?.getConversations);
     }
   }, [data]);
   useEffect(() => {
@@ -339,6 +337,28 @@ const [getConversationsArr,setGetConversationsArr]=useState([])
     setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
   }
 
+  useEffect(() => {
+    let tempConvo = { ...friendsConvo };
+    onlineUsers &&
+      Object.keys(friendsConvo).forEach((friendId) => {
+          if (friendId in onlineUsers){
+            tempConvo[friendId]={
+              ...tempConvo[friendId],
+              isOnline:true
+            }
+          }else{
+            tempConvo[friendId]={
+              ...tempConvo[friendId],
+              isOnline:false
+            }
+          }
+        }
+      );
+    setFriendsConvo(tempConvo);
+  }, [onlineUsers]);
+  useEffect(() => {
+    console.log("friendsconvo",friendsConvo)
+  }, [friendsConvo]);
   useEffect(() => {
     if (updateNeed) {
       friendsConvoList.forEach((friendId) => {
