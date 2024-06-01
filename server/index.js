@@ -184,11 +184,14 @@ const startServer = async () => {
       onlineUsers[userId] = socket.id;
       socket.userId = userId;
       io.emit("online-users", onlineUsers);
+      io.onlineUsers = onlineUsers;
+
     });
 
     socket.on("disconnect", () => {
       delete onlineUsers[socket.userId];
       io.emit("online-users", onlineUsers);
+      io.onlineUsers = onlineUsers;
       console.log("User disconnected");
     });
   });
