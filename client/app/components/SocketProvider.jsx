@@ -96,7 +96,10 @@ const SocketProvider = ({ children }) => {
   const [updateNeedSent, setUpdateNeedSent] = useState(null);
   const recieveMessage = useCallback(
     async function recieveMessage(msg) {
+      console.log(selectedId, "🚀 ~ recieveMessage ~ msg:", msg);
       if (msg.sender == selectedId) {
+        console.log("🚀 ~ recieveMessage ~ msg ifff");
+
         setMessages((prev) => [
           ...prev,
           { text: msg.text, sender: msg.sender },
@@ -341,23 +344,22 @@ const SocketProvider = ({ children }) => {
     let tempConvo = { ...friendsConvo };
     onlineUsers &&
       Object.keys(friendsConvo).forEach((friendId) => {
-          if (friendId in onlineUsers){
-            tempConvo[friendId]={
-              ...tempConvo[friendId],
-              isOnline:true
-            }
-          }else{
-            tempConvo[friendId]={
-              ...tempConvo[friendId],
-              isOnline:false
-            }
-          }
+        if (friendId in onlineUsers) {
+          tempConvo[friendId] = {
+            ...tempConvo[friendId],
+            isOnline: true,
+          };
+        } else {
+          tempConvo[friendId] = {
+            ...tempConvo[friendId],
+            isOnline: false,
+          };
         }
-      );
+      });
     setFriendsConvo(tempConvo);
   }, [onlineUsers]);
   useEffect(() => {
-    console.log("friendsconvo",friendsConvo)
+    console.log("friendsconvo", friendsConvo);
   }, [friendsConvo]);
   useEffect(() => {
     if (updateNeed) {
