@@ -132,7 +132,8 @@ const SocketProvider = ({ children }) => {
       socket?.off("online-users");
       socket?.off("receive-message");
     };
-  }, [socket, user, selectedId, messages, setUpdateNeed, setUpdateNeedSent]);
+    // }, [socket, user, selectedId, messages, setUpdateNeed, setUpdateNeedSent]);
+  }, [socket, user,selectedId]);
 
   /// fetching conversation of the user
   const [refetch, { loading, error, data }] = useLazyQuery(GET_CONVERSATIONS, {
