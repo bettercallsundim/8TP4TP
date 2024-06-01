@@ -350,7 +350,7 @@ const SocketProvider = ({ children }) => {
         update: (cache, data) => {},
       });
     }
-    socket?.emit("send-message", { message, to: selectedId, from: user?._id });
+    socket?.emit("send-message", {conversationId, message, to: selectedId, from: user?._id });
     setUpdateNeedSent({ text: message, sender: user?._id });
     setMessages((prev) => [...prev, { text: message, sender: user?._id }]);
   }

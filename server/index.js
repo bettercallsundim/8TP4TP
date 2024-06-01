@@ -133,6 +133,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { resolvers, typeDefs } from "./graphql/graphql.js";
+import ConversationModel from "./models/Conversation.model.js";
 dotenv.config();
 let onlineUsers = {};
 const startServer = async () => {
@@ -185,9 +186,22 @@ const startServer = async () => {
       socket.userId = userId;
       io.emit("online-users", onlineUsers);
       io.onlineUsers = onlineUsers;
-
     });
-
+    socket.on("send-message", async ({ message, to, from, conversationId }) => {
+      const toSocketId = onlineUsers[to];
+      if (toSocketId) {
+        const conversation = await ConversationModel.findById(conversationId);
+        socket
+          .to(toSocketId)
+          .emit("receive-message", {
+            text: message,
+            sender: from,
+            lastMessageTime: conversation.lastMessageTime,
+            lastMessageSender: conversation.lastMessageSender,
+            isSeen: conversation.isSeen,
+          });
+      }
+    });
     socket.on("disconnect", () => {
       delete onlineUsers[socket.userId];
       io.emit("online-users", onlineUsers);

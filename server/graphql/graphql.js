@@ -489,21 +489,21 @@ export const resolvers = {
       conversation.lastMessageSender = sender;
       conversation.isSeen = false;
       Promise.all([conversation.save(), newMessage.save()]);
-      console.log("onlineUsers", context.io.onlineUsers);
-      const toSocketId =
-        context.io.onlineUsers[
-          conversation.members.filter(
-            (member) => member.toString() !== sender.toString()
-          )
-        ];
-      if (toSocketId) {
-        context.io.to(toSocketId).emit("receive-message", {
-          ...newMessage._doc,
-          lastMessageTime: conversation.lastMessageTime,
-          lastMessageSender: conversation.lastMessageSender,
-          isSeen: conversation.isSeen,
-        });
-      }
+      // console.log("onlineUsers", context.io.onlineUsers);
+      // const toSocketId =
+      //   context.io.onlineUsers[
+      //     conversation.members.filter(
+      //       (member) => member.toString() !== sender.toString()
+      //     )
+      //   ];
+      // if (toSocketId) {
+      //   context.io.to(toSocketId).emit("receive-message", {
+      //     ...newMessage._doc,
+      //     lastMessageTime: conversation.lastMessageTime,
+      //     lastMessageSender: conversation.lastMessageSender,
+      //     isSeen: conversation.isSeen,
+      //   });
+      // }
 
       return newMessage;
     },
