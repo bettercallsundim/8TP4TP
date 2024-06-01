@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -90,14 +91,19 @@ const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const selectedIdRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
   const [updateNeed, setUpdateNeed] = useState(null);
   const [updateNeedSent, setUpdateNeedSent] = useState(null);
+  useEffect(() => {
+    selectedIdRef.current = selectedId;
+  }, [selectedId]);
+
   const recieveMessage = useCallback(
     async function recieveMessage(msg) {
-      console.log(selectedId, "🚀 ~ recieveMessage ~ msg:", msg);
-      if (msg.sender == selectedId) {
+      console.log(selectedIdRef.current, "🚀 ~ recieveMessage ~ msg:", msg);
+      if (msg.sender == selectedIdRef.current) {
         console.log("🚀 ~ recieveMessage ~ msg ifff");
 
         setMessages((prev) => [
@@ -107,7 +113,15 @@ const SocketProvider = ({ children }) => {
       }
       setUpdateNeed(msg);
     },
-    [selectedId, messages, setMessages, setUpdateNeed]
+    [
+      socket,
+      user,
+      selectedId,
+      messages,
+      setMessages,
+      setUpdateNeed,
+      setUpdateNeedSent,
+    ]
   );
   useEffect(() => {
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET);
@@ -133,7 +147,7 @@ const SocketProvider = ({ children }) => {
       socket?.off("receive-message");
     };
     // }, [socket, user, selectedId, messages, setUpdateNeed, setUpdateNeedSent]);
-  }, [socket, user,selectedId]);
+  }, [socket, user]);
 
   /// fetching conversation of the user
   const [refetch, { loading, error, data }] = useLazyQuery(GET_CONVERSATIONS, {
