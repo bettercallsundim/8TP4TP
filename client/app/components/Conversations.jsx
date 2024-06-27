@@ -15,7 +15,7 @@ const Conversations = () => {
       <h1 className="bg-accent py-2 px-2 font-semibold text-xl my-4">
         Conversations
       </h1>
-      <div className="space-y-4 px-2 flex flex-col">
+      <div className="space-y-4 px-2 flex flex-col overflow-y-auto">
         {friendsConvoList.map((friend, ind) => {
           return (
             <div
@@ -24,7 +24,7 @@ const Conversations = () => {
                 setSelectedId(friendsConvo[friend]._id);
                 router.push(`/message/${friendsConvo[friend]._id}`);
               }}
-              className="flex items-center cursor-pointer gap-x-2"
+              className="flex items-center cursor-pointer gap-x-2 border-b border-accent px-2 pb-4 hover:bg-gray-400"
             >
               <div className="image">
                 <img

@@ -104,7 +104,7 @@ export default function Profile({ params }) {
       style={{
         height: `calc(100vh - ${top}px)`,
       }}
-      className="bg-bng text-text py-8 px-4 md:px-12 flex items-start md:h-[90vh] w-full overflow-hidden "
+      className="bg-bng text-text py-8 px-4 md:px-12 flex items-start #md:h-[90vh] w-full overflow-hidden "
     >
       <div className="hidden md:block">
         <LeftSidebar />

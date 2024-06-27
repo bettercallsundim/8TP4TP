@@ -14,7 +14,7 @@ const GET_USERS = gql`
   }
 `;
 
-const SearchUsers = () => {
+const SearchUsers = ({ setShowMenu }) => {
   const [search, setSearch] = React.useState("");
   const [debouncedSearch, setDebouncedSearch] = React.useState("");
   const [show, setShow] = React.useState(false);
@@ -52,7 +52,7 @@ const SearchUsers = () => {
         onChange={(e) => setSearch(e.target.value)}
         value={search}
         placeholder="Search users..."
-        className="w-full py-2 px-4 border border-gray-700 rounded-lg outline-none bg-bng text-text"
+        className="w-full py-2 px-4 border border-gray-500 rounded-lg outline-none bg-bng text-text"
       />
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
@@ -65,9 +65,10 @@ const SearchUsers = () => {
                 onClick={() => {
                   setSearch("");
                   setShow(false);
+                  setShowMenu && setShowMenu(false);
                 }}
                 href={"/profile/" + user._id}
-                className="hover:bg-secondary rounded-lg  duration-300 py-2 px-4 cursor-pointer text-[var(--text)] flex items-center gap-x-2"
+                className="hover:bg-secondary rounded-lg  duration-300 py-2 px-4 cursor-pointer text-[var(--text)] flex items-center gap-x-2 border-b border-accent"
               >
                 <img className="w-8 h-8 rounded-full" src={user.picture} />
                 <span>{user.name}</span>

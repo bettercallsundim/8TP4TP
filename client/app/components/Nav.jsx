@@ -108,23 +108,26 @@ function Nav() {
         <div className="logo font-bold text-2xl">
           <Link href="/">8TP4TP</Link>
         </div>
-        <div className="w-[30%] hidden md:block">
-          <SearchUsers />
-        </div>
+        {user?.email && (
+          <div className="w-[30%] hidden md:block">
+            <SearchUsers />
+          </div>
+        )}
         <div className="links hidden md:block">
           <ul className="flex items-center gap-x-6">
-            {links.map((link, ind) => (
-              <Link
-                className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
-                href={link.path}
-                key={ind}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {user?.email &&
+              links.map((link, ind) => (
+                <Link
+                  className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
+                  href={link.path}
+                  key={ind}
+                >
+                  {link.name}
+                </Link>
+              ))}
             {user?.email && (
               <button
-                className="hover:bg-primary hover:text-bng duration-300 py-3  cursor-pointer"
+                className="hover:bg-primary hover:text-bng duration-300 py-3 px-4  cursor-pointer"
                 onClick={handleLogout}
               >
                 Log Out
@@ -132,7 +135,7 @@ function Nav() {
             )}
             <button
               onClick={toggleTheme}
-              className="hover:bg-primary hover:text-bng duration-300 py-2 cursor-pointer"
+              className="hover:bg-primary hover:text-bng duration-300 py-2 px-4 cursor-pointer"
             >
               {theme === "light" ? (
                 <MdDarkMode className="text-3xl " />
@@ -159,7 +162,7 @@ function Nav() {
       </div>
       {showMenu && (
         <div className="bg-bng h-full shadow-lg  md:hidden py-4 px-4">
-          <SearchUsers />
+          <SearchUsers setShowMenu={setShowMenu} />
           {mblLinks.map((link) => (
             <p onClick={() => setShowMenu(false)}>
               <Link
