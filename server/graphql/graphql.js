@@ -18,6 +18,7 @@ export const typeDefs = gql`
     getConversation(_id1: String!, _id2: String!): Conversation
     getMessages(conversationId: String!): [Message!]
     getUser(_id: String!): User
+    getUsers(search: String!): [User!]
   }
 
   type Mutation {
@@ -223,6 +224,12 @@ export const resolvers = {
       const user = await UserModel.findById(_id);
       if (!user) return null;
       return user;
+    },
+    getUsers: async (_, { search }, context) => {
+      const users = await UserModel.find({
+        name: { $regex: search, $options: "i" },
+      });
+      return users;
     },
     getConversations: async (_, { _id }, context) => {
       const verify = verifyJWT(context.headers.authorization.split(" ")[1]);

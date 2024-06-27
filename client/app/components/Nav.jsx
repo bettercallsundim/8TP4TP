@@ -16,6 +16,7 @@ import { HomeIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { logOut } from "../redux/globalSlice";
+import SearchUsers from "./SearchUsers";
 
 function Nav() {
   const user = useSelector((state) => state.globalSlice.user);
@@ -106,6 +107,9 @@ function Nav() {
       <div className="flex items-center justify-between py-4 md:py-0 px-8 glassmorph text-text">
         <div className="logo font-bold text-2xl">
           <Link href="/">8TP4TP</Link>
+        </div>
+        <div className="w-[30%]">
+          <SearchUsers />
         </div>
         <div className="links hidden md:block">
           <ul className="flex items-center gap-x-6">

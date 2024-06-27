@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client": "cd client && yarn run dev",
-    "server": "cd server && yarn run dev",
-    "dev": "concurrently \"yarn run server\" \"yarn run client\""
+    "client": "cd client && bun run dev",
+    "server": "cd server && bun run dev",
+    "dev": "concurrently \"bun run server\" \"bun run client\""
   },
   "keywords": [],
   "author": "",
