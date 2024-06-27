@@ -108,7 +108,7 @@ function Nav() {
         <div className="logo font-bold text-2xl">
           <Link href="/">8TP4TP</Link>
         </div>
-        <div className="w-[30%]">
+        <div className="w-[30%] hidden md:block">
           <SearchUsers />
         </div>
         <div className="links hidden md:block">
@@ -124,7 +124,7 @@ function Nav() {
             ))}
             {user?.email && (
               <button
-                className="hover:bg-primary hover:text-bng duration-300 py-3 px-4 cursor-pointer"
+                className="hover:bg-primary hover:text-bng duration-300 py-3  cursor-pointer"
                 onClick={handleLogout}
               >
                 Log Out
@@ -132,7 +132,7 @@ function Nav() {
             )}
             <button
               onClick={toggleTheme}
-              className="hover:bg-primary hover:text-bng duration-300 py-2 px-4 cursor-pointer"
+              className="hover:bg-primary hover:text-bng duration-300 py-2 cursor-pointer"
             >
               {theme === "light" ? (
                 <MdDarkMode className="text-3xl " />
@@ -158,13 +158,14 @@ function Nav() {
         </div>
       </div>
       {showMenu && (
-        <div className="bg-bng h-full shadow-lg  md:hidden py-4 ">
+        <div className="bg-bng h-full shadow-lg  md:hidden py-4 px-4">
+          <SearchUsers />
           {mblLinks.map((link) => (
             <p onClick={() => setShowMenu(false)}>
               <Link
                 prefetch={false}
                 href={link.link}
-                className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+                className="flex items-center gap-x-4 py-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
               >
                 <span className="text-primary">{link.icon}</span>
                 <h1 className="text-text">{link.name}</h1>
@@ -173,7 +174,7 @@ function Nav() {
           ))}
           {user?.email && (
             <li
-              className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+              className="flex items-center gap-x-4 py-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
               onClick={() => {
                 handleLogout();
                 setShowMenu(false);
@@ -189,7 +190,7 @@ function Nav() {
             </li>
           )}
           <li
-            className="flex items-center gap-x-4 p-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
+            className="flex items-center gap-x-4 py-4 hover:bg-secondary rounded-l-lg rounded-r-lg"
             onClick={() => {
               toggleTheme();
               setShowMenu(false);
