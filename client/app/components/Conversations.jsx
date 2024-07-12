@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 const Conversations = () => {
   const { friendsConvo, friendsConvoList, selectedId, setSelectedId } =
     useSocket();
+  console.log("🚀 ~ Conversations ~ friendsConvo:", friendsConvo);
+
   const router = useRouter();
   const user = useSelector((state) => state.globalSlice.user);
 
@@ -38,7 +40,7 @@ const Conversations = () => {
                 />
               </div>
               <div className="convo-box">
-                <p>
+                <p className="flex items-center gap-x-4">
                   <span
                     className={`bg-sky-500 px-2 #py-2 ${
                       friendsConvo[friend].lastMessageSender !== user?._id &&
@@ -50,10 +52,18 @@ const Conversations = () => {
                   </span>
                   {friendsConvo[friend].lastMessageSender !== user?._id &&
                     !friendsConvo[friend].isSeen && (
-                      <span className="w-[10px] aspect-square bg-text rounded-full #ml-auto "></span>
+                      <div className="w-[10px] aspect-square bg-green-500 rounded-full #ml-auto "></div>
                     )}
                 </p>
-                <p>{friendsConvo[friend].lastMessage}</p>
+                <p
+                  className={`${
+                    friendsConvo[friend].lastMessageSender !== user?._id &&
+                    !friendsConvo[friend].isSeen &&
+                    "font-bold"
+                  }`}
+                >
+                  {friendsConvo[friend].lastMessage}
+                </p>
                 <p className="text-xs">
                   {formatDate(friendsConvo[friend].lastMessageTime)}
                   {/* {friendsConvo[friend].lastMessageTime} */}
